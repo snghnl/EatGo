@@ -1,0 +1,158 @@
+[
+    {
+        "id": "post-001",
+        "user_id": "user-001",
+        "route_id": "route-001",
+        "content": "명동에서 즐기는 전통 한식 투어 완료! 교자부터 빈대떡까지 서울의 맛을 한번에 즐겼어요. 특히 명동교자의 만두는 정말 쫄깃하고 맛있었습니다. 다음에 또 가고 싶어요!",
+        "likes_count": 15,
+        "comments_count": 3,
+        "created_at": "2024-01-01T00:00:00Z",
+        "updated_at": "2024-01-01T00:00:00Z",
+        "comments": [
+            {
+                "id": "comment-001",
+                "post_id": "post-001",
+                "user_id": "user-002",
+                "content": "와! 정말 맛있어 보여요. 다음에 저도 가보고 싶어요!",
+                "created_at": "2024-01-01T01:00:00Z"
+            },
+            {
+                "id": "comment-002",
+                "post_id": "post-001",
+                "user_id": "user-003",
+                "content": "광장시장 빈대떡도 정말 맛있죠. 추천해주셔서 감사해요!",
+                "created_at": "2024-01-01T02:00:00Z"
+            },
+            {
+                "id": "comment-003",
+                "post_id": "post-001",
+                "user_id": "user-004",
+                "content": "사진도 정말 예쁘게 나왔네요. 경로 공유해주셔서 감사합니다!",
+                "created_at": "2024-01-01T03:00:00Z"
+            }
+        ]
+    },
+    {
+        "id": "post-002",
+        "user_id": "user-002",
+        "route_id": "route-002",
+        "content": "홍대 데이트 코스 완료! 닭갈비부터 토스트까지 정말 맛있었어요. 특히 홍대 닭갈비의 양념이 정말 일품이었습니다. 데이트하기 좋은 코스였어요!",
+        "likes_count": 23,
+        "comments_count": 5,
+        "created_at": "2024-01-02T00:00:00Z",
+        "updated_at": "2024-01-02T00:00:00Z",
+        "comments": [
+            {
+                "id": "comment-004",
+                "post_id": "post-002",
+                "user_id": "user-001",
+                "content": "홍대 맛집 정말 많죠! 다음에 다른 곳도 추천해주세요.",
+                "created_at": "2024-01-02T01:00:00Z"
+            },
+            {
+                "id": "comment-005",
+                "post_id": "post-002",
+                "user_id": "user-005",
+                "content": "토스트 맛집도 정말 좋았어요. 브런치하기 딱이었습니다!",
+                "created_at": "2024-01-02T02:00:00Z"
+            }
+        ]
+    },
+    {
+        "id": "post-003",
+        "user_id": "user-003",
+        "route_id": "route-003",
+        "content": "강남 고급 레스토랑에서 특별한 저녁을 즐겼어요. 스테이크와 와인 페어링이 정말 완벽했습니다. 기념일이나 특별한 날에 추천해요!",
+        "likes_count": 5,
+        "comments_count": 1,
+        "created_at": "2024-01-03T00:00:00Z",
+        "updated_at": "2024-01-03T00:00:00Z",
+        "comments": [
+            {
+                "id": "comment-006",
+                "post_id": "post-003",
+                "user_id": "user-001",
+                "content": "고급스러운 분위기가 정말 좋아 보여요. 다음 기념일에 가보고 싶어요!",
+                "created_at": "2024-01-03T01:00:00Z"
+            }
+        ]
+    },
+    {
+        "id": "post-004",
+        "user_id": "user-001",
+        "route_id": "route-004",
+        "content": "부산 해운대에서 신선한 해산물을 즐겼어요. 해물탕의 국물이 정말 진하고 맛있었습니다. 부산 여행 필수 코스!",
+        "likes_count": 8,
+        "comments_count": 2,
+        "created_at": "2024-01-04T00:00:00Z",
+        "updated_at": "2024-01-04T00:00:00Z",
+        "comments": [
+            {
+                "id": "comment-007",
+                "post_id": "post-004",
+                "user_id": "user-004",
+                "content": "부산 해산물은 정말 최고죠! 다음에 다른 해산물도 추천해주세요.",
+                "created_at": "2024-01-04T01:00:00Z"
+            },
+            {
+                "id": "comment-008",
+                "post_id": "post-004",
+                "user_id": "user-002",
+                "content": "해운대 경치도 정말 예쁘고 맛집도 좋았네요. 완벽한 여행이었어요!",
+                "created_at": "2024-01-04T02:00:00Z"
+            }
+        ]
+    },
+    {
+        "id": "post-005",
+        "user_id": "user-004",
+        "route_id": "route-005",
+        "content": "제주도에서 흑돼지 삼겹살을 즐겼어요. 고소하고 쫄깃한 맛이 정말 일품이었습니다. 제주도 특산품의 진수를 맛볼 수 있었어요!",
+        "likes_count": 12,
+        "comments_count": 4,
+        "created_at": "2024-01-05T00:00:00Z",
+        "updated_at": "2024-01-05T00:00:00Z",
+        "comments": [
+            {
+                "id": "comment-009",
+                "post_id": "post-005",
+                "user_id": "user-001",
+                "content": "제주 흑돼지는 정말 맛있죠! 다음에 제주도 여행할 때 꼭 가보고 싶어요.",
+                "created_at": "2024-01-05T01:00:00Z"
+            },
+            {
+                "id": "comment-010",
+                "post_id": "post-005",
+                "user_id": "user-003",
+                "content": "제주도 특산품 정말 많죠. 다른 맛집도 추천해주세요!",
+                "created_at": "2024-01-05T02:00:00Z"
+            }
+        ]
+    },
+    {
+        "id": "post-006",
+        "user_id": "user-002",
+        "route_id": "route-006",
+        "content": "대구 막창 투어 완료! 쫄깃하고 고소한 맛이 정말 일품이었어요. 대구의 대표 음식 막창의 진수를 맛볼 수 있었습니다.",
+        "likes_count": 7,
+        "comments_count": 2,
+        "created_at": "2024-01-06T00:00:00Z",
+        "updated_at": "2024-01-06T00:00:00Z",
+        "comments": [
+            {
+                "id": "comment-011",
+                "post_id": "post-006",
+                "user_id": "user-004",
+                "content": "대구 막창은 정말 최고죠! 다른 대구 맛집도 추천해주세요.",
+                "created_at": "2024-01-06T01:00:00Z"
+            },
+            {
+                "id": "comment-012",
+                "post_id": "post-006",
+                "user_id": "user-001",
+                "content": "대구 여행 필수 코스네요! 다음에 가보고 싶어요.",
+                "created_at": "2024-01-06T02:00:00Z"
+            }
+        ]
+    }
+]

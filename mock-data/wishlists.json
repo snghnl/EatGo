@@ -1,0 +1,118 @@
+[
+    {
+        "id": "wishlist-001",
+        "user_id": "user-001",
+        "title": "서울 맛집 위시리스트",
+        "description": "서울에서 꼭 가보고 싶은 맛집들",
+        "is_public": true,
+        "created_at": "2024-01-01T00:00:00Z",
+        "updated_at": "2024-01-01T00:00:00Z",
+        "items": [
+            {
+                "id": "wishlist-item-001",
+                "wishlist_id": "wishlist-001",
+                "place_name": "명동교자",
+                "place_id": "7960840",
+                "lat": 37.5636,
+                "lng": 126.9834,
+                "added_at": "2024-01-01T00:00:00Z"
+            },
+            {
+                "id": "wishlist-item-002",
+                "wishlist_id": "wishlist-001",
+                "place_name": "광장시장 빈대떡",
+                "place_id": "10456191",
+                "lat": 37.5704,
+                "lng": 126.9999,
+                "added_at": "2024-01-02T00:00:00Z"
+            }
+        ]
+    },
+    {
+        "id": "wishlist-002",
+        "user_id": "user-002",
+        "title": "홍대 데이트 코스",
+        "description": "홍대에서 즐길 수 있는 맛집들",
+        "is_public": true,
+        "created_at": "2024-01-03T00:00:00Z",
+        "updated_at": "2024-01-03T00:00:00Z",
+        "items": [
+            {
+                "id": "wishlist-item-003",
+                "wishlist_id": "wishlist-002",
+                "place_name": "홍대 닭갈비",
+                "place_id": "8456799",
+                "lat": 37.5563,
+                "lng": 126.9238,
+                "added_at": "2024-01-03T00:00:00Z"
+            },
+            {
+                "id": "wishlist-item-004",
+                "wishlist_id": "wishlist-002",
+                "place_name": "이태원 토스트",
+                "place_id": "8171788",
+                "lat": 37.5344,
+                "lng": 126.9943,
+                "added_at": "2024-01-04T00:00:00Z"
+            }
+        ]
+    },
+    {
+        "id": "wishlist-003",
+        "user_id": "user-003",
+        "title": "고급 레스토랑",
+        "description": "특별한 날을 위한 고급 레스토랑들",
+        "is_public": false,
+        "created_at": "2024-01-05T00:00:00Z",
+        "updated_at": "2024-01-05T00:00:00Z",
+        "items": [
+            {
+                "id": "wishlist-item-005",
+                "wishlist_id": "wishlist-003",
+                "place_name": "강남 스테이크",
+                "place_id": "7935684",
+                "lat": 37.5013,
+                "lng": 127.0396,
+                "added_at": "2024-01-05T00:00:00Z"
+            }
+        ]
+    },
+    {
+        "id": "wishlist-004",
+        "user_id": "user-004",
+        "title": "지역 특산품",
+        "description": "각 지역의 대표 맛집들",
+        "is_public": true,
+        "created_at": "2024-01-06T00:00:00Z",
+        "updated_at": "2024-01-06T00:00:00Z",
+        "items": [
+            {
+                "id": "wishlist-item-006",
+                "wishlist_id": "wishlist-004",
+                "place_name": "부산 해물탕",
+                "place_id": "2027428289",
+                "lat": 35.1586,
+                "lng": 129.1603,
+                "added_at": "2024-01-06T00:00:00Z"
+            },
+            {
+                "id": "wishlist-item-007",
+                "wishlist_id": "wishlist-004",
+                "place_name": "제주 흑돼지",
+                "place_id": "7839723",
+                "lat": 33.4996,
+                "lng": 126.5312,
+                "added_at": "2024-01-07T00:00:00Z"
+            },
+            {
+                "id": "wishlist-item-008",
+                "wishlist_id": "wishlist-004",
+                "place_name": "대구 막창",
+                "place_id": "27377975",
+                "lat": 35.8714,
+                "lng": 128.6014,
+                "added_at": "2024-01-08T00:00:00Z"
+            }
+        ]
+    }
+]
