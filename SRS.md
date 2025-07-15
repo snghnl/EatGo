@@ -217,18 +217,23 @@ flowchart TD
 ```mermaid
 erDiagram
     users ||--o{ posts           : writes
+    users ||--o{ post_images     : uploads
     users ||--o{ travel_courses  : creates
     users ||--o{ routes          : creates
     users ||--o{ places          : creates
     users ||--o{ comments        : writes
     users ||--o{ likes           : makes
 
+    posts ||--o{ post_images     : has
     posts ||--o{ travel_courses  : includes
     posts ||--o{ comments        : receives
     posts ||--o{ likes           : receives
 
-    travel_courses ||--|{ routes : consists of
-    routes         ||--|{ places : consists of
+    travel_courses ||--|{ routes : "consists of"
+    routes         ||--|{ places : "consists of"
+
+    places         ||--o{ place_hours : has
+    places         ||--o{ menu_items  : offers
 
     users {
         uuid    id PK
@@ -245,10 +250,19 @@ erDiagram
         datetime created_at
     }
 
+    post_images {
+        uuid    id PK
+        uuid    post_id FK         "posts.id 참조"
+        string  url                "이미지 저장 경로 or CDN URL"
+        int     sequence           "이미지 순서"
+        string  alt_text           "대체 텍스트(접근성)"
+        datetime created_at
+    }
+
     travel_courses {
         uuid    id PK
         uuid    post_id FK
-        uuid    user_id FK    "Creator"
+        uuid    user_id FK         "Creator"
         string  title
         datetime created_at
     }
@@ -256,20 +270,39 @@ erDiagram
     routes {
         uuid    id PK
         uuid    travel_course_id FK
-        uuid    user_id FK    "Creator"
+        uuid    user_id FK         "Creator"
         string  title
-        int     sequence      "순서"
+        int     sequence           "순서"
         datetime created_at
     }
 
     places {
         uuid    id PK
         uuid    route_id FK
-        uuid    user_id FK    "Creator"
+        uuid    user_id FK         "Creator"
         string  place_name
-        int     sequence      "순서"
+        int     sequence           "순서"
         float   lat
         float   lng
+        string  phone_number
+        float   avg_rating         "평균 평점"
+        datetime created_at
+    }
+
+    place_hours {
+        uuid    id PK
+        uuid    place_id FK
+        enum    day_of_week
+        time    open_time
+        time    close_time
+    }
+
+    menu_items {
+        uuid    id PK
+        uuid    place_id FK
+        string  name
+        money   price
+        text    description
     }
 
     comments {
