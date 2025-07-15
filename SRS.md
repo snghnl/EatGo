@@ -216,73 +216,107 @@ flowchart TD
 
 ```mermaid
 erDiagram
-    users ||--o{ wishlists : owns
-    users ||--o{ routes : creates
-    users ||--o{ posts : writes
-    wishlists ||--|{ wishlist_items : includes
-    routes ||--|{ route_places : consists of
-    posts ||--o{ comments : receives
-    posts ||--o{ likes : receives
+    users ||--o{ posts           : writes
+    users ||--o{ post_images     : uploads
+    users ||--o{ travel_courses  : creates
+    users ||--o{ routes          : creates
+    users ||--o{ places          : creates
+    users ||--o{ comments        : writes
+    users ||--o{ likes           : makes
+
+    posts ||--o{ post_images     : has
+    posts ||--o{ travel_courses  : includes
+    posts ||--o{ comments        : receives
+    posts ||--o{ likes           : receives
+
+    travel_courses ||--|{ routes : "consists of"
+    routes         ||--|{ places : "consists of"
+
+    places         ||--o{ place_hours : has
+    places         ||--o{ menu_items  : offers
 
     users {
-        uuid id
-        string email
-        string login_method
+        uuid    id PK
+        string  name UK
+        string  email UK
+        string  login_method
         datetime created_at
-    }
-
-    wishlists {
-        uuid id
-        uuid user_id
-        string title
-        datetime created_at
-    }
-
-    wishlist_items {
-        uuid id
-        uuid wishlist_id
-        string place_name
-        string place_id
-        float lat
-        float lng
-    }
-
-    routes {
-        uuid id
-        uuid user_id
-        string title
-        datetime created_at
-    }
-
-    route_places {
-        uuid id
-        uuid route_id
-        string place_name
-        int order
-        float lat
-        float lng
     }
 
     posts {
-        uuid id
-        uuid user_id
-        uuid route_id
-        string content
+        uuid    id PK
+        uuid    user_id FK
+        string  content
         datetime created_at
     }
 
+    post_images {
+        uuid    id PK
+        uuid    post_id FK         "posts.id 참조"
+        string  url                "이미지 저장 경로 or CDN URL"
+        int     sequence           "이미지 순서"
+        string  alt_text           "대체 텍스트(접근성)"
+        datetime created_at
+    }
+
+    travel_courses {
+        uuid    id PK
+        uuid    post_id FK
+        uuid    user_id FK         "Creator"
+        string  title
+        datetime created_at
+    }
+
+    routes {
+        uuid    id PK
+        uuid    travel_course_id FK
+        uuid    user_id FK         "Creator"
+        string  title
+        int     sequence           "순서"
+        datetime created_at
+    }
+
+    places {
+        uuid    id PK
+        uuid    route_id FK
+        uuid    user_id FK         "Creator"
+        string  place_name
+        int     sequence           "순서"
+        float   lat
+        float   lng
+        string  phone_number
+        float   avg_rating         "평균 평점"
+        datetime created_at
+    }
+
+    place_hours {
+        uuid    id PK
+        uuid    place_id FK
+        enum    day_of_week
+        time    open_time
+        time    close_time
+    }
+
+    menu_items {
+        uuid    id PK
+        uuid    place_id FK
+        string  name
+        money   price
+        text    description
+    }
+
     comments {
-        uuid id
-        uuid post_id
-        uuid user_id
-        string content
+        uuid    id PK
+        uuid    post_id FK
+        uuid    user_id FK
+        string  content
         datetime created_at
     }
 
     likes {
-        uuid id
-        uuid post_id
-        uuid user_id
+        uuid    id PK
+        uuid    post_id FK
+        uuid    user_id FK
     }
 ```
 
