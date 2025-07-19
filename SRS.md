@@ -359,6 +359,7 @@ erDiagram
         int     sequence           "이미지 순서"
         string  alt_text           "대체 텍스트(접근성)"
         datetime created_at
+        datetime updated_at
     }
 
     comments {
