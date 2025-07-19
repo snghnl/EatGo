@@ -265,7 +265,7 @@ erDiagram
         uuid    id PK
         uuid    user_id FK
         uuid    category_id FK
-        float     preference_score "0.0 ~ 1.0"
+        float    preference_score "0.0 ~ 1.0"
         datetime created_at
     }
 
