@@ -247,6 +247,7 @@ erDiagram
         string  login_method
         string  profile_image_url
         datetime created_at
+        datetime updated_at
     }
 
     categories {
