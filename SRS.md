@@ -331,6 +331,7 @@ erDiagram
         text    description
         float   total_distance     "km"
         datetime created_at
+        datetime updated_at
     }
 
     travel_courses {
