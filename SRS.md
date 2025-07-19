@@ -297,6 +297,7 @@ erDiagram
         uuid    category_id FK
         boolean is_primary         "주 카테고리 여부"
         datetime created_at
+        datetime updated_at
     }
 
     place_hours {
