@@ -370,6 +370,7 @@ erDiagram
         uuid    user_id FK
         string  content
         datetime created_at
+        datetime updated_at
     }
 
     likes {
