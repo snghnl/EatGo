@@ -269,6 +269,7 @@ erDiagram
         uuid    category_id FK
         float    preference_score "0.0 ~ 1.0"
         datetime created_at
+        datetime updated_at
     }
 
     places {
