@@ -351,6 +351,7 @@ erDiagram
         int     likes_count
         int     comments_count
         datetime created_at
+        datetime updated_at
     }
 
     post_images {
