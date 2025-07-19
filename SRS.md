@@ -317,6 +317,7 @@ erDiagram
         int     price
         text    description
         datetime created_at
+        datetime updated_at
         boolean is_active
     }
 
