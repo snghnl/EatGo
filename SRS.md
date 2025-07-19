@@ -307,6 +307,7 @@ erDiagram
         time    open_time
         time    close_time
         datetime created_at
+        datetime updated_at
     }
 
     menu_items {
