@@ -340,6 +340,7 @@ erDiagram
         string  title
         text    description
         datetime created_at
+        datetime updated_at
     }
 
     posts {
