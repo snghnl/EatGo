@@ -376,6 +376,7 @@ erDiagram
         uuid    post_id FK
         uuid    user_id FK
         datetime created_at
+        datetime updated_at
     }
 ```
 
