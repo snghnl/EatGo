@@ -260,6 +260,7 @@ erDiagram
         int     display_order
         boolean is_active
         datetime created_at
+        datetime updated_at
     }
 
     user_preferences {
