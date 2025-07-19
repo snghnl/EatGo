@@ -25,10 +25,10 @@ body:
       label: Steps to Reproduce
       description: Describe how to reproduce the issue step-by-step
       placeholder: |
-        1. Go to '...'
-        2. Click on '...'
-        3. Scroll to '...'
-        4. See error
+        1. Go to the login page
+        2. Enter invalid credentials (e.g., "user@example.com" and "wrongpassword")
+        3. Click the submit button
+        4. Observe the error message
     validations:
       required: true
 
