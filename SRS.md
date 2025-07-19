@@ -223,30 +223,125 @@ erDiagram
     users ||--o{ places          : creates
     users ||--o{ comments        : writes
     users ||--o{ likes           : makes
+    users ||--o{ user_preferences : has
 
     posts ||--o{ post_images     : has
-    posts ||--o{ travel_courses  : includes
     posts ||--o{ comments        : receives
     posts ||--o{ likes           : receives
+    posts ||--o| travel_courses  : references
 
     travel_courses ||--|{ routes : "consists of"
     routes         ||--|{ places : "consists of"
 
     places         ||--o{ place_hours : has
     places         ||--o{ menu_items  : offers
+    places         ||--o{ place_categories : belongs_to
+
+    categories     ||--o{ place_categories : used_by
+    categories     ||--o{ user_preferences : preferred_by
 
     users {
         uuid    id PK
         string  name UK
         string  email UK
         string  login_method
+        string  profile_image_url
+        datetime created_at
+    }
+
+    categories {
+        uuid    id PK
+        string  name UK
+        string  description
+        string  icon
+        string  color
+        enum    category_type    "FOOD, ATTRACTION, SHOPPING, etc."
+        int     display_order
+        boolean is_active
+        datetime created_at
+    }
+
+    user_preferences {
+        uuid    id PK
+        uuid    user_id FK
+        uuid    category_id FK
+        float     preference_score "0.0 ~ 1.0"
+        datetime created_at
+    }
+
+    places {
+        uuid    id PK
+        uuid    route_id FK
+        uuid    user_id FK         "Creator"
+        string  name
+        int     sequence           "순서"
+        float   lat
+        float   lng
+        string  phone_number
+        float   avg_rating         "평균 평점 (0.0-5.0)"
+        enum    place_type         "RESTAURANT, ATTRACTION, SHOPPING, etc."
+        string  address
+        string  road_address
+        string  external_id        "External API ID" UK
+        string  external_url
+        datetime created_at
+        datetime updated_at
+    }
+
+    place_categories {
+        uuid    id PK
+        uuid    place_id FK
+        uuid    category_id FK
+        boolean is_primary         "주 카테고리 여부"
+        datetime created_at
+    }
+
+    place_hours {
+        uuid    id PK
+        uuid    place_id FK
+        enum    day_of_week
+        time    open_time
+        time    close_time
+        datetime created_at
+    }
+
+    menu_items {
+        uuid    id PK
+        uuid    place_id FK
+        string  name
+        int     price
+        text    description
+        datetime created_at
+        boolean is_active
+    }
+
+
+    routes {
+        uuid    id PK
+        uuid    travel_course_id FK
+        uuid    user_id FK         "Creator"
+        string  title
+        int     sequence           "순서"
+        text    description
+        float   total_distance     "km"
+        datetime created_at
+    }
+
+    travel_courses {
+        uuid    id PK
+        uuid    user_id FK         "Creator"
+        string  title
+        text    description
         datetime created_at
     }
 
     posts {
         uuid    id PK
         uuid    user_id FK
-        string  content
+        uuid    travel_course_id FK    "참조된 여행 코스 (선택사항)"
+        text    content
+        int     likes_count
+        int     comments_count
         datetime created_at
     }
 
@@ -257,52 +352,6 @@ erDiagram
         int     sequence           "이미지 순서"
         string  alt_text           "대체 텍스트(접근성)"
         datetime created_at
-    }
-
-    travel_courses {
-        uuid    id PK
-        uuid    post_id FK
-        uuid    user_id FK         "Creator"
-        string  title
-        datetime created_at
-    }
-
-    routes {
-        uuid    id PK
-        uuid    travel_course_id FK
-        uuid    user_id FK         "Creator"
-        string  title
-        int     sequence           "순서"
-        datetime created_at
-    }
-
-    places {
-        uuid    id PK
-        uuid    route_id FK
-        uuid    user_id FK         "Creator"
-        string  place_name
-        int     sequence           "순서"
-        float   lat
-        float   lng
-        string  phone_number
-        float   avg_rating         "평균 평점"
-        datetime created_at
-    }
-
-    place_hours {
-        uuid    id PK
-        uuid    place_id FK
-        enum    day_of_week
-        time    open_time
-        time    close_time
-    }
-
-    menu_items {
-        uuid    id PK
-        uuid    place_id FK
-        string  name
-        money   price
-        text    description
     }
 
     comments {
@@ -317,6 +366,7 @@ erDiagram
         uuid    id PK
         uuid    post_id FK
         uuid    user_id FK
+        datetime created_at
     }
 ```
 
