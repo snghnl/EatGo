@@ -275,8 +275,10 @@ erDiagram
     places {
         uuid    id PK
         uuid    route_id FK
+        <!-- TODO: user_id 이름 변경 -->
         uuid    user_id FK         "Creator"
         string  name
+        <!-- TODO: sequence 제거 -->
         int     sequence           "순서"
         float   lat
         float   lng
@@ -285,7 +287,7 @@ erDiagram
         enum    place_type         "RESTAURANT, ATTRACTION, SHOPPING, etc."
         string  address
         string  road_address
-        string  external_id        "External API ID" UK
+        string  external_id UK       "External API ID"
         string  external_url
         datetime created_at
         datetime updated_at
