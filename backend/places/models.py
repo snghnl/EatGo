@@ -36,3 +36,59 @@ class Place(BaseModel):
         return self.name
 
 
+
+class PlaceCategory(BaseModel):
+    """
+    A model representing the relationship between Place and Category, with a primary flag.
+    """
+    id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
+    place = models.ForeignKey('Place', on_delete=models.CASCADE, related_name='place_categories')
+    # TODO: core.Category 모델 생성
+    category = models.ForeignKey('core.Category', on_delete=models.CASCADE, related_name='place_categories')
+    is_primary = models.BooleanField(default=False)
+
+    def __str__(self) -> str:
+        return f"{self.place.name} - {self.category} ({'Primary' if self.is_primary else 'Secondary'})"
+
+
+class PlaceHour(BaseModel):
+    """
+    A model representing opening hours for a place.
+    """
+    class DayOfWeek(models.TextChoices):
+        MONDAY = 'MON', 'Monday'
+        TUESDAY = 'TUE', 'Tuesday'
+        WEDNESDAY = 'WED', 'Wednesday'
+        THURSDAY = 'THU', 'Thursday'
+        FRIDAY = 'FRI', 'Friday'
+        SATURDAY = 'SAT', 'Saturday'
+        SUNDAY = 'SUN', 'Sunday'
+
+    id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
+    place = models.ForeignKey('Place', on_delete=models.CASCADE, related_name='hours')
+    day_of_week = models.CharField(
+        max_length=3,
+        choices=DayOfWeek.choices,
+    )
+    open_time = models.TimeField()
+    close_time = models.TimeField()
+
+    def __str__(self) -> str:
+        return f"{self.place.name} - {self.get_day_of_week_display()}: {self.open_time}~{self.close_time}"
+
+
+class MenuItem(BaseModel):
+    """
+    A model representing a menu item for a place.
+    """
+    id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
+    place = models.ForeignKey('Place', on_delete=models.CASCADE, related_name='menu_items')
+    name = models.CharField(max_length=255)
+    price = models.PositiveIntegerField()
+    description = models.TextField(blank=True)
+    is_active = models.BooleanField(default=True)
+
+    def __str__(self) -> str:
+        return f"{self.place.name} - {self.name}"
+
+
