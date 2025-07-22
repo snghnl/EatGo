@@ -257,7 +257,6 @@ erDiagram
         string  icon
         string  color
         enum    category_type    "FOOD, ATTRACTION, SHOPPING, etc."
-        int     display_order
         boolean is_active
         datetime created_at
         datetime updated_at
