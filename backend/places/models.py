@@ -43,7 +43,6 @@ class PlaceCategory(BaseModel):
     """
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
     place = models.ForeignKey('Place', on_delete=models.CASCADE, related_name='place_categories')
-    # TODO: core.Category 모델 생성
     category = models.ForeignKey('core.Category', on_delete=models.CASCADE, related_name='place_categories')
     is_primary = models.BooleanField(default=False)
 
