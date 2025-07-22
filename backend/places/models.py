@@ -9,7 +9,7 @@ class Place(BaseModel):
     A model representing a place (POI) in the database, based on SRS.md specification.
     """
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
-    created_by = models.ForeignKey(settings.AUTH_USER_MODEL, related_name='places', on_delete=models.SET_NULL, null=True) 
+    created_by = models.ForeignKey(settings.AUTH_USER_MODEL, related_name='places', on_delete=models.SET_NULL, null=True, blank=True) 
     name = models.CharField(max_length=255)
     lat = models.FloatField()
     lng = models.FloatField()
