@@ -34,7 +34,10 @@ class RoutePlace(BaseModel):
     memo = models.CharField(max_length=255, blank=True)
 
     class Meta:
-        unique_together = ('route', 'place')
+        constraints = [
+            models.UniqueConstraint(fields=['route', 'place'], name='unique_route_place'),
+            models.UniqueConstraint(fields=['route', 'sequence'], name='unique_route_sequence')
+        ]
         ordering = ['sequence']
 
     def __str__(self) -> str:
