@@ -47,7 +47,7 @@ class PlaceCategory(BaseModel):
     is_primary = models.BooleanField(default=False)
 
     def __str__(self) -> str:
-        return f"{self.place.name} - {self.category} ({'Primary' if self.is_primary else 'Secondary'})"
+        return f"{self.place.name} - {self.category.name} ({'Primary' if self.is_primary else 'Secondary'})"
 
 
 class PlaceHour(BaseModel):
