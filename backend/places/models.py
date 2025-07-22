@@ -36,7 +36,6 @@ class Place(BaseModel):
         return self.name
 
 
-
 class PlaceCategory(BaseModel):
     """
     A model representing the relationship between Place and Category, with a primary flag.
@@ -89,5 +88,4 @@ class MenuItem(BaseModel):
 
     def __str__(self) -> str:
         return f"{self.place.name} - {self.name}"
-
-
+      
