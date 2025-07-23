@@ -1,2 +1,5 @@
-import CommunityScreen from '../../../src/screens/CommunityScreen';
-export default CommunityScreen;
+import CommunityScreen from '@/screens/CommunityScreen';
+
+export default function CommunityTab() {
+    return <CommunityScreen />;
+}
