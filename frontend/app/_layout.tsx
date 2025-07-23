@@ -1,29 +1,50 @@
-import { DarkTheme, DefaultTheme, ThemeProvider } from '@react-navigation/native';
-import { useFonts } from 'expo-font';
-import { Stack } from 'expo-router';
-import { StatusBar } from 'expo-status-bar';
-import 'react-native-reanimated';
+import { Tabs } from 'expo-router';
+import { Ionicons } from '@expo/vector-icons';
 
-import { useColorScheme } from '@/hooks/useColorScheme';
-
-export default function RootLayout() {
-  const colorScheme = useColorScheme();
-  const [loaded] = useFonts({
-    SpaceMono: require('../assets/fonts/SpaceMono-Regular.ttf'),
-  });
-
-  if (!loaded) {
-    // Async font loading only occurs in development.
-    return null;
-  }
-
-  return (
-    <ThemeProvider value={colorScheme === 'dark' ? DarkTheme : DefaultTheme}>
-      <Stack>
-        <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
-        <Stack.Screen name="+not-found" />
-      </Stack>
-      <StatusBar style="auto" />
-    </ThemeProvider>
-  );
+export default function Layout() {
+    return (
+        <Tabs
+            screenOptions={{
+                tabBarActiveTintColor: '#C7C7C7',
+                tabBarInactiveTintColor: '#C7C7C7',
+                tabBarLabelStyle: {
+                    fontSize: 14,
+                    fontWeight: 'bold',
+                },
+            }}
+        >
+            <Tabs.Screen
+                name="(tabs)/plan/index"
+                options={{
+                    tabBarLabel: '계획하기',
+                    headerShown: false,
+                    tabBarIcon: ({ color }) => <Ionicons name="calendar-outline" size={25} color={color} />,
+                }}
+            />
+            <Tabs.Screen
+                name="(tabs)/index"
+                options={{
+                    tabBarLabel: '홈',
+                    headerShown: false,
+                    tabBarIcon: ({ color }) => <Ionicons name="map-outline" size={25} color={color} />,
+                }}
+            />
+            <Tabs.Screen
+                name="(tabs)/community/index"
+                options={{
+                    tabBarLabel: '여행코스톡',
+                    headerShown: false,
+                    tabBarIcon: ({ color }) => <Ionicons name="chatbox-ellipses-outline" size={25} color={color} />,
+                }}
+            />
+            <Tabs.Screen
+                name="(tabs)/mypage"
+                options={{
+                    tabBarLabel: '마이페이지',
+                    headerShown: false,
+                    tabBarIcon: ({ color }) => <Ionicons name="person-outline" size={25} color={color} />,
+                }}
+            />
+        </Tabs>
+    );
 }
