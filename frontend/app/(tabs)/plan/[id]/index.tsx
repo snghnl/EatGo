@@ -19,28 +19,6 @@ interface CourseData {
     subtitle: string;
 }
 
-// 빈 일차 데이터 (새 코스용)
-const emptyDayPlans = [
-    {
-        id: "1",
-        day: 1,
-        title: "",
-        places: [],
-    },
-    {
-        id: "2",
-        day: 2,
-        title: "",
-        places: [],
-    },
-    {
-        id: "3",
-        day: 3,
-        title: "",
-        places: [],
-    },
-];
-
 // 샘플 데이터 (기존 코스용)
 const sampleDayPlans = [
     {
@@ -111,7 +89,7 @@ const sampleDayPlans = [
     },
 ];
 
-export default function CourseDetailScreen() {
+export default function PlanDetailScreen() {
     const { id, startDate, endDate, destinations, foods, isNew } =
         useLocalSearchParams<{
             id: string;
@@ -219,7 +197,7 @@ export default function CourseDetailScreen() {
         console.log(`${day}일차 추천 여행경로 보러가기 클릭`);
         // recommendation 페이지로 이동 (현재 코스 ID와 함께)
         router.push({
-            pathname: "/recommendation" as any,
+            pathname: "/plan/[id]/recommendation" as any,
             params: {
                 courseId: id,
                 day: day.toString(),
@@ -235,7 +213,7 @@ export default function CourseDetailScreen() {
         console.log("새 코스 추천 여행경로 보러가기 클릭");
         // recommendation 페이지로 이동 (현재 코스 ID와 함께)
         router.push({
-            pathname: "/recommendation" as any,
+            pathname: "/plan/[id]/recommendation" as any,
             params: {
                 courseId: id,
                 startDate: startDate,
@@ -250,7 +228,7 @@ export default function CourseDetailScreen() {
         console.log("추천 경로 저장하기 클릭");
         // recommendation 페이지로 이동 (현재 코스 ID와 함께)
         router.push({
-            pathname: "/recommendation" as any,
+            pathname: "/plan/[id]/recommendation" as any,
             params: {
                 courseId: id,
                 startDate: startDate,

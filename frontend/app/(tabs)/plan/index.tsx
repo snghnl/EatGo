@@ -16,7 +16,7 @@ interface NewCourse {
     hasImages?: boolean;
 }
 
-export default function CoursesScreen() {
+export default function PlanListScreen() {
     const [modalVisible, setModalVisible] = useState(false);
     const [newCourse, setNewCourse] = useState<NewCourse | null>(null);
 
@@ -100,26 +100,21 @@ export default function CoursesScreen() {
             data.endDate
         );
 
-        // 새 코스 정보 생성
+        // 새 코스 정보를 상태에 저장 (CourseListExample에서 사용)
         const courseInfo: NewCourse = {
             id: newCourseId,
             title: title,
             subtitle: subtitle,
-            hasImages: false, // 새로 생성된 코스는 이미지 없음
+            hasImages: false,
         };
-
-        // 새 코스 정보를 상태에 저장 (CourseListExample에서 사용)
         setNewCourse(courseInfo);
-
-        // TODO: 여기서 실제로 코스 데이터를 저장하는 로직 추가
-        // 예: API 호출, 로컬 스토리지 저장 등
 
         // 모달 닫기
         setModalVisible(false);
 
-        // 새로 생성된 코스 페이지로 이동 (데이터와 함께)
+        // 새로 생성된 코스의 상세 페이지로 이동
         router.push({
-            pathname: "/course/[id]" as any,
+            pathname: "/plan/[id]" as any,
             params: {
                 id: newCourseId,
                 startDate: data.startDate,
@@ -133,7 +128,10 @@ export default function CoursesScreen() {
 
     return (
         <SafeAreaView style={styles.container}>
-            <Header title="내 여행코스" />
+            <Header
+                title="내 여행코스"
+                subtitle="나만의 여행 계획을 만들어보세요"
+            />
             <View style={styles.actionSection}>
                 <ActionButtons
                     actions={[
@@ -142,6 +140,7 @@ export default function CoursesScreen() {
                     ]}
                 />
             </View>
+
             <CourseListExample
                 onAddCourse={handleAddCourse}
                 newCourse={newCourse}
