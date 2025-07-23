@@ -32,7 +32,7 @@ class TravelCourseRoute(BaseModel):
     route = models.ForeignKey(
         Route, related_name="travel_course_routes", on_delete=models.CASCADE
     )
-    sequence = models.PositiveIntegerField()
+    sequence = models.PositiveIntegerField(default=0)
 
     class Meta:
         constraints = [
@@ -43,4 +43,13 @@ class TravelCourseRoute(BaseModel):
         ordering = ["sequence"]
 
     def __str__(self) -> str:
-        return f"{self.travel_course.title} - {self.route.title} ({self.sequence})"
+        # TODO: To avoid N+1 queries, use select_related('travel_course', 'route') when querying TravelCourseRoute objects
+        try:
+            travel_course_title = (
+                self.travel_course.title if self.travel_course else "Unknown"
+            )
+            route_title = self.route.title if self.route else "Unknown"
+            return f"{travel_course_title} - {route_title} ({self.sequence})"
+        except Exception:
+            # Fallback if related objects are not accessible
+            return f"TravelCourseRoute({self.id}) - Sequence: {self.sequence}"
