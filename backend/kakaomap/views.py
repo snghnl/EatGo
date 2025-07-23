@@ -40,9 +40,15 @@ def search_places_from_kakao(request):
         "size": 15,
         "sort": "accuracy"
     }
-    response = requests.get(url, headers=headers, params=params)
-    print("카카오 응답:", response.text)  # 실제 응답을 로그로 출력
-    data = response.json()
+    try:
+        response = requests.get(url, headers=headers, params=params)
+        response.raise_for_status()  # Raise an HTTPError for bad responses (4xx and 5xx)
+        print("카카오 응답:", response.text)  # 실제 응답을 로그로 출력
+        data = response.json()
+    except requests.exceptions.RequestException as e:
+        return JsonResponse({'error': f'Failed to fetch data from Kakao API: {str(e)}'}, status=500)
+    except ValueError:
+        return JsonResponse({'error': 'Invalid JSON response from Kakao API'}, status=500)
     results = []
     for doc in data.get("documents", []):
         place_type = map_kakao_category_to_place_type(
