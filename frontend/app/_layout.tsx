@@ -26,10 +26,8 @@ export default function RootLayout() {
         Pretendard: require("../assets/fonts/Pretendard-Regular.ttf"),
     });
 
-    if (!loaded) {
-        // Async font loading only occurs in development.
-        return null;
-    }
+    if (!loaded) return null;
+
 
     return (
         <ThemeProvider
