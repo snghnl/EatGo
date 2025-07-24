@@ -1,50 +1,49 @@
 import { Tabs } from 'expo-router';
-import { Ionicons } from '@expo/vector-icons';
+import React from 'react';
+import { Platform } from 'react-native';
+import { Ionicons } from "@expo/vector-icons";
+import AppContainer from "@/components/common/AppContainer";
+import { useColorScheme } from '@/hooks/useColorScheme';
+import { Colors } from '@/constants/Colors';
+import { HapticTab } from '@/src/components/HapticTab';
+import TabBarBackground from '@/src/components/ui/TabBarBackground';
+import { IconSymbol } from '@/src/components/ui/IconSymbol';
 
-export default function Layout() {
-    return (
-        <Tabs
-            screenOptions={{
-                tabBarActiveTintColor: '#C7C7C7',
-                tabBarInactiveTintColor: '#C7C7C7',
-                tabBarLabelStyle: {
-                    fontSize: 14,
-                    fontWeight: 'bold',
-                },
-            }}
-        >
-            <Tabs.Screen
-                name="plan"
-                options={{
-                    tabBarLabel: '계획하기',
-                    headerShown: false,
-                    tabBarIcon: ({ color }) => <Ionicons name="calendar-outline" size={25} color={color} />,
-                }}
-            />
-            <Tabs.Screen
-                name="index"
-                options={{
-                    tabBarLabel: '홈',
-                    headerShown: false,
-                    tabBarIcon: ({ color }) => <Ionicons name="map-outline" size={25} color={color} />,
-                }}
-            />
-            <Tabs.Screen
-                name="community"
-                options={{
-                    tabBarLabel: '여행코스톡',
-                    headerShown: false,
-                    tabBarIcon: ({ color }) => <Ionicons name="chatbox-ellipses-outline" size={25} color={color} />,
-                }}
-            />
-            <Tabs.Screen
-                name="mypage"
-                options={{
-                    tabBarLabel: '마이페이지',
-                    headerShown: false,
-                    tabBarIcon: ({ color }) => <Ionicons name="person-outline" size={25} color={color} />,
-                }}
-            />
-        </Tabs>
-    );
+
+export default function TabLayout() {
+  const colorScheme = useColorScheme();
+
+  return (
+    <AppContainer>
+    <Tabs
+      screenOptions={{
+        tabBarActiveTintColor: Colors[colorScheme ?? 'light'].tint,
+        headerShown: false,
+        tabBarButton: HapticTab,
+        tabBarBackground: TabBarBackground,
+        tabBarStyle: Platform.select({
+          ios: {
+            // Use a transparent background on iOS to show the blur effect
+            position: 'absolute',
+          },
+          default: {},
+        }),
+      }}>
+      <Tabs.Screen
+        name="index"
+        options={{
+          title: 'Home',
+          tabBarIcon: ({ color }) => <IconSymbol size={28} name="house.fill" color={color} />,
+        }}
+      />
+      <Tabs.Screen
+        name="explore"
+        options={{
+          title: 'Explore',
+          tabBarIcon: ({ color }) => <IconSymbol size={28} name="paperplane.fill" color={color} />,
+        }}
+        />
+      </Tabs>
+    </AppContainer>
+  );
 }
