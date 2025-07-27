@@ -1,0 +1,128 @@
+[
+    {
+        "id": "route-001",
+        "user_id": "user-001",
+        "title": "서울 명동 맛집 투어",
+        "description": "명동에서 즐기는 전통 한식 투어. 교자부터 빈대떡까지 서울의 맛을 한번에!",
+        "places": [
+            {
+                "id": "place-001",
+                "order": 1,
+                "estimated_time": 30,
+                "transport_type": "도보"
+            },
+            {
+                "id": "place-002",
+                "order": 2,
+                "estimated_time": 45,
+                "transport_type": "도보"
+            }
+        ],
+        "total_distance": 1.2,
+        "total_time": 75,
+        "is_public": true,
+        "likes_count": 15,
+        "created_at": "2024-01-01T00:00:00Z"
+    },
+    {
+        "id": "route-002",
+        "user_id": "user-002",
+        "title": "홍대 데이트 코스",
+        "description": "홍대에서 즐기는 데이트 코스. 맛있는 닭갈비와 카페까지!",
+        "places": [
+            {
+                "id": "place-004",
+                "order": 1,
+                "estimated_time": 60,
+                "transport_type": "도보"
+            },
+            {
+                "id": "place-003",
+                "order": 2,
+                "estimated_time": 30,
+                "transport_type": "도보"
+            }
+        ],
+        "total_distance": 0.8,
+        "total_time": 90,
+        "is_public": true,
+        "likes_count": 23,
+        "created_at": "2024-01-02T00:00:00Z"
+    },
+    {
+        "id": "route-003",
+        "user_id": "user-003",
+        "title": "강남 고급 레스토랑 투어",
+        "description": "강남에서 즐기는 고급 스테이크와 와인 페어링.",
+        "places": [
+            {
+                "id": "place-005",
+                "order": 1,
+                "estimated_time": 120,
+                "transport_type": "도보"
+            }
+        ],
+        "total_distance": 0.5,
+        "total_time": 120,
+        "is_public": false,
+        "likes_count": 5,
+        "created_at": "2024-01-03T00:00:00Z"
+    },
+    {
+        "id": "route-004",
+        "user_id": "user-001",
+        "title": "부산 해산물 투어",
+        "description": "부산 해운대에서 즐기는 신선한 해산물 투어.",
+        "places": [
+            {
+                "id": "place-006",
+                "order": 1,
+                "estimated_time": 90,
+                "transport_type": "도보"
+            }
+        ],
+        "total_distance": 0.3,
+        "total_time": 90,
+        "is_public": true,
+        "likes_count": 8,
+        "created_at": "2024-01-04T00:00:00Z"
+    },
+    {
+        "id": "route-005",
+        "user_id": "user-004",
+        "title": "제주도 특산품 투어",
+        "description": "제주도에서만 맛볼 수 있는 흑돼지 삼겹살 투어.",
+        "places": [
+            {
+                "id": "place-007",
+                "order": 1,
+                "estimated_time": 60,
+                "transport_type": "자동차"
+            }
+        ],
+        "total_distance": 2.0,
+        "total_time": 60,
+        "is_public": true,
+        "likes_count": 12,
+        "created_at": "2024-01-05T00:00:00Z"
+    },
+    {
+        "id": "route-006",
+        "user_id": "user-002",
+        "title": "대구 막창 투어",
+        "description": "대구의 대표 음식 막창을 즐기는 투어.",
+        "places": [
+            {
+                "id": "place-008",
+                "order": 1,
+                "estimated_time": 45,
+                "transport_type": "도보"
+            }
+        ],
+        "total_distance": 0.4,
+        "total_time": 45,
+        "is_public": true,
+        "likes_count": 7,
+        "created_at": "2024-01-06T00:00:00Z"
+    }
+]

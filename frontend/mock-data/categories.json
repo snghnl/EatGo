@@ -1,0 +1,74 @@
+[
+    {
+        "id": "cat-001",
+        "name": "한식",
+        "description": "한국 전통 음식",
+        "icon": "🍚",
+        "color": "#FF6B6B",
+        "place_count": 5,
+        "created_at": "2024-01-01T00:00:00Z"
+    },
+    {
+        "id": "cat-002",
+        "name": "양식",
+        "description": "서양 음식",
+        "icon": "🍝",
+        "color": "#4ECDC4",
+        "place_count": 1,
+        "created_at": "2024-01-01T00:00:00Z"
+    },
+    {
+        "id": "cat-003",
+        "name": "중식",
+        "description": "중국 음식",
+        "icon": "🥢",
+        "color": "#45B7D1",
+        "place_count": 0,
+        "created_at": "2024-01-01T00:00:00Z"
+    },
+    {
+        "id": "cat-004",
+        "name": "일식",
+        "description": "일본 음식",
+        "icon": "🍣",
+        "color": "#96CEB4",
+        "place_count": 0,
+        "created_at": "2024-01-01T00:00:00Z"
+    },
+    {
+        "id": "cat-005",
+        "name": "카페",
+        "description": "카페 및 디저트",
+        "icon": "☕",
+        "color": "#FFEAA7",
+        "place_count": 1,
+        "created_at": "2024-01-01T00:00:00Z"
+    },
+    {
+        "id": "cat-006",
+        "name": "디저트",
+        "description": "후식 및 간식",
+        "icon": "🍰",
+        "color": "#DDA0DD",
+        "place_count": 0,
+        "created_at": "2024-01-01T00:00:00Z"
+    },
+    {
+        "id": "cat-007",
+        "name": "술집",
+        "description": "술과 안주",
+        "icon": "🍺",
+        "color": "#FFB347",
+        "place_count": 1,
+        "created_at": "2024-01-01T00:00:00Z"
+    },
+    {
+        "id": "cat-008",
+        "name": "길거리음식",
+        "description": "길거리 음식",
+        "icon": "🌭",
+        "color": "#FF69B4",
+        "place_count": 1,
+        "created_at": "2024-01-01T00:00:00Z"
+    }
+]

@@ -1,0 +1,72 @@
+[
+    {
+        "id": "user-001",
+        "email": "foodie@example.com",
+        "username": "foodie_kim",
+        "login_method": "kakao",
+        "profile_image": "https://example.com/images/profile1.jpg",
+        "bio": "맛집 탐험가입니다. 전국의 숨겨진 맛집을 찾아다니는 것이 취미예요!",
+        "favorite_categories": ["한식", "카페"],
+        "created_routes_count": 2,
+        "followers_count": 45,
+        "following_count": 23,
+        "created_at": "2024-01-01T00:00:00Z",
+        "updated_at": "2024-01-01T00:00:00Z"
+    },
+    {
+        "id": "user-002",
+        "email": "traveler@example.com",
+        "username": "traveler_park",
+        "login_method": "email",
+        "profile_image": "https://example.com/images/profile2.jpg",
+        "bio": "여행과 음식을 사랑하는 여행자입니다. 새로운 맛을 발견하는 것이 최고!",
+        "favorite_categories": ["양식", "한식"],
+        "created_routes_count": 2,
+        "followers_count": 32,
+        "following_count": 18,
+        "created_at": "2024-01-02T00:00:00Z",
+        "updated_at": "2024-01-02T00:00:00Z"
+    },
+    {
+        "id": "user-003",
+        "email": "chef@example.com",
+        "username": "chef_lee",
+        "login_method": "kakao",
+        "profile_image": "https://example.com/images/profile3.jpg",
+        "bio": "요리사입니다. 다양한 음식 문화를 탐구하고 공유하는 것이 목표예요.",
+        "favorite_categories": ["양식", "일식", "중식"],
+        "created_routes_count": 1,
+        "followers_count": 78,
+        "following_count": 12,
+        "created_at": "2024-01-03T00:00:00Z",
+        "updated_at": "2024-01-03T00:00:00Z"
+    },
+    {
+        "id": "user-004",
+        "email": "local_guide@example.com",
+        "username": "local_guide_choi",
+        "login_method": "email",
+        "profile_image": "https://example.com/images/profile4.jpg",
+        "bio": "지역 가이드입니다. 각 지역의 특색 있는 맛집을 소개해드려요!",
+        "favorite_categories": ["한식", "지역특산품"],
+        "created_routes_count": 1,
+        "followers_count": 156,
+        "following_count": 8,
+        "created_at": "2024-01-04T00:00:00Z",
+        "updated_at": "2024-01-04T00:00:00Z"
+    },
+    {
+        "id": "user-005",
+        "email": "cafe_lover@example.com",
+        "username": "cafe_lover_kang",
+        "login_method": "kakao",
+        "profile_image": "https://example.com/images/profile5.jpg",
+        "bio": "카페 투어를 즐기는 카페러버입니다. 아름다운 카페와 맛있는 음료를 찾아다녀요!",
+        "favorite_categories": ["카페", "디저트"],
+        "created_routes_count": 0,
+        "followers_count": 23,
+        "following_count": 45,
+        "created_at": "2024-01-05T00:00:00Z",
+        "updated_at": "2024-01-05T00:00:00Z"
+    }
+]
