@@ -21,7 +21,7 @@ load_dotenv()
 BASE_DIR = Path(__file__).resolve().parent.parent
 
 # KAKAO REST API KEY 환경변수 등록
-KAKAO_REST_API_KEY = os.environ.get('KAKAO_REST_API_KEY')
+KAKAO_REST_API_KEY = os.environ.get("KAKAO_REST_API_KEY")
 
 
 # Quick-start development settings - unsuitable for production
@@ -136,10 +136,11 @@ STATIC_URL = "static/"
 DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 
 
-AUTH_USER_MODEL = 'accounts.User'
+AUTH_USER_MODEL = "accounts.User"
 
 REST_FRAMEWORK = {
-    'DEFAULT_AUTHENTICATION_CLASSES': [
-        'rest_framework.authentication.SessionAuthentication',
-    ],
+    "DEFAULT_AUTHENTICATION_CLASSES": [
+        "rest_framework.authentication.SessionAuthentication",
+    ]
 }
+
