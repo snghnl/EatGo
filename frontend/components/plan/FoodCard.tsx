@@ -37,7 +37,7 @@ export const FoodCard: React.FC<FoodCardProps> = ({
 
 const styles = StyleSheet.create({
     container: {
-        width: "25%",
+        flex: 1,
         alignItems: "center",
     },
     card: {
