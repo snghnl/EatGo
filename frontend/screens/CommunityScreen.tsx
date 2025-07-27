@@ -15,7 +15,7 @@ export default function CommunityScreen() {
                 keyExtractor={(item) => item.id}
                 renderItem={({ item }) => (
                     <View style={styles.postItem}>
-                        <Text style={styles.postTitle}>여행코스톡{item.title}</Text>
+                        <Text style={styles.postTitle}>{`여행코스톡 ${item.title}`}</Text>
                         <Text style={styles.postAuthor}>by {item.author}</Text>
                     </View>
                 )}
