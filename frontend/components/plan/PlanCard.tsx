@@ -38,7 +38,7 @@ export const PlanCard: React.FC<PlanCardProps> = ({
             listener: (event: any) => {
                 const { translationX } = event.nativeEvent;
                 // 왼쪽으로만 스와이프 가능하도록 제한
-                if (translationX > 0) {
+                if (translationX > 0 && translateX.__getValue() !== 0) {
                     translateX.setValue(0);
                 }
                 // 최대 80px 이동 제한 (초록색 배경 너비)
