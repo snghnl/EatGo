@@ -14,7 +14,10 @@ export const formatDate = (date: Date): string => {
 export const parseDate = (dateStr: string): Date => {
     if (!dateStr) return new Date();
     const [yy, mm, dd] = dateStr.split(".");
-    return new Date(2000 + parseInt(yy), parseInt(mm) - 1, parseInt(dd));
+    const currentYear = new Date().getFullYear();
+    const threshold = 50; // Sliding window threshold
+    const century = parseInt(yy) < threshold ? Math.floor(currentYear / 100) * 100 : Math.floor(currentYear / 100 - 1) * 100;
+    return new Date(century + parseInt(yy), parseInt(mm) - 1, parseInt(dd));
 };
 
 // 웹용 날짜 형식 변환 (YYYY-MM-DD -> YY.MM.DD)
