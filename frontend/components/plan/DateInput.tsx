@@ -85,6 +85,7 @@ export const DateInput: React.FC<DateInputProps> = ({
         setShowEndPicker(false);
         if (selectedDate) {
             if (selectedDate < parseDate(startDate)) {
+                alert("End date cannot be before the start date.");
                 return;
             }
             onDateChange?.(startDate, formatDate(selectedDate));
