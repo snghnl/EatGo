@@ -22,4 +22,6 @@ urlpatterns = [
     path("admin/", admin.site.urls),
     path("kakaomap/", include("kakaomap.urls")),
     path("routes/", include("routes.urls")),
+    path("travel_courses/", include("travel_courses.urls")),
+    # path('api-auth/', include('rest_framework.urls')),
 ]
