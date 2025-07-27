@@ -38,10 +38,10 @@ export const DateInput: React.FC<DateInputProps> = ({
             input.onchange = (e) => {
                 const target = e.target as HTMLInputElement;
                 const newDate = webToAppFormat(target.value);
-                if (endDate && parseDate(newDate) > parseDate(endDate)) {
-                    onDateChange?.(newDate, "");
-                } else {
+                if (endDate && parseDate(newDate) <= parseDate(endDate)) {
                     onDateChange?.(newDate, endDate);
+                } else {
+                    onDateChange?.(newDate, "");
                 }
             };
             input.click();
