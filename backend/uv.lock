@@ -20,6 +20,7 @@ dependencies = [
     { name = "djangorestframework" },
     { name = "python-dotenv" },
     { name = "requests" },
+
 ]
 
 [package.dev-dependencies]
