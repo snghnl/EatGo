@@ -1,0 +1,62 @@
+[
+  {
+    "model": "routes.route",
+    "pk": "86efdcdf-fe65-4ce7-9c1a-38a301af9342",
+    "fields": {
+      "title": "서울 명동 맛집 투어",
+      "description": "명동에서 즐기는 전통 한식 투어. 교자부터 빈대떡까지 서울의 맛을 한번에!",
+      "created_at": "2025-07-24T16:11:41.237598",
+      "updated_at": "2025-07-24T16:11:41.237598"
+    }
+  },
+  {
+    "model": "routes.route",
+    "pk": "0ebfe8bd-e0cb-4fdf-9994-80f16a497833",
+    "fields": {
+      "title": "홍대 데이트 코스",
+      "description": "홍대에서 즐기는 데이트 코스. 맛있는 닭갈비와 카페까지!",
+      "created_at": "2025-07-24T16:11:41.237598",
+      "updated_at": "2025-07-24T16:11:41.237598"
+    }
+  },
+  {
+    "model": "routes.route",
+    "pk": "d3d4bd19-4686-4788-82f0-f67a591354b1",
+    "fields": {
+      "title": "강남 고급 레스토랑 투어",
+      "description": "강남에서 즐기는 고급 스테이크와 와인 페어링.",
+      "created_at": "2025-07-24T16:11:41.237598",
+      "updated_at": "2025-07-24T16:11:41.237598"
+    }
+  },
+  {
+    "model": "routes.route",
+    "pk": "d73f2162-1564-433a-a20a-704c93832e5f",
+    "fields": {
+      "title": "부산 해산물 투어",
+      "description": "부산 해운대에서 즐기는 신선한 해산물 투어.",
+      "created_at": "2025-07-24T16:11:41.237598",
+      "updated_at": "2025-07-24T16:11:41.237598"
+    }
+  },
+  {
+    "model": "routes.route",
+    "pk": "79cdfe6e-6222-45b9-b2fe-97a777c6c551",
+    "fields": {
+      "title": "제주도 특산품 투어",
+      "description": "제주도에서만 맛볼 수 있는 흑돼지 삼겹살 투어.",
+      "created_at": "2025-07-24T16:11:41.237598",
+      "updated_at": "2025-07-24T16:11:41.237598"
+    }
+  },
+  {
+    "model": "routes.route",
+    "pk": "483ad7fe-f61e-4d44-8f96-1c18151fd715",
+    "fields": {
+      "title": "대구 막창 투어",
+      "description": "대구의 대표 음식 막창을 즐기는 투어.",
+      "created_at": "2025-07-24T16:11:41.237598",
+      "updated_at": "2025-07-24T16:11:41.237598"
+    }
+  }
+]
