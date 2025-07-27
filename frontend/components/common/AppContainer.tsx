@@ -21,9 +21,11 @@ const styles = StyleSheet.create({
         justifyContent: "center",
     },
     container: {
-        width: 390, // 고정 앱 너비 (iPhone 14 기준)
-        maxWidth: "100%",
+        width: "100%",
+        maxWidth: 390, // 최대 너비 제한 (iPhone 14 기준)
         height: "100%",
         backgroundColor: Colors.background, // 앱의 배경색 사용
+        // Ensure proper layout on iOS
+        position: "relative",
     },
 });

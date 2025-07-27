@@ -14,7 +14,16 @@ export function ThemedView({
     color = "background",
     ...otherProps
 }: ThemedViewProps) {
-    const backgroundColor = lightColor || darkColor || Colors[color];
+    let backgroundColor: string;
+
+    if (lightColor || darkColor) {
+        backgroundColor = lightColor || darkColor || "#f5f5f5";
+    } else {
+        // Handle the case where color might be a nested property
+        const colorValue = Colors[color as keyof typeof Colors];
+        backgroundColor =
+            typeof colorValue === "string" ? colorValue : "#f5f5f5";
+    }
 
     return <View style={[{ backgroundColor }, style]} {...otherProps} />;
 }
