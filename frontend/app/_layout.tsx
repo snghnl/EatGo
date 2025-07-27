@@ -11,6 +11,7 @@ import "react-native-reanimated";
 
 import { useColorScheme } from "@/hooks/useColorScheme";
 import AppContainer from "@/components/common/AppContainer";
+import { Colors } from "@/constants/Colors";
 
 export const viewport = {
     width: "device-width",
@@ -22,35 +23,39 @@ export const viewport = {
 
 export default function RootLayout() {
     const colorScheme = useColorScheme();
-    const [loaded] = useFonts({
+    const [loaded, error] = useFonts({
         Pretendard: require("../assets/fonts/Pretendard-Regular.ttf"),
     });
 
-    if (!loaded) return null;
-
+    // If fonts are still loading, show a loading state instead of null
+    if (!loaded && !error) {
+        return (
+            <View
+                style={{
+                    flex: 1,
+                    backgroundColor: Colors.background,
+                    justifyContent: "center",
+                    alignItems: "center",
+                }}
+            >
+                {/* Simple loading state */}
+            </View>
+        );
+    }
 
     return (
         <ThemeProvider
             value={colorScheme === "dark" ? DarkTheme : DefaultTheme}
         >
-            <AppContainer>
+            <View style={{ flex: 1, backgroundColor: Colors.background }}>
                 <Stack>
                     <Stack.Screen
                         name="(tabs)"
                         options={{ headerShown: false }}
                     />
-                    <Stack.Screen
-                        name="playground"
-                        options={{ title: "Playground" }}
-                    />
-                    <Stack.Screen name="+not-found" />
-                    <Stack.Screen
-                        name="course/[id]"
-                        options={{ headerShown: false }}
-                    />
                 </Stack>
                 <StatusBar style="auto" />
-            </AppContainer>
+            </View>
         </ThemeProvider>
     );
 }

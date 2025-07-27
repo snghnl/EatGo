@@ -1,6 +1,5 @@
 import React, { useState } from "react";
-import { StyleSheet, View } from "react-native";
-import { SafeAreaView } from "react-native";
+import { StyleSheet, View , SafeAreaView } from "react-native";
 import { router } from "expo-router";
 import { CourseListExample } from "@/components/plan";
 import Header from "@/components/common/Header";

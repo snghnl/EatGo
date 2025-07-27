@@ -1,6 +1,5 @@
 import React, { useState } from "react";
-import { StyleSheet, View, TouchableOpacity } from "react-native";
-import { SafeAreaView } from "react-native";
+import { StyleSheet, View, TouchableOpacity, SafeAreaView } from "react-native";
 import { useLocalSearchParams, router } from "expo-router";
 import { RecommendationList } from "@/components/plan";
 import Header from "@/components/common/Header";

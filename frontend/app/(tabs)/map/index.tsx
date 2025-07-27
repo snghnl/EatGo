@@ -1,18 +1,20 @@
 import React from "react";
-import { StyleSheet, View, Text } from "react-native";
-import { ThemedView } from "@/components/ThemedView";
+import { StyleSheet, View, Text, SafeAreaView } from "react-native";
 import { Colors } from "@/constants/Colors";
 
 export default function MapScreen() {
+    console.log("MapScreen rendering...");
+
     return (
-        <ThemedView style={styles.container}>
+        <SafeAreaView style={styles.container}>
             <View style={styles.content}>
                 <Text style={styles.title}>전체지도</Text>
                 <Text style={styles.subtitle}>
                     지도 화면이 여기에 표시됩니다.
                 </Text>
+                <Text style={styles.debug}>Debug: Screen is rendering</Text>
             </View>
-        </ThemedView>
+        </SafeAreaView>
     );
 }
 
@@ -36,6 +38,12 @@ const styles = StyleSheet.create({
     subtitle: {
         fontSize: 16,
         color: Colors.textSecondary,
+        textAlign: "center",
+        marginBottom: 16,
+    },
+    debug: {
+        fontSize: 14,
+        color: Colors.primary,
         textAlign: "center",
     },
 });

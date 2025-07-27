@@ -1,9 +1,7 @@
 import React, { useEffect, useState } from "react";
-import { StyleSheet, View } from "react-native";
-import { SafeAreaView } from "react-native";
+import { StyleSheet, View, SafeAreaView } from "react-native";
 import { useLocalSearchParams, router } from "expo-router";
-import { DayPlanList } from "@/components/plan";
-import { AddCourseCard } from "@/components/plan";
+import { DayPlanList, AddCourseCard } from "@/components/plan";
 import Header from "@/components/common/Header";
 import ActionButtons from "@/components/common/ActionButtons";
 import { Colors } from "@/constants/Colors";
