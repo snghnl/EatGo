@@ -126,21 +126,21 @@ export default function SearchBar({
             </TouchableOpacity>
 
             {isFocused && (
-                <View style={styles.overlay} pointerEvents="box-none">
-                    <View style={styles.searchResults} pointerEvents="auto">
-                        <FlatList
-                            data={results}
-                            keyExtractor={(item) => item.id}
-                            renderItem={({ item }) => (
-                                <SearchListItem
-                                    item={item}
-                                    onSelectItem={handleSelectItem}
-                                />
-                            )}
-                            keyboardShouldPersistTaps="handled"
-                            nestedScrollEnabled={true}
-                        />
-                    </View>
+                <View style={styles.overlay}>
+                    <FlatList
+                        data={results}
+                        keyExtractor={(item) => item.id}
+                        renderItem={({ item }) => (
+                            <SearchListItem
+                                item={item}
+                                onSelectItem={handleSelectItem}
+                            />
+                        )}
+                        keyboardShouldPersistTaps="handled"
+                        nestedScrollEnabled={true}
+                        style={styles.flatListStyle}
+                        showsVerticalScrollIndicator={true}
+                    />
                 </View>
             )}
         </TouchableOpacity>
@@ -191,7 +191,7 @@ const styles = StyleSheet.create({
         maxHeight: 180,
         zIndex: 1000,
     },
-    searchResults: {
+    flatListStyle: {
         flex: 1,
     },
 });

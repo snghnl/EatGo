@@ -11,6 +11,7 @@ import {
 } from "react-native";
 import Swiper from "react-native-swiper";
 import placesData from "@/mock-data/places.json";
+import { useRouter } from "expo-router";
 
 const { width } = Dimensions.get("window");
 
@@ -21,6 +22,7 @@ interface Props {
 export default function PlaceCardSwiper({ onClose }: Props) {
     const touchStartY = useRef(0);
     const isDragging = useRef(false);
+    const router = useRouter();
 
     const handleTouchStart = (e: GestureResponderEvent) => {
         touchStartY.current = e.nativeEvent.pageY;
@@ -47,6 +49,11 @@ export default function PlaceCardSwiper({ onClose }: Props) {
             onClose();
         }
         isDragging.current = false;
+    };
+
+    const handleCardPress = (place: any) => {
+        console.log("Card pressed:", place.place_name);
+        router.push(`/placelist/${place.id}/detail`);
     };
 
     const places = placesData.documents.slice(0, 5);
@@ -84,7 +91,11 @@ export default function PlaceCardSwiper({ onClose }: Props) {
                             key={`${place.id}-${index}`}
                             style={styles.cardWrapper}
                         >
-                            <View style={styles.card}>
+                            <TouchableOpacity
+                                style={styles.card}
+                                onPress={() => handleCardPress(place)}
+                                activeOpacity={0.8}
+                            >
                                 <Image
                                     source={{
                                         uri: `https://source.unsplash.com/300x300/?food,restaurant&sig=${index}`,
@@ -131,7 +142,7 @@ export default function PlaceCardSwiper({ onClose }: Props) {
                                         </View>
                                     </View>
                                 </View>
-                            </View>
+                            </TouchableOpacity>
                         </View>
                     ))}
                 </Swiper>
@@ -143,15 +154,15 @@ export default function PlaceCardSwiper({ onClose }: Props) {
 const styles = StyleSheet.create({
     container: {
         position: "absolute",
-        bottom: 80,
+        bottom: 50,
         left: 0,
         right: 0,
-        height: 170,
+        height: 200,
         backgroundColor: "transparent",
         zIndex: 1000,
     },
     dragHandle: {
-        height: 25,
+        height: 30,
         justifyContent: "center",
         alignItems: "center",
         backgroundColor: "transparent",
@@ -171,7 +182,7 @@ const styles = StyleSheet.create({
         flex: 1,
     },
     swiperContainer: {
-        height: 150,
+        height: 170,
     },
     cardWrapper: {
         flex: 1,
@@ -200,11 +211,11 @@ const styles = StyleSheet.create({
     },
     card: {
         width: width - 40,
-        height: 120,
+        height: 140,
         backgroundColor: "#fff",
         borderRadius: 10,
         flexDirection: "row",
-        padding: 12,
+        padding: 15,
         shadowColor: "#000",
         shadowOpacity: 0.1,
         shadowOffset: { width: 0, height: 2 },
@@ -212,8 +223,8 @@ const styles = StyleSheet.create({
         elevation: 5,
     },
     image: {
-        width: 90,
-        height: 96,
+        width: 100,
+        height: 110,
         borderRadius: 10,
         backgroundColor: "#f0f0f0",
     },
@@ -228,23 +239,23 @@ const styles = StyleSheet.create({
         alignItems: "flex-start",
     },
     title: {
-        fontSize: 16,
+        fontSize: 17,
         fontWeight: "bold",
         flex: 1,
         marginRight: 10,
     },
     sub: {
         color: "#888",
-        fontSize: 11,
+        fontSize: 12,
         marginBottom: 2,
     },
     text: {
-        fontSize: 11,
+        fontSize: 12,
         color: "#444",
         marginBottom: 1,
     },
     more: {
-        fontSize: 11,
+        fontSize: 12,
         color: "#e94e77",
         fontWeight: "500",
     },
@@ -256,22 +267,22 @@ const styles = StyleSheet.create({
     badge: {
         backgroundColor: "#f8f8f8",
         borderRadius: 999,
-        paddingHorizontal: 6,
+        paddingHorizontal: 8,
         paddingVertical: 2,
     },
     badgeText: {
-        fontSize: 9,
+        fontSize: 10,
         color: "#e94e77",
         fontWeight: "500",
     },
     buttonWrapper: {
         alignItems: "center",
         justifyContent: "space-between",
-        height: 120,
+        height: 140,
         paddingHorizontal: 10,
     },
     arrow: {
-        fontSize: 35,
+        fontSize: 40,
         color: "#e94e77",
         fontWeight: "bold",
     },
