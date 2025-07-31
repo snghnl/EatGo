@@ -50,7 +50,7 @@ export default function SearchResultScreen() {
                 ListHeaderComponent={
                     <Header
                         title={`"${query}" 검색 결과`}
-                        subtitle={`${searchResults.length}개의 장소를 찾았습니다`}
+                        subtitle={`${searchResults.length}개의 장소`}
                         titleColor={Colors.textPrimary}
                         subtitleColor={Colors.textSecondary}
                         align="left"

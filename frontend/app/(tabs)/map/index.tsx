@@ -3,6 +3,8 @@ import { StyleSheet, View, Text, SafeAreaView } from "react-native";
 import { Colors } from "@/constants/Colors";
 import TopBar from "@/components/TopBar";
 import SearchBar from "@/components/SearchBar";
+import FloatingButton from "@/components/FloatingButton";
+import PlaceCardSwiper from "@/components/PlaceCardSwiper";
 
 // MOCK DATA
 import mockData from "@/mock-data/places.json";
@@ -23,8 +25,19 @@ interface PlaceItem {
 }
 
 export default function MapScreen() {
+    const [showPlaceCardSwiper, setShowPlaceCardSwiper] = useState(false);
+
     const handleSelectItem = (item: PlaceItem) => {
         console.log("Selected:", item.place_name);
+    };
+
+    const handleFloatingButtonPress = () => {
+        console.log("FloatingButton pressed");
+        setShowPlaceCardSwiper(true);
+    };
+
+    const handleClosePlaceCardSwiper = () => {
+        setShowPlaceCardSwiper(false);
     };
 
     return (
@@ -41,12 +54,27 @@ export default function MapScreen() {
                 </View>
             </View>
 
-            <View style={styles.content}>
+            <View
+                style={[
+                    styles.content,
+                    showPlaceCardSwiper && { pointerEvents: "none" },
+                ]}
+            >
                 <Text style={styles.subtitle}>
                     지도 화면이 여기에 표시됩니다.
                 </Text>
-                <Text style={styles.debug}>Debug: Screen is rendering</Text>
             </View>
+
+            {!showPlaceCardSwiper && (
+                <FloatingButton
+                    onPress={handleFloatingButtonPress}
+                    style={{ bottom: 20 }}
+                />
+            )}
+
+            {showPlaceCardSwiper && (
+                <PlaceCardSwiper onClose={handleClosePlaceCardSwiper} />
+            )}
         </SafeAreaView>
     );
 }

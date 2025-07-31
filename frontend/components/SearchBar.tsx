@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import {
     View,
     TextInput,
@@ -12,7 +12,7 @@ import {
 import { Ionicons } from "@expo/vector-icons";
 import { Colors } from "@/constants/Colors";
 import SearchListItem from "./SearchListItem";
-import { useRouter } from "expo-router";
+import { useRouter, useFocusEffect } from "expo-router";
 
 interface PlaceItem {
     id: string;
@@ -42,6 +42,16 @@ export default function SearchBar({
     const [results, setResults] = useState<PlaceItem[]>([]);
     const [isFocused, setIsFocused] = useState(false);
     const router = useRouter();
+    const textInputRef = useRef<TextInput>(null);
+
+    // 페이지에 focus가 돌아왔을 때 search input 초기화
+    useFocusEffect(
+        React.useCallback(() => {
+            setSearchTerm("");
+            setResults([]);
+            setIsFocused(false);
+        }, [])
+    );
 
     useEffect(() => {
         if (searchTerm === "") {
@@ -81,9 +91,18 @@ export default function SearchBar({
         handleSearch();
     };
 
+    const handleContainerPress = () => {
+        textInputRef.current?.focus();
+    };
+
     return (
-        <View style={styles.container}>
+        <TouchableOpacity
+            style={styles.container}
+            onPress={handleContainerPress}
+            activeOpacity={1}
+        >
             <TextInput
+                ref={textInputRef}
                 placeholder={isFocused ? "" : "지역, 맛집 등을 검색하세요"}
                 placeholderTextColor="#C7C7C7"
                 style={styles.input}
@@ -124,7 +143,7 @@ export default function SearchBar({
                     </View>
                 </View>
             )}
-        </View>
+        </TouchableOpacity>
     );
 }
 
@@ -153,7 +172,6 @@ const styles = StyleSheet.create({
         flex: 1,
         fontSize: 16,
         color: "#000",
-        // outlineStyle: "none",
     },
     searchButton: {
         padding: 5,

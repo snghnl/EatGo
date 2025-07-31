@@ -1,5 +1,3 @@
-// app/place/[id].tsx
-
 import { useLocalSearchParams } from 'expo-router';
 import { View, Text, StyleSheet } from 'react-native';
 import placesData from '@/mock-data/places.json';
