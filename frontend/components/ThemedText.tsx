@@ -1,29 +1,22 @@
-import { StyleSheet, Text, type TextProps } from "react-native";
-import { Colors } from "../constants/Colors";
-import { Fonts } from "../constants/Fonts";
+import { StyleSheet, Text, type TextProps } from 'react-native';
+import { Colors } from '../constants/Colors';
+import { Fonts } from '../constants/Fonts';
 
 export type ThemedTextProps = TextProps & {
     color?: keyof typeof Colors;
     size?: keyof typeof Fonts;
     weight?: keyof typeof Fonts.weight;
     lineHeight?: keyof typeof Fonts.lineHeight;
-    type?:
-        | "default"
-        | "title"
-        | "subtitle"
-        | "caption"
-        | "link"
-        | "heading"
-        | "body";
+    type?: 'default' | 'title' | 'subtitle' | 'caption' | 'link' | 'heading' | 'body';
 };
 
 export function ThemedText({
     style,
-    color = "textPrimary",
-    size = "base",
-    weight = "normal",
-    lineHeight = "normal",
-    type = "default",
+    color = 'textPrimary',
+    size = 'base',
+    weight = 'normal',
+    lineHeight = 'normal',
+    type = 'default',
     ...rest
 }: ThemedTextProps) {
     return (
@@ -36,13 +29,13 @@ export function ThemedText({
                     fontWeight: Fonts.weight[weight],
                     lineHeight: Fonts[size] * Fonts.lineHeight[lineHeight],
                 },
-                type === "default" ? styles.default : undefined,
-                type === "title" ? styles.title : undefined,
-                type === "subtitle" ? styles.subtitle : undefined,
-                type === "caption" ? styles.caption : undefined,
-                type === "link" ? styles.link : undefined,
-                type === "heading" ? styles.heading : undefined,
-                type === "body" ? styles.body : undefined,
+                type === 'default' ? styles.default : undefined,
+                type === 'title' ? styles.title : undefined,
+                type === 'subtitle' ? styles.subtitle : undefined,
+                type === 'caption' ? styles.caption : undefined,
+                type === 'link' ? styles.link : undefined,
+                type === 'heading' ? styles.heading : undefined,
+                type === 'body' ? styles.body : undefined,
                 style,
             ]}
             {...rest}
@@ -55,14 +48,14 @@ const styles = StyleSheet.create({
         // 기본 스타일은 인라인으로 처리됨
     },
     title: {
-        fontSize: Fonts["4xl"],
+        fontSize: Fonts['4xl'],
         fontWeight: Fonts.weight.bold,
-        lineHeight: Fonts["4xl"] * Fonts.lineHeight.tight,
+        lineHeight: Fonts['4xl'] * Fonts.lineHeight.tight,
     },
     subtitle: {
-        fontSize: Fonts["2xl"],
+        fontSize: Fonts['2xl'],
         fontWeight: Fonts.weight.semibold,
-        lineHeight: Fonts["2xl"] * Fonts.lineHeight.normal,
+        lineHeight: Fonts['2xl'] * Fonts.lineHeight.normal,
     },
     heading: {
         fontSize: Fonts.xl,
