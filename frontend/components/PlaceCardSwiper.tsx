@@ -74,7 +74,7 @@ export default function PlaceCardSwiper({ onClose }: Props) {
                     autoplay={false}
                     showsButtons={true}
                     buttonWrapperStyle={styles.buttonWrapper}
-                    nextButton={<View />}
+                    nextButton={<Text style={styles.arrow}>›</Text>}
                     prevButton={<Text style={styles.arrow}>‹</Text>}
                     removeClippedSubviews={false}
                     height={135}
@@ -143,7 +143,7 @@ export default function PlaceCardSwiper({ onClose }: Props) {
 const styles = StyleSheet.create({
     container: {
         position: "absolute",
-        bottom: 0,
+        bottom: 80,
         left: 0,
         right: 0,
         height: 170,

@@ -68,7 +68,7 @@ export default function MapScreen() {
             {!showPlaceCardSwiper && (
                 <FloatingButton
                     onPress={handleFloatingButtonPress}
-                    style={{ bottom: 20 }}
+                    style={{ bottom: 100 }}
                 />
             )}
 
