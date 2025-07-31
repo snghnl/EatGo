@@ -2,6 +2,7 @@ import React from 'react';
 import { TouchableOpacity, StyleSheet, ViewStyle } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { LinearGradient } from 'expo-linear-gradient';
+import { Colors } from '@/constants/Colors';
 
 interface Props {
     onPress: () => void;
@@ -12,12 +13,12 @@ export default function FloatingButton({ onPress, style }: Props) {
     return (
         <TouchableOpacity onPress={onPress} style={[styles.buttonContainer, style]}>
             <LinearGradient
-                colors={['#FF9EA4', '#FF4753']}
+                colors={['#FF9EA4', Colors.primary]}
                 start={{ x: 0, y: 0 }}
                 end={{ x: 0, y: 1 }}
                 style={styles.gradientButton}
             >
-                <Ionicons name="chevron-up" size={40} color="white" />
+                <Ionicons name="chevron-up" size={20} color="white" />
             </LinearGradient>
         </TouchableOpacity>
     );

@@ -1,0 +1,136 @@
+import React from 'react';
+import { View, Text, TouchableOpacity, StyleSheet } from 'react-native';
+import { MaterialIcons } from '@expo/vector-icons';
+import { Colors } from '../../../constants/Colors';
+import { ThemedText } from '../../ThemedText';
+
+interface PlaceHeaderProps {
+    placeName: string;
+    category: string;
+    distance: string;
+    address?: string;
+    isOpenNow?: boolean;
+    onBookmarkPress: () => void;
+    isBookmarked: boolean;
+}
+
+export const PlaceHeader: React.FC<PlaceHeaderProps> = ({
+    placeName,
+    category,
+    distance,
+    address,
+    onBookmarkPress,
+    isBookmarked,
+    isOpenNow = false,
+}) => {
+    return (
+        <View style={styles.container}>
+            <View style={styles.content}>
+                <ThemedText size="md" weight="bold" style={styles.category}>
+                    {category}
+                </ThemedText>
+                <ThemedText size="2xl" weight="bold" style={styles.placeName}>
+                    {placeName}
+                </ThemedText>
+
+                <View>
+                    {isOpenNow !== undefined && (
+                        <ThemedText
+                            size="sm"
+                            style={{ color: isOpenNow ? Colors.textPrimary : 'gray', fontWeight: '600' }}
+                        >
+                            {isOpenNow ? '영업중' : '영업 종료'}
+                        </ThemedText>
+                    )}
+                    {address && (
+                        <ThemedText size="sm" style={styles.address} numberOfLines={1}>
+                            {address}
+                        </ThemedText>
+                    )}
+                    <View style={styles.rowBetween}>
+                        <Text style={styles.distance}>
+                            <ThemedText size="md" weight="bold">
+                                전주역
+                            </ThemedText>
+                            에서 {distance} km
+                        </Text>
+
+                        <TouchableOpacity style={styles.addRouteButton}>
+                            <ThemedText size="md">+ 여행 경로 추가</ThemedText>
+                        </TouchableOpacity>
+                    </View>
+                </View>
+            </View>
+
+            <TouchableOpacity onPress={onBookmarkPress} style={styles.bookmarkButton}>
+                <MaterialIcons
+                    name={isBookmarked ? 'bookmark' : 'bookmark-border'}
+                    size={24}
+                    color={Colors.textPrimary}
+                />
+            </TouchableOpacity>
+        </View>
+    );
+};
+
+const styles = StyleSheet.create({
+    container: {
+        flexDirection: 'row',
+        alignItems: 'flex-start',
+        paddingHorizontal: 20,
+        paddingTop: 60,
+        paddingBottom: 20,
+        backgroundColor: Colors.listbackground,
+    },
+    backButton: {
+        marginRight: 16,
+        marginTop: 4,
+    },
+    content: {
+        flex: 1,
+    },
+    category: {
+        color: Colors.textSecondary,
+        marginBottom: 4,
+    },
+    placeName: {
+        marginBottom: 8,
+    },
+    metaInfo: {
+        marginBottom: 16,
+    },
+    rowBetween: {
+        flexDirection: 'row',
+        justifyContent: 'space-between',
+        alignItems: 'center',
+        marginBottom: 8,
+    },
+
+    distance: {
+        fontSize: 14,
+        color: Colors.textSecondary,
+        marginBottom: 2,
+    },
+    directionsLink: {
+        fontSize: 14,
+        color: Colors.primary,
+        textDecorationLine: 'underline',
+    },
+    addRouteButton: {
+        alignSelf: 'flex-start',
+        paddingHorizontal: 12,
+        paddingVertical: 2,
+        borderRadius: 16,
+        borderWidth: 1,
+        borderColor: Colors.textSecondary,
+    },
+    address: {
+        fontSize: 12,
+        color: Colors.textSecondary,
+        marginBottom: 2,
+    },
+    bookmarkButton: {
+        marginLeft: 16,
+        marginTop: 4,
+    },
+});

@@ -1,7 +1,7 @@
 import React, { useRef } from 'react';
 import { View, Text, Image, StyleSheet, Dimensions, Linking, GestureResponderEvent } from 'react-native';
 import Swiper from 'react-native-swiper';
-import placesData from '../../mock-data/places.json';
+import placesData from '@/mock-data/places.json';
 
 const { width } = Dimensions.get('window');
 

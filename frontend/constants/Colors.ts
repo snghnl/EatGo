@@ -12,6 +12,7 @@ export const Colors = {
     // 배경 색상
     background: '#f5f5f5',
     backgroundGray: '#f0f0f0',
+    listbackground: '#FFFCFC',
 
     // 텍스트 색상
     textPrimary: '#363636',

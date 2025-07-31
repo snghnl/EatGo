@@ -55,7 +55,7 @@ export const PlaceCard: React.FC<PlaceCardProps> = ({
                     {category.split(' > ').slice(1).join(' > ')}
                 </ThemedText>
 
-                <ThemedText size="lg" weight="semibold" style={styles.name}>
+                <ThemedText size="lg" weight="bold" style={styles.name}>
                     {name}
                 </ThemedText>
 

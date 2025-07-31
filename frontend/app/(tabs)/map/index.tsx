@@ -1,10 +1,14 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { StyleSheet, View, Text, SafeAreaView } from 'react-native';
 import { Colors } from '@/constants/Colors';
 import TopBar from '@/components/TopBar';
 import SearchBar from '@/components/SearchBar';
+import FloatingButton from '@/components/main/FloatingButton';
+import PlaceCardSwiper from '@/components/main/PlaceCardSwiper';
 
 export default function MapScreen() {
+    const [showSwiper, setShowSwiper] = useState(false);
+
     console.log('MapScreen rendering...');
 
     return (
@@ -17,6 +21,12 @@ export default function MapScreen() {
                 <Text style={styles.subtitle}>지도 화면이 여기에 표시됩니다.</Text>
                 <Text style={styles.debug}>Debug: Screen is rendering</Text>
             </View>
+
+            {showSwiper ? (
+                <PlaceCardSwiper onClose={() => setShowSwiper(false)} />
+            ) : (
+                <FloatingButton onPress={() => setShowSwiper(true)} />
+            )}
         </SafeAreaView>
     );
 }

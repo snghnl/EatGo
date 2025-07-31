@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { router } from 'expo-router';
 
 import { View, FlatList, StyleSheet } from 'react-native';
@@ -25,6 +25,14 @@ const titleMap: Record<string, { title: string; subtitle: string }> = {
 
 export default function PlaceListScreen() {
     const { category } = useLocalSearchParams<{ category: string }>();
+    const [bookmarkedPlaceIds, setBookmarkedPlaceIds] = useState<string[]>([]);
+
+    const toggleBookmark = (placeId: string) => {
+        setBookmarkedPlaceIds((prev) =>
+            prev.includes(placeId) ? prev.filter((id) => id !== placeId) : [...prev, placeId]
+        );
+    };
+
     const documents = placesData.documents;
     const current = titleMap[category] || {
         title: '',
@@ -41,25 +49,27 @@ export default function PlaceListScreen() {
 
     return (
         <View style={styles.container}>
+            {
+                <Header
+                    title={current.title}
+                    subtitle={current.subtitle}
+                    titleColor={Colors.textPrimary}
+                    subtitleColor={Colors.textSecondary}
+                    align="left"
+                />
+            }
             <FlatList
                 data={filtered}
                 keyExtractor={(place) => place.id}
                 contentContainerStyle={styles.listContent}
-                ListHeaderComponent={
-                    <Header
-                        title={current.title}
-                        subtitle={current.subtitle}
-                        titleColor={Colors.textPrimary}
-                        subtitleColor={Colors.textSecondary}
-                        align="left"
-                    />
-                }
                 renderItem={({ item }) => (
                     <PlaceCard
                         id={item.id}
                         name={item.place_name}
                         category={item.category_name}
                         address={item.road_address_name}
+                        isBookmarked={bookmarkedPlaceIds.includes(item.id)}
+                        onBookmark={() => toggleBookmark(item.id)}
                         onPress={() => router.push(`/place/${item.id}/detail`)}
                     />
                 )}
