@@ -103,7 +103,7 @@ export default function PlaceDetailScreen() {
                 <PlaceMenu menuItems={mockMenuItems} />
                 <View style={styles.separator} />
 
-                <view style={styles.container}>
+                <View style={styles.container}>
                     <ThemedText size="lg" weight="bold" style={styles.title}>
                         다른 여행객분들은{'\n'}
                     </ThemedText>
@@ -116,7 +116,7 @@ export default function PlaceDetailScreen() {
                     </ThemedText>
 
                     <CourseCard hasImages={true} />
-                </view>
+                </View>
             </ScrollView>
         </SafeAreaView>
     );

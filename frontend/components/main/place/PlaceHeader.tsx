@@ -26,7 +26,7 @@ export const PlaceHeader: React.FC<PlaceHeaderProps> = ({
     return (
         <View style={styles.container}>
             <View style={styles.content}>
-                <ThemedText size="md" weight="bold" style={styles.category}>
+                <ThemedText weight="bold" style={styles.category}>
                     {category}
                 </ThemedText>
                 <ThemedText size="2xl" weight="bold" style={styles.placeName}>
@@ -49,14 +49,12 @@ export const PlaceHeader: React.FC<PlaceHeaderProps> = ({
                     )}
                     <View style={styles.rowBetween}>
                         <Text style={styles.distance}>
-                            <ThemedText size="md" weight="bold">
-                                전주역
-                            </ThemedText>
+                            <ThemedText weight="bold">전주역</ThemedText>
                             에서 {distance} km
                         </Text>
 
                         <TouchableOpacity style={styles.addRouteButton}>
-                            <ThemedText size="md">+ 여행 경로 추가</ThemedText>
+                            <ThemedText>+ 여행 경로 추가</ThemedText>
                         </TouchableOpacity>
                     </View>
                 </View>

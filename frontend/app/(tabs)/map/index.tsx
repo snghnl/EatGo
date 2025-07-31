@@ -1,13 +1,13 @@
-import React, { useState, useEffect } from "react";
-import { StyleSheet, View, Text, SafeAreaView, Animated } from "react-native";
-import { Colors } from "@/constants/Colors";
-import TopBar from "@/components/TopBar";
-import SearchBar from "@/components/SearchBar";
-import FloatingButton from "@/components/FloatingButton";
-import PlaceCardSwiper from "@/components/PlaceCardSwiper";
+import React, { useState, useEffect } from 'react';
+import { StyleSheet, View, Text, SafeAreaView, Animated } from 'react-native';
+import { Colors } from '@/constants/Colors';
+import TopBar from '@/components/TopBar';
+import SearchBar from '@/components/SearchBar';
+import FloatingButton from '@/components/main/FloatingButton';
+import PlaceCardSwiper from '@/components/main/PlaceCardSwiper';
 
 // MOCK DATA
-import mockData from "@/mock-data/places.json";
+import mockData from '@/mock-data/places.json';
 
 interface PlaceItem {
     id: string;
@@ -30,11 +30,11 @@ export default function MapScreen() {
     const [swiperAnimation] = useState(new Animated.Value(0));
 
     const handleSelectItem = (item: PlaceItem) => {
-        console.log("Selected:", item.place_name);
+        console.log('Selected:', item.place_name);
     };
 
     const handleFloatingButtonPress = () => {
-        console.log("FloatingButton pressed");
+        console.log('FloatingButton pressed');
         setShowPlaceCardSwiper(true);
 
         // 버튼 사라지는 애니메이션
@@ -106,34 +106,21 @@ export default function MapScreen() {
         <SafeAreaView style={styles.container}>
             <View style={styles.headerWrapper}>
                 <View style={styles.searchWrapper}>
-                    <SearchBar
-                        searchData={mockData.documents}
-                        onSelectItem={handleSelectItem}
-                    />
+                    <SearchBar searchData={mockData.documents} onSelectItem={handleSelectItem} />
                 </View>
                 <View style={styles.topBarWrapper}>
                     <TopBar />
                 </View>
             </View>
 
-            <View
-                style={[
-                    styles.content,
-                    showPlaceCardSwiper && { pointerEvents: "none" },
-                ]}
-            >
-                <Text style={styles.subtitle}>
-                    지도 화면이 여기에 표시됩니다.
-                </Text>
+            <View style={[styles.content, showPlaceCardSwiper && { pointerEvents: 'none' }]}>
+                <Text style={styles.subtitle}>지도 화면이 여기에 표시됩니다.</Text>
                 <Text style={styles.debug}>Debug: Screen is rendering</Text>
             </View>
 
             {!showPlaceCardSwiper && (
                 <Animated.View style={buttonAnimatedStyle}>
-                    <FloatingButton
-                        onPress={handleFloatingButtonPress}
-                        style={{ bottom: 80 }}
-                    />
+                    <FloatingButton onPress={handleFloatingButtonPress} style={{ bottom: 80 }} />
                 </Animated.View>
             )}
 
@@ -164,19 +151,19 @@ const styles = StyleSheet.create({
     },
     content: {
         flex: 1,
-        justifyContent: "center",
-        alignItems: "center",
+        justifyContent: 'center',
+        alignItems: 'center',
         paddingHorizontal: 20,
     },
     subtitle: {
         fontSize: 16,
         color: Colors.textSecondary,
-        textAlign: "center",
+        textAlign: 'center',
         marginBottom: 16,
     },
     debug: {
         fontSize: 14,
         color: Colors.primary,
-        textAlign: "center",
+        textAlign: 'center',
     },
 });

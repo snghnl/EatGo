@@ -1,10 +1,10 @@
-import React, { useState, useEffect } from "react";
-import { View, FlatList, StyleSheet } from "react-native";
-import { useLocalSearchParams, useRouter } from "expo-router";
-import { PlaceCard } from "@/components/main/PlaceCard";
-import placesData from "@/mock-data/places.json";
-import { Colors } from "@/constants/Colors";
-import Header from "@/components/common/Header";
+import React, { useState, useEffect } from 'react';
+import { View, FlatList, StyleSheet } from 'react-native';
+import { useLocalSearchParams, useRouter } from 'expo-router';
+import { PlaceCard } from '@/components/main/PlaceCard';
+import placesData from '@/mock-data/places.json';
+import { Colors } from '@/constants/Colors';
+import Header from '@/components/common/Header';
 
 interface PlaceItem {
     id: string;
@@ -62,14 +62,10 @@ export default function SearchResultScreen() {
                         name={item.place_name}
                         category={item.category_name}
                         address={item.road_address_name}
-                        distance={item.distance || ""}
-                        description={
-                            item.category_name.split(" > ").pop() || ""
-                        }
+                        distance={item.distance || ''}
+                        description={item.category_name.split(' > ').pop() || ''}
                         imageUrl="https://source.unsplash.com/random/300x300?food"
-                        onPress={(placeId) =>
-                            router.push(`/placelist/${placeId}/detail`)
-                        }
+                        onPress={() => router.push(`/place/${item.id}/detail`)}
                     />
                 )}
             />
