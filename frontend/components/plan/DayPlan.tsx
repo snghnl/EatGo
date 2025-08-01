@@ -18,10 +18,13 @@ interface DayPlanProps {
     places: PlaceItem[];
     onPlacePress?: (placeId: string) => void;
     onCardPress?: () => void;
+    onLongPress?: () => void;
     onSave?: () => void;
     isSaved?: boolean;
     isNewCourse?: boolean;
     onRecommendationPress?: (day: number) => void;
+    selectedPlaceId?: string | null;
+    isActive?: boolean;
 }
 
 export const DayPlan: React.FC<DayPlanProps> = ({
@@ -30,10 +33,13 @@ export const DayPlan: React.FC<DayPlanProps> = ({
     places,
     onPlacePress,
     onCardPress,
+    onLongPress,
     onSave,
     isSaved = false,
     isNewCourse = false,
     onRecommendationPress,
+    selectedPlaceId = null,
+    isActive = false,
 }) => {
     const handleRecommendationPress = () => {
         onRecommendationPress?.(day);
@@ -61,6 +67,9 @@ export const DayPlan: React.FC<DayPlanProps> = ({
                     onCardPress={onCardPress}
                     onSave={onSave}
                     isSaved={isSaved}
+                    onLongPress={onLongPress}
+                    selectedPlaceId={selectedPlaceId}
+                    isActive={isActive}
                 />
             )}
         </ThemedView>

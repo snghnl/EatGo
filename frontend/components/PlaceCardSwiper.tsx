@@ -17,9 +17,10 @@ const { width } = Dimensions.get("window");
 
 interface Props {
     onClose: () => void;
+    onPlaceSelect?: (selectedPlace: any) => void;
 }
 
-export default function PlaceCardSwiper({ onClose }: Props) {
+export default function PlaceCardSwiper({ onClose, onPlaceSelect }: Props) {
     const touchStartY = useRef(0);
     const isDragging = useRef(false);
     const router = useRouter();
@@ -53,7 +54,12 @@ export default function PlaceCardSwiper({ onClose }: Props) {
 
     const handleCardPress = (place: any) => {
         console.log("Card pressed:", place.place_name);
-        router.push(`/placelist/${place.id}/detail`);
+        if (onPlaceSelect) {
+            onPlaceSelect(place);
+            onClose();
+        } else {
+            router.push(`/placelist/${place.id}/detail`);
+        }
     };
 
     const places = placesData.documents.slice(0, 5);
@@ -159,7 +165,7 @@ const styles = StyleSheet.create({
         right: 0,
         height: 200,
         backgroundColor: "transparent",
-        zIndex: 1000,
+        zIndex: 1003, // PlanCard보다 위에 표시
     },
     dragHandle: {
         height: 30,
