@@ -106,12 +106,12 @@ export default function PlaceDetailScreen() {
                 <View style={styles.titleWrapper}>
                     <ThemedText size="lg" weight="bold" style={styles.title}>
                         다른 여행객분들은{'\n'}
-                    </ThemedText>
-                    <ThemedText size="lg" weight="bold" style={styles.title}>
-                        <ThemedText size="lg" color="primary" weight="bold">
-                            이 코스
+                        <ThemedText size="lg" weight="bold" style={styles.title}>
+                            <ThemedText size="lg" color="primary" weight="bold">
+                                이 코스
+                            </ThemedText>
+                            로 방문하셨어요
                         </ThemedText>
-                        로 방문하셨어요
                     </ThemedText>
                 </View>
                 <CourseListExample />

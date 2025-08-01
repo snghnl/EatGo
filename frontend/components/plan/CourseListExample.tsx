@@ -38,8 +38,13 @@ export const CourseListExample: React.FC<{
     };
 
     const handleCoursePress = (courseId: string) => {
-        console.log('코스 클릭:', courseId);
-        router.push(`/course/${courseId}`);
+        console.log("코스 클릭:", courseId);
+        router.push({
+            pathname: `/plan/${courseId}` as any,
+            params: {
+                id: courseId,
+            },
+        });
     };
 
     return (

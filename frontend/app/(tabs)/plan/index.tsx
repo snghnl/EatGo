@@ -1,6 +1,6 @@
 import React, { useState } from "react";
-import { StyleSheet, View , SafeAreaView } from "react-native";
-import { router } from "expo-router";
+import { StyleSheet, View, SafeAreaView } from "react-native";
+import { router, useFocusEffect } from "expo-router";
 import { CourseListExample } from "@/components/plan";
 import Header from "@/components/common/Header";
 import ActionButtons from "@/components/common/ActionButtons";
@@ -18,6 +18,14 @@ interface NewCourse {
 export default function PlanListScreen() {
     const [modalVisible, setModalVisible] = useState(false);
     const [newCourse, setNewCourse] = useState<NewCourse | null>(null);
+
+    // plan 페이지에 포커스가 돌아올 때 모달 상태 초기화
+    useFocusEffect(
+        React.useCallback(() => {
+            setModalVisible(false);
+            setNewCourse(null);
+        }, [])
+    );
 
     const handleAddCourse = () => {
         setModalVisible(true);

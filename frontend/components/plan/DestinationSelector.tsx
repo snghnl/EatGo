@@ -25,18 +25,37 @@ export const DestinationSelector: React.FC<DestinationSelectorProps> = ({
         onDestinationChange?.(newSelected);
     };
 
+    // 22개 아이템을 4개씩 그룹으로 나누기 (4×N 그리드)
+    const createRows = () => {
+        const rows = [];
+        for (let i = 0; i < JEONLA_DESTINATIONS.length; i += 4) {
+            const rowItems = JEONLA_DESTINATIONS.slice(i, i + 4);
+            rows.push(rowItems);
+        }
+        return rows;
+    };
+
+    const rows = createRows();
+
     return (
         <View style={styles.container}>
-            <View style={styles.buttonGrid}>
-                {JEONLA_DESTINATIONS.map((destination, index) => (
-                    <DestinationButton
-                        key={index}
-                        destination={destination}
-                        isSelected={selectedDestinations.includes(destination)}
-                        onPress={handleDestinationPress}
-                    />
-                ))}
-            </View>
+            {rows.map((row, rowIndex) => (
+                <View
+                    key={rowIndex}
+                    style={[styles.row, row.length < 4 && styles.lastRow]}
+                >
+                    {row.map((destination, index) => (
+                        <DestinationButton
+                            key={`${rowIndex}-${index}`}
+                            destination={destination}
+                            isSelected={selectedDestinations.includes(
+                                destination
+                            )}
+                            onPress={handleDestinationPress}
+                        />
+                    ))}
+                </View>
+            ))}
         </View>
     );
 };
@@ -44,11 +63,15 @@ export const DestinationSelector: React.FC<DestinationSelectorProps> = ({
 const styles = StyleSheet.create({
     container: {
         marginBottom: 24,
+        marginTop: 20,
     },
-    buttonGrid: {
+    row: {
         flexDirection: "row",
-        flexWrap: "wrap",
-        gap: 12,
+        justifyContent: "space-between",
+        marginBottom: 8,
+    },
+    lastRow: {
         justifyContent: "center",
+        gap: 8,
     },
 });

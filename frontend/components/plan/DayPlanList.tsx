@@ -21,26 +21,28 @@ interface DayPlanListProps {
     dayPlans: DayPlanItem[];
     onPlacePress?: (dayPlanId: string, placeId: string) => void;
     onCardPress?: (dayPlanId: string) => void;
+    onLongPress?: (dayPlanId: string) => void;
     onSave?: (dayPlanId: string) => void;
     isNewCourse?: boolean;
     onRecommendationPress?: (day: number) => void;
+    selectedPlaceId?: string | null;
+    activeDayPlanId?: string | null;
 }
 
 export const DayPlanList: React.FC<DayPlanListProps> = ({
     dayPlans,
     onPlacePress,
     onCardPress,
+    onLongPress,
     onSave,
     isNewCourse = false,
     onRecommendationPress,
+    selectedPlaceId = null,
+    activeDayPlanId = null,
 }) => {
     return (
         <ThemedView style={styles.container}>
-            <ScrollView
-                style={styles.scrollView}
-                contentContainerStyle={styles.scrollContent}
-                showsVerticalScrollIndicator={false}
-            >
+            <View style={styles.content}>
                 {dayPlans.map((dayPlan) => (
                     <DayPlan
                         key={dayPlan.id}
@@ -51,12 +53,15 @@ export const DayPlanList: React.FC<DayPlanListProps> = ({
                             onPlacePress?.(dayPlan.id, placeId)
                         }
                         onCardPress={() => onCardPress?.(dayPlan.id)}
+                        onLongPress={() => onLongPress?.(dayPlan.id)}
                         onSave={() => onSave?.(dayPlan.id)}
                         isNewCourse={isNewCourse}
                         onRecommendationPress={onRecommendationPress}
+                        selectedPlaceId={selectedPlaceId}
+                        isActive={activeDayPlanId === dayPlan.id}
                     />
                 ))}
-            </ScrollView>
+            </View>
         </ThemedView>
     );
 };
@@ -66,12 +71,9 @@ const styles = StyleSheet.create({
         flex: 1,
         backgroundColor: Colors.background,
     },
-    scrollView: {
-        flex: 1,
-    },
-    scrollContent: {
+    content: {
         flexGrow: 1,
         paddingBottom: 16,
-        paddingTop: 24,
+        paddingTop: 8, // 24에서 8로 줄임
     },
 });

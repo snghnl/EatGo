@@ -39,12 +39,14 @@ const styles = StyleSheet.create({
     container: {
         flex: 1,
         alignItems: "center",
+        marginBottom: 10,
+        maxWidth: "23%",
     },
     card: {
         width: "100%",
-        aspectRatio: 1, // 정사각형
+        aspectRatio: 1,
         backgroundColor: Colors.backgroundGray,
-        borderRadius: 8,
+        borderRadius: 6,
         borderWidth: 1,
         borderColor: Colors.border,
         justifyContent: "center",
@@ -61,21 +63,22 @@ const styles = StyleSheet.create({
         alignItems: "center",
     },
     imagePlaceholder: {
-        width: 28,
-        height: 28,
+        width: 18,
+        height: 18,
         justifyContent: "center",
         alignItems: "center",
         backgroundColor: Colors.white,
-        borderRadius: 14,
+        borderRadius: 9,
     },
     imageText: {
-        fontSize: 20,
+        fontSize: 14,
     },
     foodName: {
-        fontSize: 16,
+        fontSize: 11,
         fontWeight: "500",
         color: Colors.textPrimary,
         textAlign: "center",
+        lineHeight: 13,
     },
     selectedText: {
         color: Colors.primary,

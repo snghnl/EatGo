@@ -17,9 +17,10 @@ const { width } = Dimensions.get('window');
 
 interface Props {
     onClose: () => void;
+    onPlaceSelect?: (selectedPlace: any) => void;
 }
 
-export default function PlaceCardSwiper({ onClose }: Props) {
+export default function PlaceCardSwiper({ onClose, onPlaceSelect }: Props) {
     const touchStartY = useRef(0);
     const isDragging = useRef(false);
     const router = useRouter();

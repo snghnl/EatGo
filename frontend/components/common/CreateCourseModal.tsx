@@ -34,7 +34,7 @@ export const CreateCourseModal: React.FC<CreateCourseModalProps> = ({
     onComplete,
 }) => {
     const [currentStep, setCurrentStep] = useState(1);
-    const [startDate, setStartDate] = useState(getTodayFormatted());
+    const [startDate, setStartDate] = useState("");
     const [endDate, setEndDate] = useState("");
     const [selectedDestinations, setSelectedDestinations] = useState<string[]>(
         []
@@ -75,9 +75,13 @@ export const CreateCourseModal: React.FC<CreateCourseModalProps> = ({
     // 모달 등장/사라짐 애니메이션
     useEffect(() => {
         if (visible) {
-            // 오늘 날짜로 초기화
-            setStartDate(getTodayFormatted());
+            // 모든 상태를 초기화
+            setCurrentStep(1);
+            setStartDate("");
             setEndDate("");
+            setSelectedDestinations([]);
+            setSelectedFoods([]);
+            stepSlideAnim.setValue(0);
 
             slideAnim.setValue(1);
             animateSlide(slideAnim, 0);
@@ -99,6 +103,20 @@ export const CreateCourseModal: React.FC<CreateCourseModalProps> = ({
 
     const handleFoodChange: FoodChangeHandler = (foods) => {
         setSelectedFoods(foods);
+    };
+
+    // 각 단계별 입력 완성 여부 확인
+    const isStepComplete = (step: number): boolean => {
+        switch (step) {
+            case 1:
+                return startDate !== "" && endDate !== "";
+            case 2:
+                return selectedDestinations.length > 0;
+            case 3:
+                return selectedFoods.length > 0;
+            default:
+                return false;
+        }
     };
 
     const handleNext = () => {
@@ -139,11 +157,13 @@ export const CreateCourseModal: React.FC<CreateCourseModalProps> = ({
                             endDate={endDate}
                             onDateChange={handleDateChange}
                         />
+                        {/* 서브타이틀 미리보기 제거 
                         {endDate && (
                             <Text style={styles.subtitlePreview}>
                                 {getSubtitleByDate(startDate, endDate)}
                             </Text>
                         )}
+                        */}
                     </>
                 );
             case 2:
@@ -178,6 +198,16 @@ export const CreateCourseModal: React.FC<CreateCourseModalProps> = ({
                                     ],
                                 }),
                             },
+                            {
+                                translateX: stepSlideAnim.interpolate({
+                                    inputRange: [-1, 0, 1],
+                                    outputRange: [
+                                        -ANIMATION_CONFIG.SLIDE_DISTANCE,
+                                        0,
+                                        ANIMATION_CONFIG.SLIDE_DISTANCE,
+                                    ],
+                                }),
+                            },
                         ],
                     },
                 ]}
@@ -198,32 +228,7 @@ export const CreateCourseModal: React.FC<CreateCourseModalProps> = ({
                     </TouchableOpacity>
                 </View>
 
-                <ScrollView
-                    style={styles.content}
-                    showsVerticalScrollIndicator={false}
-                >
-                    <Animated.View
-                        style={[
-                            styles.animatedContent,
-                            {
-                                transform: [
-                                    {
-                                        translateX: stepSlideAnim.interpolate({
-                                            inputRange: [-1, 0, 1],
-                                            outputRange: [
-                                                -ANIMATION_CONFIG.SLIDE_DISTANCE,
-                                                0,
-                                                ANIMATION_CONFIG.SLIDE_DISTANCE,
-                                            ],
-                                        }),
-                                    },
-                                ],
-                            },
-                        ]}
-                    >
-                        {renderStepContent()}
-                    </Animated.View>
-                </ScrollView>
+                <View style={styles.content}>{renderStepContent()}</View>
 
                 <View style={styles.footer}>
                     <View style={styles.leftButtonContainer}>
@@ -238,9 +243,20 @@ export const CreateCourseModal: React.FC<CreateCourseModalProps> = ({
                     </View>
                     <TouchableOpacity
                         onPress={handleNext}
-                        style={styles.nextButton}
+                        style={[
+                            styles.nextButton,
+                            !isStepComplete(currentStep) &&
+                                styles.nextButtonDisabled,
+                        ]}
+                        disabled={!isStepComplete(currentStep)}
                     >
-                        <Text style={styles.nextText}>
+                        <Text
+                            style={[
+                                styles.nextText,
+                                !isStepComplete(currentStep) &&
+                                    styles.nextTextDisabled,
+                            ]}
+                        >
                             {currentStep === 3
                                 ? "추천 코스와 함께 계획하러 가기"
                                 : "다음"}
@@ -259,7 +275,7 @@ const styles = StyleSheet.create({
         left: 0,
         right: 0,
         bottom: 0,
-        backgroundColor: "rgba(245, 245, 245, 0.7)",
+        backgroundColor: "rgba(0, 0, 0, 0.5)",
         justifyContent: "center",
         alignItems: "center",
         paddingHorizontal: 20,
@@ -268,54 +284,66 @@ const styles = StyleSheet.create({
     modal: {
         width: "100%",
         maxWidth: 400,
+        minHeight: 500,
         maxHeight: "85%",
         backgroundColor: Colors.white,
         borderRadius: 12,
-        padding: 24,
+        padding: 20,
         shadowColor: Colors.black,
         shadowOffset: {
             width: 0,
             height: 2,
         },
-        shadowOpacity: 0.1,
-        shadowRadius: 4,
-        elevation: 3,
+        shadowOpacity: 0.25,
+        shadowRadius: 8,
+        elevation: 8,
     },
     header: {
         flexDirection: "row",
         alignItems: "center",
-        marginBottom: 24,
+        justifyContent: "space-between",
+        marginBottom: 20,
+        paddingBottom: 10,
+        borderBottomWidth: 1,
+        borderBottomColor: "#f0f0f0",
     },
     closeButton: {
         width: 32,
         height: 32,
         justifyContent: "center",
         alignItems: "center",
+        backgroundColor: "#f5f5f5",
+        borderRadius: 16,
     },
     closeText: {
-        fontSize: 20,
+        fontSize: 18,
         color: Colors.textPrimary,
         fontWeight: "600",
     },
     title: {
-        flex: 1,
-        fontSize: 20,
+        fontSize: 18,
         fontWeight: "bold",
         color: Colors.textPrimary,
+        flex: 1,
     },
     content: {
         flex: 1,
-    },
-    animatedContent: {
-        flex: 1,
+        minHeight: 200,
     },
     subtitlePreview: {
         marginTop: 12,
+        padding: 12,
+        backgroundColor: "#f8f9fa",
+        borderRadius: 8,
         color: Colors.textSecondary,
         textAlign: "center",
+        fontSize: 14,
     },
     footer: {
-        marginTop: 0,
+        marginTop: 20,
+        paddingTop: 15,
+        borderTopWidth: 1,
+        borderTopColor: "#f0f0f0",
         flexDirection: "row",
         justifyContent: "space-between",
         alignItems: "center",
@@ -325,24 +353,35 @@ const styles = StyleSheet.create({
         alignItems: "flex-start",
     },
     previousButton: {
-        paddingVertical: 8,
+        paddingVertical: 12,
         paddingHorizontal: 16,
+        backgroundColor: "#f5f5f5",
+        borderRadius: 8,
     },
     previousText: {
         fontSize: 16,
         fontWeight: "600",
         color: Colors.textSecondary,
-        textDecorationLine: "underline",
     },
     nextButton: {
-        paddingVertical: 8,
+        paddingVertical: 12,
         paddingHorizontal: 16,
-        alignItems: "flex-end",
+        backgroundColor: Colors.primary,
+        borderRadius: 8,
+        minWidth: 80,
+        alignItems: "center",
+    },
+    nextButtonDisabled: {
+        backgroundColor: "#e0e0e0",
+        opacity: 0.7,
     },
     nextText: {
         fontSize: 16,
         fontWeight: "600",
-        color: Colors.primary,
-        textDecorationLine: "underline",
+        color: Colors.white,
+        textAlign: "center",
+    },
+    nextTextDisabled: {
+        color: "#a0a0a0",
     },
 });

@@ -7,9 +7,15 @@ interface PlaceProps {
     category: string;
     name: string;
     onPress?: () => void;
+    isSelected?: boolean;
 }
 
-export const Place: React.FC<PlaceProps> = ({ category, name, onPress }) => {
+export const Place: React.FC<PlaceProps> = ({
+    category,
+    name,
+    onPress,
+    isSelected = false,
+}) => {
     return (
         <TouchableOpacity onPress={onPress} activeOpacity={0.7}>
             <View style={styles.container}>
@@ -23,7 +29,7 @@ export const Place: React.FC<PlaceProps> = ({ category, name, onPress }) => {
                 </ThemedText>
                 <ThemedText
                     size="lg"
-                    color="textPrimary"
+                    color={isSelected ? "error" : "textPrimary"}
                     weight="bold"
                     style={styles.name}
                 >
