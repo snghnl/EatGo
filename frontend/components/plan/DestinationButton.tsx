@@ -30,23 +30,27 @@ export const DestinationButton: React.FC<DestinationButtonProps> = ({
 
 const styles = StyleSheet.create({
     button: {
-        width: "30%",
-        height: 40,
+        flex: 1,
+        maxWidth: "23%",
+        height: 36,
         backgroundColor: Colors.backgroundGray,
-        borderRadius: 8,
+        borderRadius: 6,
         justifyContent: "center",
         alignItems: "center",
         borderWidth: 1,
         borderColor: Colors.border,
+        marginHorizontal: "0.5%",
     },
     selectedButton: {
         backgroundColor: Colors.primary,
         borderColor: Colors.primary,
     },
     buttonText: {
-        fontSize: 16,
+        fontSize: 14,
         fontWeight: "500",
         color: Colors.textPrimary,
+        textAlign: "center",
+        lineHeight: 16,
     },
     selectedText: {
         color: Colors.white,
