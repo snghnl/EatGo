@@ -1,43 +1,16 @@
 import React, { useState, useCallback } from "react";
 import { Animated } from "react-native";
-import FloatingButton from "./FloatingButton";
-import PlaceCardSwiper from "./PlaceCardSwiper";
-
-// Types
-interface PlaceItem {
-    id: string;
-    place_name: string;
-    category_name: string;
-    road_address_name: string;
-    address_name: string;
-    category_group_code: string;
-    category_group_name: string;
-    distance: string;
-    phone: string;
-    place_url: string;
-    x: string;
-    y: string;
-}
+import FloatingButton from "@/components/main/FloatingButton";
+import PlaceCardSwiper from "@/components/main/PlaceCardSwiper";
 
 interface MapPlaceCardSwiperProps {
-    onSelectItem?: (item: PlaceItem) => void;
+    onSelectItem?: (item: any) => void;
+    buttonStyle?: any;
 }
-
-// Constants
-const ANIMATION_CONFIG = {
-    BUTTON_HIDE_DURATION: 100,
-    SWIPER_SHOW_DURATION: 200,
-    SWIPER_HIDE_DURATION: 200,
-    BUTTON_SHOW_DURATION: 400,
-    BUTTON_TRANSLATE_Y: 50,
-    SWIPER_TRANSLATE_Y: 200,
-    BUTTON_SCALE_RANGE: [0.8, 1],
-} as const;
-
-const FLOATING_BUTTON_STYLE = { bottom: 80 };
 
 export default function MapPlaceCardSwiper({
     onSelectItem,
+    buttonStyle = { bottom: 80 },
 }: MapPlaceCardSwiperProps) {
     const [showPlaceCardSwiper, setShowPlaceCardSwiper] = useState(false);
     const [buttonAnimation] = useState(new Animated.Value(1));
@@ -45,22 +18,22 @@ export default function MapPlaceCardSwiper({
 
     const animateButton = useCallback(
         (toValue: number, duration: number) => {
-            return Animated.timing(buttonAnimation, {
+            Animated.timing(buttonAnimation, {
                 toValue,
                 duration,
                 useNativeDriver: true,
-            });
+            }).start();
         },
         [buttonAnimation]
     );
 
     const animateSwiper = useCallback(
-        (toValue: number, duration: number) => {
-            return Animated.timing(swiperAnimation, {
+        (toValue: number, duration: number, callback?: () => void) => {
+            Animated.timing(swiperAnimation, {
                 toValue,
                 duration,
                 useNativeDriver: true,
-            });
+            }).start(callback);
         },
         [swiperAnimation]
     );
@@ -69,47 +42,50 @@ export default function MapPlaceCardSwiper({
         console.log("FloatingButton pressed");
         setShowPlaceCardSwiper(true);
 
-        // Hide button and show swiper animations
-        animateButton(0, ANIMATION_CONFIG.BUTTON_HIDE_DURATION).start();
-        animateSwiper(1, ANIMATION_CONFIG.SWIPER_SHOW_DURATION).start();
+        // 버튼 사라지는 애니메이션
+        animateButton(0, 100);
+
+        // 스와이퍼 올라오는 애니메이션
+        animateSwiper(1, 200);
     }, [animateButton, animateSwiper]);
 
     const handleClosePlaceCardSwiper = useCallback(() => {
-        // Hide swiper animation
-        animateSwiper(0, ANIMATION_CONFIG.SWIPER_HIDE_DURATION).start(() => {
+        // 스와이퍼 내려가는 애니메이션
+        animateSwiper(0, 200, () => {
             setShowPlaceCardSwiper(false);
         });
 
-        // Show button animation
-        animateButton(1, ANIMATION_CONFIG.BUTTON_SHOW_DURATION).start();
-    }, [animateButton, animateSwiper]);
+        // 버튼 나타나는 애니메이션
+        animateButton(1, 400);
+    }, [animateSwiper, animateButton]);
 
-    // Animation styles
+    // 버튼 애니메이션 스타일
     const buttonAnimatedStyle = {
         opacity: buttonAnimation,
         transform: [
             {
                 translateY: buttonAnimation.interpolate({
                     inputRange: [0, 1],
-                    outputRange: [ANIMATION_CONFIG.BUTTON_TRANSLATE_Y, 0],
+                    outputRange: [50, 0],
                 }),
             },
             {
                 scale: buttonAnimation.interpolate({
                     inputRange: [0, 1],
-                    outputRange: ANIMATION_CONFIG.BUTTON_SCALE_RANGE,
+                    outputRange: [0.8, 1],
                 }),
             },
         ],
     };
 
+    // 스와이퍼 애니메이션 스타일
     const swiperAnimatedStyle = {
         opacity: swiperAnimation,
         transform: [
             {
                 translateY: swiperAnimation.interpolate({
                     inputRange: [0, 1],
-                    outputRange: [ANIMATION_CONFIG.SWIPER_TRANSLATE_Y, 0],
+                    outputRange: [200, 0],
                 }),
             },
         ],
@@ -121,7 +97,7 @@ export default function MapPlaceCardSwiper({
                 <Animated.View style={buttonAnimatedStyle}>
                     <FloatingButton
                         onPress={handleFloatingButtonPress}
-                        style={FLOATING_BUTTON_STYLE}
+                        style={buttonStyle}
                     />
                 </Animated.View>
             )}

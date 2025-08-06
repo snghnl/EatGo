@@ -8,7 +8,6 @@ import MapPlaceCardSwiper from "@/components/main/MapPlaceCardSwiper";
 // MOCK DATA
 import mockData from "@/mock-data/places.json";
 
-// Types
 interface PlaceItem {
     id: string;
     place_name: string;

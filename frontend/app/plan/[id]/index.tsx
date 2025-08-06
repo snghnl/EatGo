@@ -1,10 +1,10 @@
-import React, { useEffect, useState } from "react";
+import React, { useState, useEffect } from "react";
 import {
     StyleSheet,
     View,
+    Text,
     SafeAreaView,
     Alert,
-    TouchableOpacity,
     ScrollView,
 } from "react-native";
 import { useLocalSearchParams, router } from "expo-router";

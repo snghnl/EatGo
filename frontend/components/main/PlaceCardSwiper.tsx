@@ -1,4 +1,4 @@
-import React, { useRef, useCallback } from "react";
+import React, { useRef, useCallback, useMemo } from "react";
 import {
     View,
     Text,
@@ -13,38 +13,11 @@ import Swiper from "react-native-swiper";
 import placesData from "@/mock-data/places.json";
 import { useRouter } from "expo-router";
 
-// Constants
 const { width } = Dimensions.get("window");
-const SWIPER_CONFIG = {
-    HEIGHT: 135,
-    CARD_HEIGHT: 140,
-    CARD_WIDTH: width - 40,
-    DRAG_THRESHOLD: 3,
-    CLOSE_THRESHOLD: 15,
-    MAX_PLACES: 5,
-} as const;
-
-const STYLES = {
-    ARROW_SIZE: 40,
-    DRAG_INDICATOR_WIDTH: 40,
-    DRAG_INDICATOR_HEIGHT: 4,
-    IMAGE_SIZE: 100,
-    IMAGE_HEIGHT: 110,
-} as const;
-
-// Types
-interface Place {
-    id: string;
-    place_name: string;
-    category_name: string;
-    road_address_name: string;
-    phone: string;
-    place_url: string;
-}
 
 interface Props {
     onClose: () => void;
-    onPlaceSelect?: (selectedPlace: Place) => void;
+    onPlaceSelect?: (selectedPlace: any) => void;
 }
 
 export default function PlaceCardSwiper({ onClose, onPlaceSelect }: Props) {
@@ -52,7 +25,7 @@ export default function PlaceCardSwiper({ onClose, onPlaceSelect }: Props) {
     const isDragging = useRef(false);
     const router = useRouter();
 
-    const places = placesData.documents.slice(0, SWIPER_CONFIG.MAX_PLACES);
+    const places = useMemo(() => placesData.documents.slice(0, 5), []);
 
     const handleTouchStart = useCallback((e: GestureResponderEvent) => {
         touchStartY.current = e.nativeEvent.pageY;
@@ -63,7 +36,7 @@ export default function PlaceCardSwiper({ onClose, onPlaceSelect }: Props) {
     const handleTouchMove = useCallback((e: GestureResponderEvent) => {
         const currentY = e.nativeEvent.pageY;
         const deltaY = currentY - touchStartY.current;
-        if (Math.abs(deltaY) > SWIPER_CONFIG.DRAG_THRESHOLD) {
+        if (Math.abs(deltaY) > 3) {
             isDragging.current = true;
         }
     }, []);
@@ -75,8 +48,7 @@ export default function PlaceCardSwiper({ onClose, onPlaceSelect }: Props) {
             const touchEndY = e.nativeEvent.pageY;
             const deltaY = touchEndY - touchStartY.current;
             console.log("Touch delta Y:", deltaY);
-
-            if (deltaY > SWIPER_CONFIG.CLOSE_THRESHOLD) {
+            if (deltaY > 15) {
                 console.log("Closing swiper via touch");
                 onClose();
             }
@@ -86,7 +58,7 @@ export default function PlaceCardSwiper({ onClose, onPlaceSelect }: Props) {
     );
 
     const handleCardPress = useCallback(
-        (place: Place) => {
+        (place: any) => {
             console.log("Card pressed:", place.place_name);
             router.push(`/place/${place.id}/detail`);
         },
@@ -98,7 +70,7 @@ export default function PlaceCardSwiper({ onClose, onPlaceSelect }: Props) {
     }, []);
 
     const renderPlaceCard = useCallback(
-        (place: Place, index: number) => (
+        (place: any, index: number) => (
             <View key={`${place.id}-${index}`} style={styles.cardWrapper}>
                 <TouchableOpacity
                     style={styles.card}
@@ -174,11 +146,9 @@ export default function PlaceCardSwiper({ onClose, onPlaceSelect }: Props) {
                     nextButton={<Text style={styles.arrow}>›</Text>}
                     prevButton={<Text style={styles.arrow}>‹</Text>}
                     removeClippedSubviews={false}
-                    height={SWIPER_CONFIG.HEIGHT}
+                    height={135}
                 >
-                    {places.map((place, index) =>
-                        renderPlaceCard(place, index)
-                    )}
+                    {places.map(renderPlaceCard)}
                 </Swiper>
             </View>
         </View>
@@ -202,8 +172,8 @@ const styles = StyleSheet.create({
         backgroundColor: "transparent",
     },
     dragIndicator: {
-        width: STYLES.DRAG_INDICATOR_WIDTH,
-        height: STYLES.DRAG_INDICATOR_HEIGHT,
+        width: 40,
+        height: 4,
         backgroundColor: "#ccc",
         borderRadius: 2,
     },
@@ -216,7 +186,7 @@ const styles = StyleSheet.create({
         flex: 1,
     },
     swiperContainer: {
-        height: SWIPER_CONFIG.HEIGHT,
+        height: 170,
     },
     cardWrapper: {
         flex: 1,
@@ -244,8 +214,8 @@ const styles = StyleSheet.create({
         marginRight: 3,
     },
     card: {
-        width: SWIPER_CONFIG.CARD_WIDTH,
-        height: SWIPER_CONFIG.CARD_HEIGHT,
+        width: width - 40,
+        height: 140,
         backgroundColor: "#fff",
         borderRadius: 10,
         flexDirection: "row",
@@ -257,8 +227,8 @@ const styles = StyleSheet.create({
         elevation: 5,
     },
     image: {
-        width: STYLES.IMAGE_SIZE,
-        height: STYLES.IMAGE_HEIGHT,
+        width: 100,
+        height: 110,
         borderRadius: 10,
         backgroundColor: "#f0f0f0",
     },
@@ -312,11 +282,11 @@ const styles = StyleSheet.create({
     buttonWrapper: {
         alignItems: "center",
         justifyContent: "space-between",
-        height: SWIPER_CONFIG.CARD_HEIGHT,
+        height: 140,
         paddingHorizontal: 10,
     },
     arrow: {
-        fontSize: STYLES.ARROW_SIZE,
+        fontSize: 40,
         color: "#e94e77",
         fontWeight: "bold",
     },
