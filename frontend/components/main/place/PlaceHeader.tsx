@@ -3,6 +3,7 @@ import { View, Text, TouchableOpacity, StyleSheet } from 'react-native';
 import { MaterialIcons } from '@expo/vector-icons';
 import { Colors } from '../../../constants/Colors';
 import { ThemedText } from '../../ThemedText';
+import { BookmarkButton } from '../BookmarkButton';
 
 interface PlaceHeaderProps {
     placeName: string;
@@ -29,6 +30,12 @@ export const PlaceHeader: React.FC<PlaceHeaderProps> = ({
                 <ThemedText weight="bold" style={styles.category}>
                     {category}
                 </ThemedText>
+                <BookmarkButton
+                    isBookmarked={isBookmarked}
+                    onPress={onBookmarkPress}
+                    style={styles.bookmarkButton}
+                    size={25}
+                />
                 <ThemedText size="2xl" weight="bold" style={styles.placeName}>
                     {placeName}
                 </ThemedText>
@@ -59,14 +66,6 @@ export const PlaceHeader: React.FC<PlaceHeaderProps> = ({
                     </View>
                 </View>
             </View>
-
-            <TouchableOpacity onPress={onBookmarkPress} style={styles.bookmarkButton}>
-                <MaterialIcons
-                    name={isBookmarked ? 'bookmark' : 'bookmark-border'}
-                    size={24}
-                    color={Colors.textPrimary}
-                />
-            </TouchableOpacity>
         </View>
     );
 };

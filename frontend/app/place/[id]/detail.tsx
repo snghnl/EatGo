@@ -9,7 +9,7 @@ import { PlaceMenu } from '@/components/main/place/PlaceMenu';
 import { ThemedText } from '@/components/ThemedText';
 import { Colors } from '@/constants/Colors';
 import placesData from '@/mock-data/places.json';
-import { CourseCard } from '@/components/plan';
+import { CourseListExample } from '@/components/plan';
 
 export default function PlaceDetailScreen() {
     const router = useRouter();
@@ -103,20 +103,18 @@ export default function PlaceDetailScreen() {
                 <PlaceMenu menuItems={mockMenuItems} />
                 <View style={styles.separator} />
 
-                <View style={styles.container}>
+                <View style={styles.titleWrapper}>
                     <ThemedText size="lg" weight="bold" style={styles.title}>
                         다른 여행객분들은{'\n'}
-                    </ThemedText>
-
-                    <ThemedText size="lg" color="primary" weight="bold" style={styles.title}>
-                        이 코스
-                        <ThemedText size="lg" weight="bold">
+                        <ThemedText size="lg" weight="bold" style={styles.title}>
+                            <ThemedText size="lg" color="primary" weight="bold">
+                                이 코스
+                            </ThemedText>
                             로 방문하셨어요
                         </ThemedText>
                     </ThemedText>
-
-                    <CourseCard hasImages={true} />
                 </View>
+                <CourseListExample />
             </ScrollView>
         </SafeAreaView>
     );
@@ -140,7 +138,13 @@ const styles = StyleSheet.create({
         height: 8,
         backgroundColor: '#F5F5F5',
     },
+    titleWrapper: {
+        paddingTop: 32,
+        paddingBottom: 24,
+        paddingHorizontal: 20,
+        backgroundColor: Colors.listbackground,
+    },
     title: {
-        paddingLeft: 20,
+        justifyContent: 'center',
     },
 });

@@ -1,8 +1,9 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { View, StyleSheet, TouchableOpacity, Image } from 'react-native';
 import { ThemedText } from '@/components/ThemedText';
 import { Colors } from '@/constants/Colors';
 import { Ionicons } from '@expo/vector-icons';
+import { BookmarkButton } from '@/components/main/BookmarkButton';
 
 export interface PlaceCardProps {
     id: string;
@@ -30,19 +31,20 @@ export const PlaceCard: React.FC<PlaceCardProps> = ({
     isBookmarked = false,
     isSaved = false,
 }) => {
+    const [bookmarked, setBookmarked] = useState(isBookmarked);
+
+    const handleBookmarkPress = () => {
+        setBookmarked((prev) => !prev);
+        onBookmark?.();
+    };
+
     return (
         <TouchableOpacity
             style={[styles.card, isSaved && styles.savedCard]}
             onPress={() => onPress?.(id)}
             activeOpacity={0.9}
         >
-            <TouchableOpacity style={styles.bookmarkButton} onPress={onBookmark}>
-                <Ionicons
-                    name={isBookmarked ? 'bookmark' : 'bookmark-outline'}
-                    size={20}
-                    color={isBookmarked ? Colors.primary : Colors.textSecondary}
-                />
-            </TouchableOpacity>
+            <BookmarkButton isBookmarked={bookmarked} onPress={handleBookmarkPress} />
 
             <Image
                 source={{
