@@ -9,7 +9,7 @@ import {
 } from "react-native";
 import { useLocalSearchParams, router } from "expo-router";
 import { DayPlanList, AddCourseCard } from "@/components/plan";
-import PlaceCardSwiper from "@/components/PlaceCardSwiper";
+import PlaceCardSwiper from "@/components/main/PlaceCardSwiper";
 import Header from "@/components/common/Header";
 import ActionButtons from "@/components/common/ActionButtons";
 import { Colors } from "@/constants/Colors";

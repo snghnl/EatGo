@@ -8,7 +8,7 @@ import {
 } from "react-native";
 import { useLocalSearchParams, router } from "expo-router";
 import { RecommendationList } from "@/components/plan";
-import PlaceCardSwiper from "@/components/PlaceCardSwiper";
+import PlaceCardSwiper from "@/components/main/PlaceCardSwiper";
 import Header from "@/components/common/Header";
 import { ThemedText } from "@/components/ThemedText";
 import { Colors } from "@/constants/Colors";

@@ -1,24 +1,49 @@
-import React from 'react';
-import { TouchableOpacity, StyleSheet, ViewStyle } from 'react-native';
-import { Ionicons } from '@expo/vector-icons';
-import { LinearGradient } from 'expo-linear-gradient';
-import { Colors } from '@/constants/Colors';
+import React from "react";
+import { TouchableOpacity, StyleSheet, ViewStyle } from "react-native";
+import { Ionicons } from "@expo/vector-icons";
+import { LinearGradient } from "expo-linear-gradient";
+import { Colors } from "@/constants/Colors";
 
+// Types
 interface Props {
     onPress: () => void;
     style?: ViewStyle;
 }
 
+// Constants
+const BUTTON_CONFIG = {
+    PADDING: 14,
+    BORDER_RADIUS: 40,
+    ICON_SIZE: 20,
+    SHADOW_OPACITY: 0.2,
+    SHADOW_OFFSET: { width: 0, height: 2 },
+    SHADOW_RADIUS: 4,
+    ELEVATION: 5,
+} as const;
+
+const GRADIENT_CONFIG = {
+    COLORS: ["#FF9EA4", Colors.primary],
+    START: { x: 0, y: 0 },
+    END: { x: 0, y: 1 },
+} as const;
+
 export default function FloatingButton({ onPress, style }: Props) {
     return (
-        <TouchableOpacity onPress={onPress} style={[styles.buttonContainer, style]}>
+        <TouchableOpacity
+            onPress={onPress}
+            style={[styles.buttonContainer, style]}
+        >
             <LinearGradient
-                colors={['#FF9EA4', Colors.primary]}
-                start={{ x: 0, y: 0 }}
-                end={{ x: 0, y: 1 }}
+                colors={GRADIENT_CONFIG.COLORS}
+                start={GRADIENT_CONFIG.START}
+                end={GRADIENT_CONFIG.END}
                 style={styles.gradientButton}
             >
-                <Ionicons name="chevron-up" size={20} color="white" />
+                <Ionicons
+                    name="chevron-up"
+                    size={BUTTON_CONFIG.ICON_SIZE}
+                    color="white"
+                />
             </LinearGradient>
         </TouchableOpacity>
     );
@@ -26,20 +51,20 @@ export default function FloatingButton({ onPress, style }: Props) {
 
 const styles = StyleSheet.create({
     buttonContainer: {
-        position: 'absolute',
+        position: "absolute",
         bottom: 60,
-        alignSelf: 'center',
+        alignSelf: "center",
         zIndex: 10,
     },
     gradientButton: {
-        padding: 14,
-        borderRadius: 40,
-        alignItems: 'center',
-        justifyContent: 'center',
-        shadowColor: '#000',
-        shadowOpacity: 0.2,
-        shadowOffset: { width: 0, height: 2 },
-        shadowRadius: 4,
-        elevation: 5,
+        padding: BUTTON_CONFIG.PADDING,
+        borderRadius: BUTTON_CONFIG.BORDER_RADIUS,
+        alignItems: "center",
+        justifyContent: "center",
+        shadowColor: "#000",
+        shadowOpacity: BUTTON_CONFIG.SHADOW_OPACITY,
+        shadowOffset: BUTTON_CONFIG.SHADOW_OFFSET,
+        shadowRadius: BUTTON_CONFIG.SHADOW_RADIUS,
+        elevation: BUTTON_CONFIG.ELEVATION,
     },
 });
