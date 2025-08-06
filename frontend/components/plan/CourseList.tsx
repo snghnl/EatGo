@@ -1,19 +1,16 @@
-import React from "react";
-import { StyleSheet, View } from "react-native";
-import { ThemedView } from "../ThemedView";
-import { CourseCard } from "./CourseCard";
-import { Colors } from "../../constants/Colors";
-import { Course } from "../../types";
+import React from 'react';
+import { StyleSheet, View } from 'react-native';
+import { ThemedView } from '../ThemedView';
+import { CourseCard } from './CourseCard';
+import { Colors } from '../../constants/Colors';
+import { Course } from '../../types';
 
 interface CourseListProps {
     courses: Course[];
     onCoursePress?: (courseId: string) => void;
 }
 
-export const CourseList: React.FC<CourseListProps> = ({
-    courses,
-    onCoursePress,
-}) => {
+export const CourseList: React.FC<CourseListProps> = ({ courses, onCoursePress }) => {
     return (
         <ThemedView style={styles.container}>
             <View style={styles.contentContainer}>

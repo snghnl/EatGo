@@ -39,30 +39,43 @@ export const FoodSelector: React.FC<FoodSelectorProps> = ({ onFoodChange }) => {
         onFoodChange?.(newSelected);
     };
 
+    // 12개 아이템을 4개씩 3개 그룹으로 나누기 (4×3 그리드)
+    const createRows = () => {
+        const rows = [];
+        for (let i = 0; i < foodCategories.length; i += 4) {
+            const rowItems = foodCategories.slice(i, i + 4);
+            rows.push(rowItems);
+        }
+        return rows;
+    };
+
+    const rows = createRows();
+
     return (
         <View style={styles.container}>
-            <View style={styles.foodGrid}>
-                {foodCategories.map((food, index) => (
-                    <FoodCard
-                        key={index}
-                        foodName={food}
-                        isSelected={selectedFoods.includes(food)}
-                        onPress={handleFoodPress}
-                    />
-                ))}
-            </View>
+            {rows.map((row, rowIndex) => (
+                <View key={rowIndex} style={styles.row}>
+                    {row.map((food, index) => (
+                        <FoodCard
+                            key={`${rowIndex}-${index}`}
+                            foodName={food}
+                            isSelected={selectedFoods.includes(food)}
+                            onPress={handleFoodPress}
+                        />
+                    ))}
+                </View>
+            ))}
         </View>
     );
 };
 
 const styles = StyleSheet.create({
     container: {
-        marginBottom: 24,
+        marginBottom: 16,
     },
-    foodGrid: {
+    row: {
         flexDirection: "row",
-        flexWrap: "wrap",
-        gap: 24,
-        justifyContent: "center",
+        justifyContent: "space-between",
+        marginBottom: 8,
     },
 });

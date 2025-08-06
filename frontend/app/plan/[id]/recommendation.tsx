@@ -1,7 +1,14 @@
 import React, { useState } from "react";
-import { StyleSheet, View, TouchableOpacity, SafeAreaView } from "react-native";
+import {
+    StyleSheet,
+    View,
+    TouchableOpacity,
+    SafeAreaView,
+    Alert,
+} from "react-native";
 import { useLocalSearchParams, router } from "expo-router";
 import { RecommendationList } from "@/components/plan";
+import PlaceCardSwiper from "@/components/main/PlaceCardSwiper";
 import Header from "@/components/common/Header";
 import { ThemedText } from "@/components/ThemedText";
 import { Colors } from "@/constants/Colors";
@@ -138,6 +145,11 @@ export default function RecommendationScreen() {
     const [selectedRecommendations, setSelectedRecommendations] = useState<
         string[]
     >([]);
+    const [selectedRecommendationId, setSelectedRecommendationId] = useState<
+        string | null
+    >(null);
+    const [selectedPlaceId, setSelectedPlaceId] = useState<string | null>(null);
+    const [showPlaceCardSwiper, setShowPlaceCardSwiper] = useState(false);
 
     // 지역 이름 추출
     const getRegionName = () => {
@@ -148,9 +160,51 @@ export default function RecommendationScreen() {
         return "전주";
     };
 
+    const handleTabPress = (tab: "region" | "theme") => {
+        setActiveTab(tab);
+    };
+
+    const handleLongPress = (recommendationId: string) => {
+        console.log("PlanCard long press:", recommendationId);
+        setSelectedRecommendationId(recommendationId);
+    };
+
     const handlePlacePress = (recommendationId: string, placeId: string) => {
-        console.log("장소 클릭:", recommendationId, placeId);
-        // TODO: 장소 수정 모달 또는 페이지로 이동
+        console.log("Place pressed:", recommendationId, placeId);
+        if (selectedRecommendationId === recommendationId) {
+            // 선택된 추천의 place를 터치한 경우
+            setSelectedPlaceId(placeId);
+            setShowPlaceCardSwiper(true);
+        } else {
+            // 일반적인 place 터치
+            console.log("장소 클릭:", recommendationId, placeId);
+        }
+    };
+
+    const handleClosePlaceCardSwiper = () => {
+        setShowPlaceCardSwiper(false);
+        setSelectedPlaceId(null);
+        setSelectedRecommendationId(null);
+    };
+
+    const handlePlaceSelect = (selectedPlace: any) => {
+        console.log("Place selected for replacement:", selectedPlace);
+        Alert.alert(
+            `${selectedPlace.place_name}로 교체하시겠습니까?`,
+            "교체하면 기존 장소가 삭제됩니다.",
+            [
+                { text: "취소", style: "cancel" },
+                {
+                    text: "교체",
+                    onPress: () => {
+                        console.log(
+                            `교체 시도: ${selectedPlace.place_name} (ID: ${selectedPlace.id})`
+                        );
+                        alert(`${selectedPlace.place_name}로 교체되었습니다!`);
+                    },
+                },
+            ]
+        );
     };
 
     const handleCardPress = (recommendationId: string) => {
@@ -168,10 +222,6 @@ export default function RecommendationScreen() {
                 return [...prev, recommendationId];
             }
         });
-    };
-
-    const handleTabPress = (tab: "region" | "theme") => {
-        setActiveTab(tab);
     };
 
     return (
@@ -222,7 +272,18 @@ export default function RecommendationScreen() {
                 onPlacePress={handlePlacePress}
                 onCardPress={handleCardPress}
                 onSave={handleSave}
+                onLongPress={handleLongPress}
+                selectedPlaceId={selectedPlaceId}
+                activeRecommendationId={selectedRecommendationId}
             />
+
+            {/* PlaceCardSwiper */}
+            {showPlaceCardSwiper && (
+                <PlaceCardSwiper
+                    onClose={handleClosePlaceCardSwiper}
+                    onPlaceSelect={handlePlaceSelect}
+                />
+            )}
         </SafeAreaView>
     );
 }

@@ -1,7 +1,15 @@
-import React, { useEffect, useState } from "react";
-import { StyleSheet, View, SafeAreaView } from "react-native";
+import React, { useState, useEffect } from "react";
+import {
+    StyleSheet,
+    View,
+    Text,
+    SafeAreaView,
+    Alert,
+    ScrollView,
+} from "react-native";
 import { useLocalSearchParams, router } from "expo-router";
 import { DayPlanList, AddCourseCard } from "@/components/plan";
+import PlaceCardSwiper from "@/components/main/PlaceCardSwiper";
 import Header from "@/components/common/Header";
 import ActionButtons from "@/components/common/ActionButtons";
 import { Colors } from "@/constants/Colors";
@@ -98,6 +106,11 @@ export default function PlanDetailScreen() {
             isNew?: string;
         }>();
     const [courseData, setCourseData] = useState<CourseData | null>(null);
+    const [selectedDayPlanId, setSelectedDayPlanId] = useState<string | null>(
+        null
+    );
+    const [selectedPlaceId, setSelectedPlaceId] = useState<string | null>(null);
+    const [showPlaceCardSwiper, setShowPlaceCardSwiper] = useState(false);
 
     // 새 코스인지 판단 (isNew 파라미터가 'true'이면 새 코스)
     const isNewCourse = isNew === "true";
@@ -176,11 +189,6 @@ export default function PlanDetailScreen() {
         console.log("코스 편집 버튼 클릭");
     };
 
-    const handlePlacePress = (dayPlanId: string, placeId: string) => {
-        console.log("장소 클릭:", dayPlanId, placeId);
-        // TODO: 장소 수정 모달 또는 페이지로 이동
-    };
-
     const handleCardPress = (dayPlanId: string) => {
         console.log("카드 클릭:", dayPlanId);
         // TODO: 카드 전체 액션 (예: 스와이프 저장)
@@ -195,8 +203,9 @@ export default function PlanDetailScreen() {
         console.log(`${day}일차 추천 여행경로 보러가기 클릭`);
         // recommendation 페이지로 이동 (현재 코스 ID와 함께)
         router.push({
-            pathname: "/plan/[id]/recommendation" as any,
+            pathname: `/plan/${id}/recommendation` as any,
             params: {
+                id: id,
                 courseId: id,
                 day: day.toString(),
                 startDate: startDate,
@@ -211,8 +220,9 @@ export default function PlanDetailScreen() {
         console.log("새 코스 추천 여행경로 보러가기 클릭");
         // recommendation 페이지로 이동 (현재 코스 ID와 함께)
         router.push({
-            pathname: "/plan/[id]/recommendation" as any,
+            pathname: `/plan/${id}/recommendation` as any,
             params: {
+                id: id,
                 courseId: id,
                 startDate: startDate,
                 endDate: endDate,
@@ -226,7 +236,7 @@ export default function PlanDetailScreen() {
         console.log("추천 경로 저장하기 클릭");
         // recommendation 페이지로 이동 (현재 코스 ID와 함께)
         router.push({
-            pathname: "/plan/[id]/recommendation" as any,
+            pathname: `/plan/${id}/recommendation` as any,
             params: {
                 courseId: id,
                 startDate: startDate,
@@ -235,6 +245,68 @@ export default function PlanDetailScreen() {
                 foods: foods,
             },
         });
+    };
+
+    const handleLongPress = (dayPlanId: string) => {
+        console.log("PlanCard long press:", dayPlanId);
+        setSelectedDayPlanId(dayPlanId);
+    };
+
+    const handlePlacePress = (dayPlanId: string, placeId: string) => {
+        console.log("Place pressed:", dayPlanId, placeId);
+        if (selectedDayPlanId === dayPlanId) {
+            // 선택된 일차의 place를 터치한 경우
+            setSelectedPlaceId(placeId);
+            setShowPlaceCardSwiper(true);
+        } else {
+            // 일반적인 place 터치 (상세 페이지로 이동 등)
+            console.log("장소 클릭:", dayPlanId, placeId);
+        }
+    };
+
+    const handleClosePlaceCardSwiper = () => {
+        setShowPlaceCardSwiper(false);
+        setSelectedPlaceId(null);
+        setSelectedDayPlanId(null);
+    };
+
+    const handlePlaceSelect = (selectedPlace: any) => {
+        console.log("Place selected for replacement:", selectedPlace);
+        // 여기서 실제 place 교체 로직을 구현할 수 있습니다
+        // 현재는 콘솔에만 출력
+        Alert.alert(
+            `${selectedPlace.place_name}로 교체하시겠습니까?`,
+            "교체하면 기존 장소가 삭제됩니다.",
+            [
+                { text: "취소", style: "cancel" },
+                {
+                    text: "교체",
+                    onPress: () => {
+                        // 실제 교체 로직 구현
+                        // 예: 해당 일차 계획의 places 배열에서 선택된 장소를 제거하고 새로운 장소를 추가
+                        // 이 부분은 실제 데이터 구조에 따라 다르게 구현해야 합니다.
+                        // 여기서는 단순히 콘솔에 출력하고 실제 교체는 미구현
+                        console.log(
+                            `교체 시도: ${selectedPlace.place_name} (ID: ${selectedPlace.id})`
+                        );
+                        // 실제 교체 로직 구현 예시 (예: 해당 일차 계획의 places 배열 수정)
+                        // const updatedDayPlans = sampleDayPlans.map((dayPlan) => {
+                        //     if (dayPlan.id === selectedDayPlanId) {
+                        //         return {
+                        //             ...dayPlan,
+                        //             places: dayPlan.places.filter(
+                        //                 (place) => place.id !== selectedPlaceId
+                        //             ),
+                        //         };
+                        //     }
+                        //     return dayPlan;
+                        // });
+                        // setSampleDayPlans(updatedDayPlans); // 샘플 데이터 업데이트
+                        alert(`${selectedPlace.place_name}로 교체되었습니다!`);
+                    },
+                },
+            ]
+        );
     };
 
     if (!courseData) {
@@ -260,23 +332,36 @@ export default function PlanDetailScreen() {
                 </View>
             ) : (
                 <>
-                    <DayPlanList
-                        dayPlans={sampleDayPlans}
-                        onPlacePress={handlePlacePress}
-                        onCardPress={handleCardPress}
-                        onSave={handleSave}
-                        isNewCourse={isNewCourse}
-                        onRecommendationPress={handleRecommendationPress}
-                    />
+                    <ScrollView style={styles.scrollContainer}>
+                        {/* 기존 코스의 경우 추천 경로 저장하기 버튼 */}
+                        <View style={styles.addRecommendationContainer}>
+                            <AddCourseCard
+                                onPress={handleAddRecommendation}
+                                text="추천 경로 저장하기"
+                            />
+                        </View>
 
-                    {/* 기존 코스의 경우 추천 경로 저장하기 버튼 */}
-                    <View style={styles.addRecommendationContainer}>
-                        <AddCourseCard
-                            onPress={handleAddRecommendation}
-                            text="추천 경로 저장하기"
+                        <DayPlanList
+                            dayPlans={sampleDayPlans}
+                            onPlacePress={handlePlacePress}
+                            onCardPress={handleCardPress}
+                            onSave={handleSave}
+                            isNewCourse={isNewCourse}
+                            onRecommendationPress={handleRecommendationPress}
+                            onLongPress={handleLongPress}
+                            selectedPlaceId={selectedPlaceId}
+                            activeDayPlanId={selectedDayPlanId}
                         />
-                    </View>
+                    </ScrollView>
                 </>
+            )}
+
+            {/* PlaceCardSwiper */}
+            {showPlaceCardSwiper && (
+                <PlaceCardSwiper
+                    onClose={handleClosePlaceCardSwiper}
+                    onPlaceSelect={handlePlaceSelect}
+                />
             )}
         </SafeAreaView>
     );
@@ -294,8 +379,11 @@ const styles = StyleSheet.create({
         alignItems: "flex-end",
     },
     addRecommendationContainer: {
-        paddingTop: 16,
+        paddingTop: 8, // 16에서 8로 줄임
         paddingHorizontal: 16,
-        paddingBottom: 16,
+        paddingBottom: 8, // 16에서 8로 줄임
+    },
+    scrollContainer: {
+        flex: 1,
     },
 });

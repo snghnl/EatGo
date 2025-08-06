@@ -1,12 +1,12 @@
-import React, { useState } from "react";
-import { StyleSheet, View, ScrollView } from "react-native";
-import { ThemedView } from "../ThemedView";
-import { CourseList } from "./CourseList";
-import { AddCourseCard } from "./AddCourseCard";
-import { router } from "expo-router";
-import { Colors } from "../../constants/Colors";
-import { SAMPLE_COURSES } from "../../constants/Data";
-import { Course } from "../../types";
+import React, { useState } from 'react';
+import { StyleSheet, View, ScrollView } from 'react-native';
+import { ThemedView } from '../ThemedView';
+import { CourseList } from './CourseList';
+import { AddCourseCard } from './AddCourseCard';
+import { router } from 'expo-router';
+import { Colors } from '../../constants/Colors';
+import { SAMPLE_COURSES } from '../../constants/Data';
+import { Course } from '../../types';
 
 export const CourseListExample: React.FC<{
     onAddCourse?: () => void;
@@ -33,13 +33,18 @@ export const CourseListExample: React.FC<{
     }, [newCourse]);
 
     const handleAddCourse = () => {
-        console.log("새 여행경로 만들기 클릭");
+        console.log('새 여행경로 만들기 클릭');
         onAddCourse?.();
     };
 
     const handleCoursePress = (courseId: string) => {
         console.log("코스 클릭:", courseId);
-        router.push(`/course/${courseId}`);
+        router.push({
+            pathname: `/plan/${courseId}` as any,
+            params: {
+                id: courseId,
+            },
+        });
     };
 
     return (
@@ -53,10 +58,7 @@ export const CourseListExample: React.FC<{
                     <AddCourseCard onPress={handleAddCourse} />
                 </View>
 
-                <CourseList
-                    courses={courses}
-                    onCoursePress={handleCoursePress}
-                />
+                <CourseList courses={courses} onCoursePress={handleCoursePress} />
             </ScrollView>
         </ThemedView>
     );

@@ -23,6 +23,9 @@ interface RecommendationListProps {
     onPlacePress?: (recommendationId: string, placeId: string) => void;
     onCardPress?: (recommendationId: string) => void;
     onSave?: (recommendationId: string) => void;
+    onLongPress?: (recommendationId: string) => void;
+    selectedPlaceId?: string | null;
+    activeRecommendationId?: string | null;
 }
 
 export const RecommendationList: React.FC<RecommendationListProps> = ({
@@ -31,6 +34,9 @@ export const RecommendationList: React.FC<RecommendationListProps> = ({
     onPlacePress,
     onCardPress,
     onSave,
+    onLongPress,
+    selectedPlaceId = null,
+    activeRecommendationId = null,
 }) => {
     // 제목별로 그룹화
     const groupedRecommendations = recommendations.reduce(
@@ -81,6 +87,14 @@ export const RecommendationList: React.FC<RecommendationListProps> = ({
                                         }
                                         onSave={() =>
                                             onSave?.(recommendation.id)
+                                        }
+                                        onLongPress={() =>
+                                            onLongPress?.(recommendation.id)
+                                        }
+                                        selectedPlaceId={selectedPlaceId}
+                                        isActive={
+                                            activeRecommendationId ===
+                                            recommendation.id
                                         }
                                     />
                                 </View>
