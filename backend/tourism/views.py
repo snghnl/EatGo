@@ -127,7 +127,7 @@ class TourismRecommendationViewSet(viewsets.GenericViewSet):
                 {
                     "success": False,
                     "error": "입력 데이터가 올바르지 않습니다.",
-                    "details": e.detail,
+                    "details": str(e),
                 },
                 status=status.HTTP_400_BAD_REQUEST,
             )
@@ -184,7 +184,7 @@ class TourismRecommendationViewSet(viewsets.GenericViewSet):
                 {
                     "success": False,
                     "error": "입력 데이터가 올바르지 않습니다.",
-                    "details": e.detail,
+                    "details": str(e),
                 },
                 status=status.HTTP_400_BAD_REQUEST,
             )
@@ -248,7 +248,7 @@ class TourismAPIViewSet(viewsets.GenericViewSet):
                 {
                     "success": False,
                     "error": "입력 데이터가 올바르지 않습니다.",
-                    "details": e.detail,
+                    "details": str(e),
                 },
                 status=status.HTTP_400_BAD_REQUEST,
             )
