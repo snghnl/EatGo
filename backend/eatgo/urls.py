@@ -17,11 +17,14 @@ Including another URLconf
 
 from django.contrib import admin
 from django.urls import path, include
+from . import views
 
 urlpatterns = [
     path("admin/", admin.site.urls),
     path("kakaomap/", include("kakaomap.urls")),
     path("routes/", include("routes.urls")),
     path("travel_courses/", include("travel_courses.urls")),
-    # path('api-auth/', include('rest_framework.urls')),
+    path("", include("community.urls")),
+    path("api-auth/", include("rest_framework.urls")),
+    path("csrf-token/", views.get_csrf_token, name="get_csrf_token"),
 ]

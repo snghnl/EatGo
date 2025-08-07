@@ -51,6 +51,8 @@ INSTALLED_APPS = [
     "places",
     "routes",
     "travel_courses",
+    "community",
+    "django_filters",
 ]
 
 MIDDLEWARE = [
@@ -143,4 +145,3 @@ REST_FRAMEWORK = {
         "rest_framework.authentication.SessionAuthentication",
     ]
 }
-

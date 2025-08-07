@@ -1,0 +1,79 @@
+[
+  {
+    "model": "travel_courses.travelcourseroute",
+    "pk": "660e8400-e29b-41d4-a716-446655440001",
+    "fields": {
+      "travel_course": "550e8400-e29b-41d4-a716-446655440001",
+      "route": "86efdcdf-fe65-4ce7-9c1a-38a301af9342",
+      "sequence": 1,
+      "created_at": "2024-01-01T00:00:00Z",
+      "updated_at": "2024-01-01T00:00:00Z"
+    }
+  },
+  {
+    "model": "travel_courses.travelcourseroute",
+    "pk": "660e8400-e29b-41d4-a716-446655440002",
+    "fields": {
+      "travel_course": "550e8400-e29b-41d4-a716-446655440001",
+      "route": "0ebfe8bd-e0cb-4fdf-9994-80f16a497833",
+      "sequence": 2,
+      "created_at": "2024-01-01T00:00:00Z",
+      "updated_at": "2024-01-01T00:00:00Z"
+    }
+  },
+  {
+    "model": "travel_courses.travelcourseroute",
+    "pk": "660e8400-e29b-41d4-a716-446655440003",
+    "fields": {
+      "travel_course": "550e8400-e29b-41d4-a716-446655440001",
+      "route": "d3d4bd19-4686-4788-82f0-f67a591354b1",
+      "sequence": 3,
+      "created_at": "2024-01-01T00:00:00Z",
+      "updated_at": "2024-01-01T00:00:00Z"
+    }
+  },
+  {
+    "model": "travel_courses.travelcourseroute",
+    "pk": "660e8400-e29b-41d4-a716-446655440004",
+    "fields": {
+      "travel_course": "550e8400-e29b-41d4-a716-446655440002",
+      "route": "0ebfe8bd-e0cb-4fdf-9994-80f16a497833",
+      "sequence": 1,
+      "created_at": "2024-01-02T00:00:00Z",
+      "updated_at": "2024-01-02T00:00:00Z"
+    }
+  },
+  {
+    "model": "travel_courses.travelcourseroute",
+    "pk": "660e8400-e29b-41d4-a716-446655440005",
+    "fields": {
+      "travel_course": "550e8400-e29b-41d4-a716-446655440003",
+      "route": "d3d4bd19-4686-4788-82f0-f67a591354b1",
+      "sequence": 1,
+      "created_at": "2024-01-03T00:00:00Z",
+      "updated_at": "2024-01-03T00:00:00Z"
+    }
+  },
+  {
+    "model": "travel_courses.travelcourseroute",
+    "pk": "660e8400-e29b-41d4-a716-446655440006",
+    "fields": {
+      "travel_course": "550e8400-e29b-41d4-a716-446655440004",
+      "route": "d73f2162-1564-433a-a20a-704c93832e5f",
+      "sequence": 1,
+      "created_at": "2024-01-04T00:00:00Z",
+      "updated_at": "2024-01-04T00:00:00Z"
+    }
+  },
+  {
+    "model": "travel_courses.travelcourseroute",
+    "pk": "660e8400-e29b-41d4-a716-446655440007",
+    "fields": {
+      "travel_course": "550e8400-e29b-41d4-a716-446655440005",
+      "route": "79cdfe6e-6222-45b9-b2fe-97a777c6c551",
+      "sequence": 1,
+      "created_at": "2024-01-05T00:00:00Z",
+      "updated_at": "2024-01-05T00:00:00Z"
+    }
+  }
+]

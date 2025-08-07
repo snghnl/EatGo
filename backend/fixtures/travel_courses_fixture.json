@@ -1,0 +1,57 @@
+[
+  {
+    "model": "travel_courses.travelcourse",
+    "pk": "550e8400-e29b-41d4-a716-446655440001",
+    "fields": {
+      "title": "2박3일 서울 맛집 투어",
+      "description": "서울의 대표 맛집들을 3일에 걸쳐 체험하는 완벽한 여행 코스입니다. 전통 한식부터 현대적 카페까지 다양한 맛을 경험할 수 있습니다.",
+      "created_by": null,
+      "created_at": "2024-01-01T00:00:00Z",
+      "updated_at": "2024-01-01T00:00:00Z"
+    }
+  },
+  {
+    "model": "travel_courses.travelcourse",
+    "pk": "550e8400-e29b-41d4-a716-446655440002",
+    "fields": {
+      "title": "홍대 청춘 맛집 코스",
+      "description": "젊음의 거리 홍대에서 즐기는 데이트 코스와 야식 투어. 연인과 함께 또는 친구들과 함께 즐기기 좋은 코스입니다.",
+      "created_by": null,
+      "created_at": "2024-01-02T00:00:00Z",
+      "updated_at": "2024-01-02T00:00:00Z"
+    }
+  },
+  {
+    "model": "travel_courses.travelcourse",
+    "pk": "550e8400-e29b-41d4-a716-446655440003",
+    "fields": {
+      "title": "강남 프리미엄 다이닝",
+      "description": "강남의 고급 레스토랑들을 경험하는 특별한 여행 코스. 기념일이나 중요한 모임에 적합한 럭셔리 다이닝 경험을 제공합니다.",
+      "created_by": null,
+      "created_at": "2024-01-03T00:00:00Z",
+      "updated_at": "2024-01-03T00:00:00Z"
+    }
+  },
+  {
+    "model": "travel_courses.travelcourse",
+    "pk": "550e8400-e29b-41d4-a716-446655440004",
+    "fields": {
+      "title": "부산 해산물 천국 투어",
+      "description": "부산의 신선한 해산물을 만끽할 수 있는 1박2일 코스. 해운대, 자갈치시장, 광안리 등에서 바다의 맛을 제대로 경험할 수 있습니다.",
+      "created_by": null,
+      "created_at": "2024-01-04T00:00:00Z",
+      "updated_at": "2024-01-04T00:00:00Z"
+    }
+  },
+  {
+    "model": "travel_courses.travelcourse",
+    "pk": "550e8400-e29b-41d4-a716-446655440005",
+    "fields": {
+      "title": "제주도 특산품 탐방 투어",
+      "description": "제주도만의 특별한 음식들을 맛보는 2박3일 코스. 흑돼지, 갈치조림, 한라봉 등 제주도의 대표 먹거리를 모두 경험할 수 있습니다.",
+      "created_by": null,
+      "created_at": "2024-01-05T00:00:00Z",
+      "updated_at": "2024-01-05T00:00:00Z"
+    }
+  }
+]
