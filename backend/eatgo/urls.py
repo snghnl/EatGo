@@ -49,5 +49,6 @@ urlpatterns = [
     path("kakaomap/", include("kakaomap.urls")),
     path("routes/", include("routes.urls")),
     path("travel_courses/", include("travel_courses.urls")),
+    path("api/tourism/", include("tourism.urls")),
     # path('api-auth/', include('rest_framework.urls')),
 ]
