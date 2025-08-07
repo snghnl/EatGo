@@ -175,6 +175,7 @@ class TourismAPICache(BaseModel):
 class POIRecommendationCache(BaseModel):
     """
     사용자 위치 기반 POI 추천 결과를 캐싱하는 모델
+    추후 Redis 등 캐싱 시스템으로 마이그레이션 가능
     """
 
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
