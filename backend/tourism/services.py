@@ -15,10 +15,10 @@ class TourismAPIService:
     """
 
     # API 기본 설정
-    BASE_URL = "http://apis.data.go.kr/B551011/KorService1"
+    BASE_URL = "http://apis.data.go.kr/B551011"
     API_ENDPOINTS = {
-        "regional_tourism": "/areaBasedList1",  # 기초지자체 중심 관광지 정보
-        "related_tourism": "/areaBasedList1",  # 관광지별 연관 관광지 정보
+        "regional_tourism": "/LocgoHubTarService1/areaBasedList1",  # 기초지자체 중심 관광지 정보
+        "related_tourism": "/TarRlteTarService1/areaBasedList1",  # 관광지별 연관 관광지 정보
     }
 
     def __init__(self):
@@ -96,7 +96,12 @@ class TourismAPIService:
             raise Exception(f"API 호출 중 오류 발생: {str(e)}")
 
     def get_regional_tourism_data(
-        self, area_cd: str, signgu_cd: str, base_ym: str = None
+        self,
+        area_cd: str,
+        signgu_cd: str,
+        base_ym: str = None,
+        page_no: int = 1,
+        num_of_rows: int = 100,
     ) -> List[Dict]:
         """
         기초지자체 중심 관광지 정보 조회
@@ -105,6 +110,8 @@ class TourismAPIService:
             area_cd: 지역코드 (예: '11' for 서울)
             signgu_cd: 시군구코드 (예: '11530' for 구로구)
             base_ym: 기준연월 (YYYYMM 형식, 기본값: 현재월)
+            page_no: 페이지 번호 (기본값: 1)
+            num_of_rows: 한 번에 가져올 데이터 수 (기본값: 100)
 
         Returns:
             관광지 정보 리스트
@@ -113,11 +120,11 @@ class TourismAPIService:
             base_ym = datetime.now().strftime("%Y%m")
 
         params = {
-            "areaCode": area_cd,
-            "sigunguCode": signgu_cd,
+            "areaCd": area_cd,
+            "signguCd": signgu_cd,
             "baseYm": base_ym,
-            "numOfRows": 100,  # 한 번에 가져올 데이터 수
-            "pageNo": 1,
+            "numOfRows": num_of_rows,  # 한 번에 가져올 데이터 수
+            "pageNo": page_no,
         }
 
         cache_key = self._generate_cache_key("regional_tourism", params)
@@ -125,7 +132,14 @@ class TourismAPIService:
         # 캐시 확인
         cached_data = self._get_cached_data(cache_key)
         if cached_data:
-            return cached_data.get("response", {}).get("body", {}).get("items", [])
+            items_data = (
+                cached_data.get("response", {}).get("body", {}).get("items", {})
+            )
+            return (
+                items_data.get("item", [])
+                if isinstance(items_data, dict)
+                else items_data
+            )
 
         # API 호출
         api_data = self._call_api(self.API_ENDPOINTS["regional_tourism"], params)
@@ -134,23 +148,32 @@ class TourismAPIService:
         self._save_cache_data(cache_key, api_data, "regional_tourism", params)
 
         # DB에 POI 정보 저장
-        self._save_pois_to_db(
-            api_data.get("response", {}).get("body", {}).get("items", [])
+        items_data = api_data.get("response", {}).get("body", {}).get("items", {})
+        items_list = (
+            items_data.get("item", []) if isinstance(items_data, dict) else items_data
         )
 
-        return api_data.get("response", {}).get("body", {}).get("items", [])
+        self._save_pois_to_db(items_list)
+
+        return items_list
 
     def get_related_tourism_data(
-        self, tats_nm: str, area_cd: str, signgu_cd: str, base_ym: str = None
+        self,
+        area_cd: str,
+        signgu_cd: str,
+        base_ym: str = None,
+        page_no: int = 1,
+        num_of_rows: int = 50,
     ) -> List[Dict]:
         """
         관광지별 연관 관광지 정보 조회
 
         Args:
-            tats_nm: 관광지명
             area_cd: 지역코드
             signgu_cd: 시군구코드
             base_ym: 기준연월 (YYYYMM 형식, 기본값: 현재월)
+            page_no: 페이지 번호 (기본값: 1)
+            num_of_rows: 한 번에 가져올 데이터 수 (기본값: 50)
 
         Returns:
             연관 관광지 정보 리스트
@@ -159,11 +182,11 @@ class TourismAPIService:
             base_ym = datetime.now().strftime("%Y%m")
 
         params = {
-            "areaCode": area_cd,
-            "sigunguCode": signgu_cd,
+            "areaCd": area_cd,
+            "signguCd": signgu_cd,
             "baseYm": base_ym,
-            "numOfRows": 50,
-            "pageNo": 1,
+            "numOfRows": num_of_rows,
+            "pageNo": page_no,
         }
 
         cache_key = self._generate_cache_key("related_tourism", params)
@@ -171,7 +194,14 @@ class TourismAPIService:
         # 캐시 확인
         cached_data = self._get_cached_data(cache_key)
         if cached_data:
-            return cached_data.get("response", {}).get("body", {}).get("items", [])
+            items_data = (
+                cached_data.get("response", {}).get("body", {}).get("items", {})
+            )
+            return (
+                items_data.get("item", [])
+                if isinstance(items_data, dict)
+                else items_data
+            )
 
         # API 호출
         api_data = self._call_api(self.API_ENDPOINTS["related_tourism"], params)
@@ -180,11 +210,14 @@ class TourismAPIService:
         self._save_cache_data(cache_key, api_data, "related_tourism", params)
 
         # DB에 연관 관광지 정보 저장
-        self._save_related_tourism_to_db(
-            tats_nm, api_data.get("response", {}).get("body", {}).get("items", [])
+        items_data = api_data.get("response", {}).get("body", {}).get("items", {})
+        items_list = (
+            items_data.get("item", []) if isinstance(items_data, dict) else items_data
         )
 
-        return api_data.get("response", {}).get("body", {}).get("items", [])
+        self._save_related_tourism_to_db(items_list)
+
+        return items_list
 
     def _save_pois_to_db(self, items: List[Dict]):
         """API 응답의 POI 정보를 DB에 저장"""
@@ -193,7 +226,6 @@ class TourismAPIService:
                 TourismPOI.objects.update_or_create(
                     hub_tats_cd=item.get("hubTatsCd"),
                     defaults={
-                        "hub_tats_nm": item.get("hubTatsNm", ""),
                         "map_x": float(item.get("mapX", 0)),
                         "map_y": float(item.get("mapY", 0)),
                         "area_cd": item.get("areaCd", ""),
@@ -210,27 +242,31 @@ class TourismAPIService:
                 # 데이터 변환 오류 시 로그 기록 (실제로는 로깅 시스템 사용)
                 print(f"POI 데이터 저장 오류: {e}, 데이터: {item}")
 
-    def _save_related_tourism_to_db(self, base_tats_nm: str, items: List[Dict]):
+    def _save_related_tourism_to_db(self, items: List[Dict]):
         """API 응답의 연관 관광지 정보를 DB에 저장"""
         for item in items:
             try:
+                # 필수 필드가 없으면 건너뛰기
+                if not item.get("rlteTatsCd"):
+                    continue
+
                 RelatedTourism.objects.update_or_create(
-                    base_tats_nm=base_tats_nm,
-                    rite_tats_cd=item.get("riteTatsCd"),
+                    rite_tats_cd=item.get("rlteTatsCd"),
                     defaults={
-                        "base_area_cd": item.get("tAtsAreaCd", ""),
-                        "base_area_nm": item.get("tAtsAreaNm", ""),
-                        "base_signgu_cd": item.get("tAtsSignguCd", ""),
-                        "base_signgu_nm": item.get("tAtsSignguNm", ""),
-                        "rite_tats_nm": item.get("riteTatsNm", ""),
-                        "rite_regn_cd": item.get("riteRegnCd", ""),
-                        "rite_regn_nm": item.get("riteRegnNm", ""),
-                        "rite_signgu_cd": item.get("riteSignguCd", ""),
-                        "rite_signgu_nm": item.get("riteSignguNm", ""),
-                        "rite_ctgry_lcls_nm": item.get("riteCtgryLclsNm", ""),
-                        "rite_ctgry_mcls_nm": item.get("riteCtgryMclsNm", ""),
-                        "rite_ctgry_scls_nm": item.get("riteCtgrySclsNm", ""),
-                        "rite_rank": int(item.get("riteRank", 0)),
+                        "base_tats_nm": item.get("tAtsNm", ""),
+                        "base_area_cd": item.get("areaCd", ""),
+                        "base_area_nm": item.get("areaNm", ""),
+                        "base_signgu_cd": item.get("signguCd", ""),
+                        "base_signgu_nm": item.get("signguNm", ""),
+                        "rite_tats_nm": item.get("rlteTatsNm", ""),
+                        "rite_regn_cd": item.get("rlteRegnCd", ""),
+                        "rite_regn_nm": item.get("rlteRegnNm", ""),
+                        "rite_signgu_cd": item.get("rlteSignguCd", ""),
+                        "rite_signgu_nm": item.get("rlteSignguNm", ""),
+                        "rite_ctgry_lcls_nm": item.get("rlteCtgryLclsNm", ""),
+                        "rite_ctgry_mcls_nm": item.get("rlteCtgryMclsNm", ""),
+                        "rite_ctgry_scls_nm": item.get("rlteCtgrySclsNm", ""),
+                        "rite_rank": int(item.get("rlteRank", 0)),
                         "base_ym": item.get("baseYm", ""),
                     },
                 )
@@ -329,8 +365,10 @@ class POIRecommendationService:
             연관 관광지 리스트
         """
         try:
+            # get_related_tourism_data는 area_cd, signgu_cd, base_ym, page_no, num_of_rows를 받음
+            # poi_name은 현재 API에서 지원하지 않으므로 area_cd와 signgu_cd만 사용
             related_data = self.tourism_service.get_related_tourism_data(
-                poi_name, area_cd, signgu_cd
+                area_cd, signgu_cd
             )
 
             related_pois = []
@@ -350,3 +388,9 @@ class POIRecommendationService:
         except Exception as e:
             print(f"연관 관광지 조회 중 오류: {e}")
             return []
+
+
+if __name__ == "__main__":
+    tourism_service = TourismAPIService()
+    print(tourism_service.get_regional_tourism_data("11", "11530"))
+    print(tourism_service.get_related_tourism_data("11", "11530"))
