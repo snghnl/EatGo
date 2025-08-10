@@ -1,9 +1,11 @@
 import React, { useCallback } from "react";
-import { StyleSheet, View, Text, SafeAreaView } from "react-native";
+import { StyleSheet, View, Text } from "react-native";
+import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { Colors } from "@/constants/Colors";
 import TopBar from "@/components/TopBar";
 import SearchBar from "@/components/SearchBar";
 import MapPlaceCardSwiper from "@/components/main/MapPlaceCardSwiper";
+import KakaoMap from "@/components/main/KakaoMap";
 
 // MOCK DATA
 import mockData from "@/mock-data/places.json";
@@ -24,13 +26,15 @@ interface PlaceItem {
 }
 
 export default function MapScreen() {
+    const insets = useSafeAreaInsets();
+
     const handleSelectItem = useCallback((item: PlaceItem) => {
         console.log("Selected:", item.place_name);
     }, []);
 
     return (
-        <SafeAreaView style={styles.container}>
-            <View style={styles.headerWrapper}>
+        <View style={styles.container}>
+            <View style={[styles.headerWrapper, { paddingTop: insets.top }]}>
                 <View style={styles.searchWrapper}>
                     <SearchBar
                         searchData={mockData.documents}
@@ -42,15 +46,20 @@ export default function MapScreen() {
                 </View>
             </View>
 
-            <View style={styles.content}>
-                <Text style={styles.subtitle}>
-                    지도 화면이 여기에 표시됩니다.
-                </Text>
-                <Text style={styles.debug}>Debug: Screen is rendering</Text>
+            {/* 지도를 배경으로 전체 화면에 렌더링 */}
+            <View style={styles.mapContainer}>
+                <KakaoMap latitude={37.566826} longitude={126.9786567} />
             </View>
 
-            <MapPlaceCardSwiper onSelectItem={handleSelectItem} />
-        </SafeAreaView>
+            <View
+                style={[
+                    styles.cardSwiperWrapper,
+                    { paddingBottom: insets.bottom },
+                ]}
+            >
+                <MapPlaceCardSwiper onSelectItem={handleSelectItem} />
+            </View>
+        </View>
     );
 }
 
@@ -60,9 +69,19 @@ const styles = StyleSheet.create({
         backgroundColor: Colors.background,
     },
     headerWrapper: {
-        paddingTop: 10,
+        position: "absolute",
+        top: 0,
+        left: 0,
+        right: 0,
         paddingHorizontal: 20,
         zIndex: 100,
+    },
+    cardSwiperWrapper: {
+        position: "absolute",
+        left: 0,
+        right: 0,
+        bottom: 0,
+        zIndex: 10,
     },
     searchWrapper: {
         marginBottom: 0,
@@ -70,21 +89,12 @@ const styles = StyleSheet.create({
     topBarWrapper: {
         marginTop: 0,
     },
-    content: {
-        flex: 1,
-        justifyContent: "center",
-        alignItems: "center",
-        paddingHorizontal: 20,
-    },
-    subtitle: {
-        fontSize: 16,
-        color: Colors.textSecondary,
-        textAlign: "center",
-        marginBottom: 16,
-    },
-    debug: {
-        fontSize: 14,
-        color: Colors.primary,
-        textAlign: "center",
+    mapContainer: {
+        position: "absolute",
+        top: 0,
+        left: 0,
+        right: 0,
+        bottom: 0,
+        zIndex: 1,
     },
 });
