@@ -14,15 +14,18 @@ from pathlib import Path
 import os
 from dotenv import load_dotenv
 
-# .env 파일 로드
-load_dotenv()
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 
+# .env 파일 로드
+load_dotenv(BASE_DIR.parent / ".env.local")
+
 # KAKAO REST API KEY 환경변수 등록
 KAKAO_REST_API_KEY = os.environ.get("KAKAO_REST_API_KEY")
 
+# 한국관광공사 API 서비스 키 환경변수 등록
+TOURISM_API_SERVICE_KEY = os.environ.get("TOURISM_API_SERVICE_KEY")
 
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/5.2/howto/deployment/checklist/
@@ -51,6 +54,9 @@ INSTALLED_APPS = [
     "places",
     "routes",
     "travel_courses",
+    "kakaomap",
+    "drf_yasg",
+    "tourism",
 ]
 
 MIDDLEWARE = [
@@ -143,4 +149,3 @@ REST_FRAMEWORK = {
         "rest_framework.authentication.SessionAuthentication",
     ]
 }
-

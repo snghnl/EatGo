@@ -1,13 +1,14 @@
-import React, { useState, useEffect } from 'react';
-import { StyleSheet, View, Text, SafeAreaView, Animated } from 'react-native';
-import { Colors } from '@/constants/Colors';
-import TopBar from '@/components/TopBar';
-import SearchBar from '@/components/SearchBar';
-import FloatingButton from '@/components/main/FloatingButton';
-import PlaceCardSwiper from '@/components/main/PlaceCardSwiper';
+import React, { useCallback } from "react";
+import { StyleSheet, View, Text } from "react-native";
+import { useSafeAreaInsets } from "react-native-safe-area-context";
+import { Colors } from "@/constants/Colors";
+import TopBar from "@/components/TopBar";
+import SearchBar from "@/components/SearchBar";
+import MapPlaceCardSwiper from "@/components/main/MapPlaceCardSwiper";
+import KakaoMap from "@/components/main/KakaoMap";
 
 // MOCK DATA
-import mockData from '@/mock-data/places.json';
+import mockData from "@/mock-data/places.json";
 
 interface PlaceItem {
     id: string;
@@ -25,111 +26,40 @@ interface PlaceItem {
 }
 
 export default function MapScreen() {
-    const [showPlaceCardSwiper, setShowPlaceCardSwiper] = useState(false);
-    const [buttonAnimation] = useState(new Animated.Value(1));
-    const [swiperAnimation] = useState(new Animated.Value(0));
+    const insets = useSafeAreaInsets();
 
-    const handleSelectItem = (item: PlaceItem) => {
-        console.log('Selected:', item.place_name);
-    };
-
-    const handleFloatingButtonPress = () => {
-        console.log('FloatingButton pressed');
-        setShowPlaceCardSwiper(true);
-
-        // 버튼 사라지는 애니메이션
-        Animated.timing(buttonAnimation, {
-            toValue: 0,
-            duration: 100,
-            useNativeDriver: true,
-        }).start();
-
-        // 스와이퍼 올라오는 애니메이션
-        Animated.timing(swiperAnimation, {
-            toValue: 1,
-            duration: 200,
-            useNativeDriver: true,
-        }).start();
-    };
-
-    const handleClosePlaceCardSwiper = () => {
-        // 스와이퍼 내려가는 애니메이션
-        Animated.timing(swiperAnimation, {
-            toValue: 0,
-            duration: 200,
-            useNativeDriver: true,
-        }).start(() => {
-            setShowPlaceCardSwiper(false);
-        });
-
-        // 버튼 나타나는 애니메이션
-        Animated.timing(buttonAnimation, {
-            toValue: 1,
-            duration: 400,
-            useNativeDriver: true,
-        }).start();
-    };
-
-    // 버튼 애니메이션 스타일
-    const buttonAnimatedStyle = {
-        opacity: buttonAnimation,
-        transform: [
-            {
-                translateY: buttonAnimation.interpolate({
-                    inputRange: [0, 1],
-                    outputRange: [50, 0],
-                }),
-            },
-            {
-                scale: buttonAnimation.interpolate({
-                    inputRange: [0, 1],
-                    outputRange: [0.8, 1],
-                }),
-            },
-        ],
-    };
-
-    // 스와이퍼 애니메이션 스타일
-    const swiperAnimatedStyle = {
-        opacity: swiperAnimation,
-        transform: [
-            {
-                translateY: swiperAnimation.interpolate({
-                    inputRange: [0, 1],
-                    outputRange: [200, 0],
-                }),
-            },
-        ],
-    };
+    const handleSelectItem = useCallback((item: PlaceItem) => {
+        console.log("Selected:", item.place_name);
+    }, []);
 
     return (
-        <SafeAreaView style={styles.container}>
-            <View style={styles.headerWrapper}>
+        <View style={styles.container}>
+            <View style={[styles.headerWrapper, { paddingTop: insets.top }]}>
                 <View style={styles.searchWrapper}>
-                    <SearchBar searchData={mockData.documents} onSelectItem={handleSelectItem} />
+                    <SearchBar
+                        searchData={mockData.documents}
+                        onSelectItem={handleSelectItem}
+                    />
                 </View>
                 <View style={styles.topBarWrapper}>
                     <TopBar />
                 </View>
             </View>
 
-            <View style={[styles.content, showPlaceCardSwiper && { pointerEvents: 'none' }]}>
-                <Text style={styles.subtitle}>지도 화면이 여기에 표시됩니다.</Text>
-                <Text style={styles.debug}>Debug: Screen is rendering</Text>
+            {/* 지도를 배경으로 전체 화면에 렌더링 */}
+            <View style={styles.mapContainer}>
+                <KakaoMap latitude={37.566826} longitude={126.9786567} />
             </View>
 
-            {!showPlaceCardSwiper && (
-                <Animated.View style={buttonAnimatedStyle}>
-                    <FloatingButton onPress={handleFloatingButtonPress} style={{ bottom: 80 }} />
-                </Animated.View>
-            )}
-
-            {showPlaceCardSwiper && (
-                <Animated.View style={swiperAnimatedStyle}>
-                    <PlaceCardSwiper onClose={handleClosePlaceCardSwiper} />
-                </Animated.View>
-            )}
-        </SafeAreaView>
+            <View
+                style={[
+                    styles.cardSwiperWrapper,
+                    { paddingBottom: insets.bottom },
+                ]}
+            >
+                <MapPlaceCardSwiper onSelectItem={handleSelectItem} />
+            </View>
+        </View>
     );
 }
 
@@ -139,9 +69,19 @@ const styles = StyleSheet.create({
         backgroundColor: Colors.background,
     },
     headerWrapper: {
-        paddingTop: 10,
+        position: "absolute",
+        top: 0,
+        left: 0,
+        right: 0,
         paddingHorizontal: 20,
         zIndex: 100,
+    },
+    cardSwiperWrapper: {
+        position: "absolute",
+        left: 0,
+        right: 0,
+        bottom: 0,
+        zIndex: 10,
     },
     searchWrapper: {
         marginBottom: 0,
@@ -149,21 +89,12 @@ const styles = StyleSheet.create({
     topBarWrapper: {
         marginTop: 0,
     },
-    content: {
-        flex: 1,
-        justifyContent: 'center',
-        alignItems: 'center',
-        paddingHorizontal: 20,
-    },
-    subtitle: {
-        fontSize: 16,
-        color: Colors.textSecondary,
-        textAlign: 'center',
-        marginBottom: 16,
-    },
-    debug: {
-        fontSize: 14,
-        color: Colors.primary,
-        textAlign: 'center',
+    mapContainer: {
+        position: "absolute",
+        top: 0,
+        left: 0,
+        right: 0,
+        bottom: 0,
+        zIndex: 1,
     },
 });
