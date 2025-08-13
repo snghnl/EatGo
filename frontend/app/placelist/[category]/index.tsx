@@ -1,4 +1,5 @@
-import React, { useState } from 'react';
+import React from 'react';
+import { useBookmark } from '@/app/BookmarkContext';
 import { router } from 'expo-router';
 
 import { View, FlatList, StyleSheet } from 'react-native';
@@ -25,13 +26,8 @@ const titleMap: Record<string, { title: string; subtitle: string }> = {
 
 export default function PlaceListScreen() {
     const { category } = useLocalSearchParams<{ category: string }>();
-    const [bookmarkedPlaceIds, setBookmarkedPlaceIds] = useState<string[]>([]);
 
-    const toggleBookmark = (placeId: string) => {
-        setBookmarkedPlaceIds((prev) =>
-            prev.includes(placeId) ? prev.filter((id) => id !== placeId) : [...prev, placeId]
-        );
-    };
+    const { bookmarkedPlaceIds, toggleBookmark } = useBookmark();
 
     const documents = placesData.documents;
     const current = titleMap[category] || {
@@ -68,6 +64,9 @@ export default function PlaceListScreen() {
                         name={item.place_name}
                         category={item.category_name}
                         address={item.road_address_name}
+                        distance={item.distance || ''}
+                        description={item.category_name.split(' > ').pop() || ''}
+                        imageUrl={'https://source.unsplash.com/random/300x300?food'}
                         isBookmarked={bookmarkedPlaceIds.includes(item.id)}
                         onBookmark={() => toggleBookmark(item.id)}
                         onPress={() => router.push(`/place/${item.id}/detail`)}

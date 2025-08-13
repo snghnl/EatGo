@@ -1,13 +1,11 @@
-import React, { useState } from 'react';
+import React from 'react';
 import { View, StyleSheet, TouchableOpacity, Image } from 'react-native';
 import { ThemedText } from '@/components/ThemedText';
 import { Colors } from '@/constants/Colors';
-import { Ionicons } from '@expo/vector-icons';
 import { BookmarkButton } from '@/components/main/BookmarkButton';
 
 export interface PlaceCardProps {
     id: string;
-    isSaved?: boolean;
     imageUrl: string;
     category: string;
     name: string;
@@ -17,7 +15,9 @@ export interface PlaceCardProps {
     onPress?: (placeId: string) => void;
     onBookmark?: () => void;
     isBookmarked?: boolean;
+    isSaved?: boolean;
 }
+
 export const PlaceCard: React.FC<PlaceCardProps> = ({
     id,
     name,
@@ -31,20 +31,13 @@ export const PlaceCard: React.FC<PlaceCardProps> = ({
     isBookmarked = false,
     isSaved = false,
 }) => {
-    const [bookmarked, setBookmarked] = useState(isBookmarked);
-
-    const handleBookmarkPress = () => {
-        setBookmarked((prev) => !prev);
-        onBookmark?.();
-    };
-
     return (
         <TouchableOpacity
             style={[styles.card, isSaved && styles.savedCard]}
             onPress={() => onPress?.(id)}
             activeOpacity={0.9}
         >
-            <BookmarkButton isBookmarked={bookmarked} onPress={handleBookmarkPress} />
+            <BookmarkButton isBookmarked={isBookmarked} onPress={onBookmark} />
 
             <Image
                 source={{
@@ -53,7 +46,7 @@ export const PlaceCard: React.FC<PlaceCardProps> = ({
                 style={styles.image}
             />
             <View style={styles.info}>
-                <ThemedText size="xs" color="dim">
+                <ThemedText size="xs" color="textSecondary" style={styles.category}>
                     {category.split(' > ').slice(1).join(' > ')}
                 </ThemedText>
 
@@ -61,11 +54,11 @@ export const PlaceCard: React.FC<PlaceCardProps> = ({
                     {name}
                 </ThemedText>
 
-                <ThemedText size="sm" color="default">
+                <ThemedText size="sm" color="textPrimary" style={styles.distance}>
                     {distance} · {address}
                 </ThemedText>
 
-                <ThemedText size="sm" color="default" numberOfLines={1}>
+                <ThemedText size="sm" color="textSecondary" numberOfLines={1}>
                     {description}
                 </ThemedText>
             </View>
@@ -90,7 +83,6 @@ const styles = StyleSheet.create({
         width: '100%',
         minHeight: 131,
     },
-
     image: {
         width: 111,
         height: 111,
@@ -106,11 +98,5 @@ const styles = StyleSheet.create({
     name: {
         marginTop: 2,
         marginBottom: 4,
-    },
-    bookmarkButton: {
-        position: 'absolute',
-        top: 10,
-        right: 10,
-        zIndex: 10,
     },
 });

@@ -1,5 +1,6 @@
 // app/place/[id]/detail.tsx
-import React, { useState } from 'react';
+import React from 'react';
+import { useBookmark } from '@/app/BookmarkContext';
 import { ScrollView, View, StyleSheet, SafeAreaView } from 'react-native';
 import { useRouter, useLocalSearchParams } from 'expo-router';
 import { PlaceHeader } from '@/components/main/place/PlaceHeader';
@@ -14,7 +15,8 @@ import { CourseListExample } from '@/components/plan';
 export default function PlaceDetailScreen() {
     const router = useRouter();
     const { id } = useLocalSearchParams<{ id: string }>();
-    const [isBookmarked, setIsBookmarked] = useState(false);
+    const { bookmarkedPlaceIds, toggleBookmark } = useBookmark();
+    const isBookmarked = bookmarkedPlaceIds.includes(id);
 
     const place = placesData.documents.find((item) => item.id === id);
 
@@ -78,8 +80,7 @@ export default function PlaceDetailScreen() {
     };
 
     const handleBookmarkPress = () => {
-        setIsBookmarked(!isBookmarked);
-        // TODO: Implement bookmark API call
+        toggleBookmark(id);
     };
 
     return (

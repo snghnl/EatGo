@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { useBookmark } from '@/app/BookmarkContext';
 import { View, FlatList, StyleSheet } from 'react-native';
 import { useLocalSearchParams, useRouter } from 'expo-router';
 import { PlaceCard } from '@/components/main/PlaceCard';
@@ -41,6 +42,7 @@ export default function SearchResultScreen() {
         }
     }, [query]);
 
+    const { bookmarkedPlaceIds, toggleBookmark } = useBookmark();
     return (
         <View style={styles.container}>
             <FlatList
@@ -65,6 +67,8 @@ export default function SearchResultScreen() {
                         distance={item.distance || ''}
                         description={item.category_name.split(' > ').pop() || ''}
                         imageUrl="https://source.unsplash.com/random/300x300?food"
+                        isBookmarked={bookmarkedPlaceIds.includes(item.id)}
+                        onBookmark={() => toggleBookmark(item.id)}
                         onPress={() => router.push(`/place/${item.id}/detail`)}
                     />
                 )}

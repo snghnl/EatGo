@@ -38,7 +38,7 @@ export const CourseListExample: React.FC<{
     };
 
     const handleCoursePress = (courseId: string) => {
-        console.log("코스 클릭:", courseId);
+        console.log('코스 클릭:', courseId);
         router.push({
             pathname: `/plan/${courseId}` as any,
             params: {
@@ -67,7 +67,7 @@ export const CourseListExample: React.FC<{
 const styles = StyleSheet.create({
     container: {
         flex: 1,
-        backgroundColor: Colors.background,
+        backgroundColor: 'transparent',
     },
     scrollView: {
         flex: 1,
