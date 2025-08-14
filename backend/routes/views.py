@@ -19,6 +19,9 @@ class RouteViewSet(viewsets.ModelViewSet):
     permission_classes = [permissions.IsAuthenticated]
 
     def get_queryset(self):
+        # Swagger 스키마 생성 시에는 모든 데이터 반환
+        if getattr(self, "swagger_fake_view", False):
+            return self.queryset.none()
         return self.queryset.filter(created_by=self.request.user)
 
     @action(detail=False, methods=["post"])
