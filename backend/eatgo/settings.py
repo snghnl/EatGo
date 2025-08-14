@@ -21,6 +21,9 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # .env 파일 로드
 load_dotenv(BASE_DIR.parent / ".env.local")
 
+
+API_VERSION = "/api/v1"
+
 # KAKAO REST API KEY 환경변수 등록
 KAKAO_REST_API_KEY = os.environ.get("KAKAO_REST_API_KEY")
 
