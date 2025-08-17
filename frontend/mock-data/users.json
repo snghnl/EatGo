@@ -4,7 +4,7 @@
         "email": "foodie@example.com",
         "username": "foodie_kim",
         "login_method": "kakao",
-        "profile_image": "https://example.com/images/profile1.jpg",
+        "profile_image": "",
         "bio": "맛집 탐험가입니다. 전국의 숨겨진 맛집을 찾아다니는 것이 취미예요!",
         "favorite_categories": ["한식", "카페"],
         "created_routes_count": 2,

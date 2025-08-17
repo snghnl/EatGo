@@ -26,7 +26,7 @@ const MyPageHeader: React.FC<MyPageHeaderProps> = ({ username, neighborCount, pr
                         <ThemedText size="lg" weight="bold" style={styles.username}>
                             @{username}
                         </ThemedText>
-                        <Ionicons name="chevron-forward" size={18} color={Colors.grayText} />
+                        <Ionicons name="chevron-forward" size={18} color={Colors.textSecondary} />
                     </View>
                     <ThemedText size="sm" color="textSecondary">
                         이웃 {neighborCount}명

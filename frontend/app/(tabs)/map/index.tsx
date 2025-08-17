@@ -1,14 +1,14 @@
-import React, { useCallback } from "react";
-import { StyleSheet, View, Text } from "react-native";
-import { useSafeAreaInsets } from "react-native-safe-area-context";
-import { Colors } from "@/constants/Colors";
-import TopBar from "@/components/TopBar";
-import SearchBar from "@/components/SearchBar";
-import MapPlaceCardSwiper from "@/components/main/MapPlaceCardSwiper";
-import KakaoMap from "@/components/main/KakaoMap";
+import React, { useCallback } from 'react';
+import { StyleSheet, View, Text } from 'react-native';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
+import { Colors } from '@/constants/Colors';
+import TopBar from '@/components/TopBar';
+import SearchBar from '@/components/SearchBar';
+import MapPlaceCardSwiper from '@/components/main/MapPlaceCardSwiper';
+import KakaoMap from '@/components/main/KakaoMap';
 
 // MOCK DATA
-import mockData from "@/mock-data/places.json";
+import mockData from '@/mock-data/places.json';
 
 interface PlaceItem {
     id: string;
@@ -29,17 +29,14 @@ export default function MapScreen() {
     const insets = useSafeAreaInsets();
 
     const handleSelectItem = useCallback((item: PlaceItem) => {
-        console.log("Selected:", item.place_name);
+        console.log('Selected:', item.place_name);
     }, []);
 
     return (
         <View style={styles.container}>
             <View style={[styles.headerWrapper, { paddingTop: insets.top }]}>
                 <View style={styles.searchWrapper}>
-                    <SearchBar
-                        searchData={mockData.documents}
-                        onSelectItem={handleSelectItem}
-                    />
+                    <SearchBar searchData={mockData.documents} onSelectItem={handleSelectItem} />
                 </View>
                 <View style={styles.topBarWrapper}>
                     <TopBar />
@@ -51,12 +48,7 @@ export default function MapScreen() {
                 <KakaoMap latitude={37.566826} longitude={126.9786567} />
             </View>
 
-            <View
-                style={[
-                    styles.cardSwiperWrapper,
-                    { paddingBottom: insets.bottom },
-                ]}
-            >
+            <View style={[styles.cardSwiperWrapper, { paddingBottom: insets.bottom }]}>
                 <MapPlaceCardSwiper onSelectItem={handleSelectItem} />
             </View>
         </View>
@@ -69,7 +61,7 @@ const styles = StyleSheet.create({
         backgroundColor: Colors.background,
     },
     headerWrapper: {
-        position: "absolute",
+        position: 'absolute',
         top: 0,
         left: 0,
         right: 0,
@@ -77,7 +69,7 @@ const styles = StyleSheet.create({
         zIndex: 100,
     },
     cardSwiperWrapper: {
-        position: "absolute",
+        position: 'absolute',
         left: 0,
         right: 0,
         bottom: 0,
@@ -90,7 +82,7 @@ const styles = StyleSheet.create({
         marginTop: 0,
     },
     mapContainer: {
-        position: "absolute",
+        position: 'absolute',
         top: 0,
         left: 0,
         right: 0,

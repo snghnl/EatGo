@@ -30,12 +30,12 @@ export const MyPageTabs: React.FC<MyPageTabsProps> = ({ onTabChange, style }) =>
                 {tabs.map(({ label, value }) => (
                     <TouchableOpacity
                         key={label}
-                        style={[styles.tabButton, selectedLabel === label && styles.selectedTabButton]}
+                        style={[styles.tabButton, selectedLabel === label]}
                         onPress={() => handleTabPress(label, value)}
                     >
                         <ThemedText
                             weight={selectedLabel === label ? 'semibold' : 'normal'}
-                            color={selectedLabel === label ? 'primary' : 'textPrimary'}
+                            color={selectedLabel === label ? 'primary' : 'textSecondary'}
                             style={{ textAlign: 'center', width: 80 }}
                         >
                             {label}

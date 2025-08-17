@@ -7,14 +7,15 @@ import { MyPageTabs } from '@/components/mypage/MyPageTabs';
 import DropdownSort from '@/components/mypage/DropdownSort';
 import { PlaceCard } from '@/components/main/PlaceCard';
 import placesData from '@/mock-data/places.json';
-import { CourseListExample } from '@/components/plan';
+import { CourseListExample, CourseCard } from '@/components/plan';
+import { SAMPLE_COURSES } from '@/constants/Data';
 import { ThemedText } from '@/components/ThemedText';
 import { Colors } from '@/constants/Colors';
 
 const MyPageTab = () => {
     const [activeTab, setActiveTab] = useState<'places' | 'courses' | 'saved'>('places');
     const [sortOption, setSortOption] = useState('최신순');
-    const { bookmarkedPlaceIds, toggleBookmark } = useBookmark();
+    const { bookmarkedPlaceIds, toggleBookmark, bookmarkedCourseIds, toggleCourseBookmark } = useBookmark();
 
     const user = usersData[0];
     const sortedPlaces = placesData.documents.slice(0, 3);
@@ -64,7 +65,30 @@ const MyPageTab = () => {
                             <CourseListExample />
                         </View>
                     )}
-                    {activeTab === 'saved' && <ThemedText>저장한 경로 리스트를 여기에 렌더링</ThemedText>}
+                    {activeTab === 'saved' && (
+                        <View>
+                            {(() => {
+                                console.log('[MyPageTab] bookmarkedCourseIds:', bookmarkedCourseIds);
+                                console.log('[MyPageTab] SAMPLE_COURSES:', SAMPLE_COURSES);
+                                const filtered = SAMPLE_COURSES.filter((course: any) =>
+                                    bookmarkedCourseIds.includes(course.id)
+                                );
+                                console.log('[MyPageTab] filtered:', filtered);
+                                if (filtered.length === 0) {
+                                    return <ThemedText>저장한 경로가 없습니다.</ThemedText>;
+                                }
+                                return filtered.map((course: any) => (
+                                    <CourseCard
+                                        key={course.id}
+                                        subtitle={course.subtitle}
+                                        title={course.title}
+                                        hasImages={course.hasImages}
+                                        onPress={() => {}}
+                                    />
+                                ));
+                            })()}
+                        </View>
+                    )}
                 </View>
             </ScrollView>
         </View>
