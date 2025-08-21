@@ -48,6 +48,7 @@
     "devDependencies": {
         "@babel/core": "^7.25.2",
         "@gorhom/bottom-sheet": "^5.1.6",
+        "@hey-api/openapi-ts": "0.80.16",
         "@react-native-async-storage/async-storage": "^2.2.0",
         "@react-native-community/slider": "^4.5.7",
         "@storybook/addon-ondevice-actions": "^9.0.18",
