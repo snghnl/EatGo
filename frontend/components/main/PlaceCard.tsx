@@ -57,10 +57,6 @@ export const PlaceCard: React.FC<PlaceCardProps> = ({
                 <ThemedText size="sm" color="textPrimary" style={styles.distance}>
                     {distance} · {address}
                 </ThemedText>
-
-                <ThemedText size="sm" color="textSecondary" numberOfLines={1}>
-                    {description}
-                </ThemedText>
             </View>
         </TouchableOpacity>
     );

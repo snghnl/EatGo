@@ -4,9 +4,10 @@ import { Platform } from 'react-native';
 import AppContainer from '@/components/common/AppContainer';
 import { useColorScheme } from '@/hooks/useColorScheme';
 import { Colors } from '@/constants/Colors';
+import { Fonts } from '@/constants/Fonts';
 import { HapticTab } from '@/components/HapticTab';
 import TabBarBackground from '@/components/ui/TabBarBackground';
-import { IconSymbol } from '@/components/ui/IconSymbol';
+import { Ionicons } from '@expo/vector-icons';
 
 export default function TabLayout() {
     const colorScheme = useColorScheme();
@@ -15,21 +16,14 @@ export default function TabLayout() {
         <Tabs
             initialRouteName="map/index"
             screenOptions={{
-                tabBarActiveTintColor: Colors[colorScheme ?? 'light'].tint,
+                tabBarActiveTintColor: Colors.textLight,
+                tabBarInactiveTintColor: Colors.textLight,
                 headerShown: false,
                 title: '',
                 tabBarButton: HapticTab,
                 tabBarBackground: TabBarBackground,
                 tabBarStyle: Platform.select({
-                    ios: {
-                        // Use a transparent background on iOS to show the blur effect
-                        position: 'absolute',
-                        bottom: 0,
-                        left: 0,
-                        right: 0,
-                        height: 88,
-                        paddingBottom: 34,
-                    },
+                    ios: { position: 'absolute', bottom: 0, left: 0, right: 0, height: 88, paddingBottom: 33 },
                     default: {},
                 }),
             }}
@@ -37,31 +31,52 @@ export default function TabLayout() {
             <Tabs.Screen
                 name="plan/index"
                 options={{
-                    title: 'Plan',
-                    tabBarIcon: ({ color }) => <IconSymbol size={28} name="paperplane.fill" color={color} />,
+                    title: '계획하기',
+                    tabBarIcon: ({ color, size, focused }) => (
+                        <Ionicons name={focused ? 'calendar' : 'calendar-outline'} size={size ?? 25} color={color} />
+                    ),
                 }}
             />
             <Tabs.Screen
                 name="map/index"
                 options={{
-                    title: 'Home',
-                    tabBarIcon: ({ color }) => <IconSymbol size={28} name="house.fill" color={color} />,
+                    title: '전체지도',
+                    tabBarIcon: ({ color, size, focused }) => (
+                        <Ionicons name={focused ? 'location' : 'location-outline'} size={size ?? 25} color={color} />
+                    ),
                 }}
             />
             <Tabs.Screen
                 name="community/index"
                 options={{
-                    title: 'Community',
-                    tabBarIcon: ({ color }) => <IconSymbol size={28} name="message.fill" color={color} />,
+                    title: '여행코스톡',
+                    tabBarIcon: ({ color, size, focused }) => (
+                        <Ionicons
+                            name={focused ? 'chatbubbles' : 'chatbubbles-outline'}
+                            size={size ?? 25}
+                            color={color}
+                        />
+                    ),
                 }}
             />
             <Tabs.Screen
                 name="mypage/index"
                 options={{
-                    title: 'MyPage',
-                    tabBarIcon: ({ color }) => <IconSymbol size={28} name="person.fill" color={color} />,
+                    title: '마이페이지',
+                    tabBarIcon: ({ color, size, focused }) => (
+                        <Ionicons name={focused ? 'person' : 'person-outline'} size={size ?? 25} color={color} />
+                    ),
                 }}
             />
+            <Tabs.Screen name="community/[id]/index" options={{ href: null }} />
+            <Tabs.Screen name="community/post_select" options={{ href: null }} />
+            <Tabs.Screen name="community/post" options={{ href: null }} />
+            <Tabs.Screen name="map/place/[id]/detail" options={{ href: null }} />
+            <Tabs.Screen name="map/placelist/[category]/index" options={{ href: null }} />
+            <Tabs.Screen name="map/placelist/searchresult" options={{ href: null }} />
+            <Tabs.Screen name="plan/coureselist" options={{ href: null }} />
+            <Tabs.Screen name="plan/[id]/index" options={{ href: null }} />
+            <Tabs.Screen name="plan/[id]/recommendation" options={{ href: null }} />
         </Tabs>
     );
 }

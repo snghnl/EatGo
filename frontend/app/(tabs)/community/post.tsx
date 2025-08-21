@@ -15,11 +15,16 @@ import { ThemedText } from '@/components/ThemedText';
 import { Colors } from '@/constants/Colors';
 import { useNavigation, useLocalSearchParams } from 'expo-router';
 import { SAMPLE_COURSES } from '@/constants/Data';
+import { router } from 'expo-router';
+import PostImagePicker from '@/components/community/PostImagePicker';
+import { Fonts } from '@/constants/Fonts';
 
 export default function PostEditor() {
     const [title, setTitle] = useState('');
     const [content, setContent] = useState('');
-    const navigation = useNavigation();
+    const [images, setImages] = useState<string[]>([]); // 이미지 상태 추가
+    const [inputHeight, setInputHeight] = useState(200); // 초기 높이 설정
+
     const { courseId } = useLocalSearchParams<{ courseId?: string }>();
     const course = SAMPLE_COURSES.find((c) => c.id === courseId);
 
@@ -31,13 +36,17 @@ export default function PostEditor() {
 
     return (
         <SafeAreaView style={styles.container}>
-            <KeyboardAvoidingView
-                style={{ flex: 1 }}
-                behavior={Platform.OS === 'ios' ? 'padding' : undefined}
-                keyboardVerticalOffset={100}
-            >
+            <KeyboardAvoidingView style={{ flex: 1 }} behavior={Platform.OS === 'ios' ? 'padding' : undefined}>
                 <ScrollView contentContainerStyle={styles.scroll}>
                     {/* 상단 헤더 */}
+                    <View style={{ position: 'absolute', top: 15, left: 15, zIndex: 10 }}>
+                        <Ionicons
+                            name="chevron-back"
+                            size={20}
+                            color={Colors.textSecondary}
+                            onPress={() => router.push('/(tabs)/community/post_select')}
+                        />
+                    </View>
                     <View style={styles.header}>
                         <TouchableOpacity onPress={handleSubmit}>
                             <Text style={styles.submitText}>등록</Text>
@@ -56,6 +65,7 @@ export default function PostEditor() {
                         <Text style={styles.metaText}>
                             {dateRange} <Text style={{ color: 'red' }}>📍 {location}</Text>
                         </Text>
+                        <PostImagePicker images={images} setImages={setImages} />
 
                         <TextInput
                             style={styles.textarea}
@@ -64,6 +74,9 @@ export default function PostEditor() {
                             textAlignVertical="top"
                             value={content}
                             onChangeText={setContent}
+                            onContentSizeChange={(e) => {
+                                setInputHeight(e.nativeEvent.contentSize.height);
+                            }}
                         />
                     </View>
                 </ScrollView>
@@ -78,19 +91,21 @@ const styles = StyleSheet.create({
         backgroundColor: Colors.white,
     },
     scroll: {
-        padding: 16,
+        padding: 20,
     },
     header: {
         alignItems: 'flex-end',
-        marginBottom: 20,
+        marginBottom: 15,
     },
     title: {
-        fontSize: 25,
-        fontWeight: 'semibold',
-        marginBottom: 50,
+        fontSize: Fonts['2xl'],
+        fontWeight: Fonts.weight.semibold,
+        marginBottom: 30,
     },
     submitText: {
         color: Colors.textSecondary,
+        fontSize: Fonts.base,
+        fontWeight: Fonts.weight.medium,
     },
     input: {
         borderBottomWidth: 1,
@@ -100,16 +115,21 @@ const styles = StyleSheet.create({
         marginBottom: 12,
     },
     metaText: {
-        fontSize: 12,
+        fontSize: Fonts.sm,
         color: Colors.textSecondary,
         marginBottom: 12,
     },
     textarea: {
-        height: 200,
-        borderWidth: 1,
         borderColor: Colors.backgroundGray,
         borderRadius: 8,
         padding: 12,
-        fontSize: 14,
+        fontSize: Fonts.base,
+    },
+
+    photoButton: {
+        backgroundColor: Colors.backgroundGray,
+        paddingVertical: 5,
+        borderRadius: 8,
+        alignItems: 'center',
     },
 });

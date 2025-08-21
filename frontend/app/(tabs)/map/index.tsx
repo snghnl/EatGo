@@ -2,7 +2,7 @@ import React, { useCallback } from 'react';
 import { StyleSheet, View, Text } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { Colors } from '@/constants/Colors';
-import TopBar from '@/components/TopBar';
+import TopBar from '@/components/main/TopBar';
 import SearchBar from '@/components/SearchBar';
 import MapPlaceCardSwiper from '@/components/main/MapPlaceCardSwiper';
 import KakaoMap from '@/components/main/KakaoMap';

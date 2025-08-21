@@ -10,6 +10,8 @@ import { CommunityDetailUser } from '@/components/community/CommunityDetailUser'
 import { CommunityDetailContent } from '@/components/community/CommunityDetailContent';
 
 import Header from '@/components/common/Header';
+import { Ionicons } from '@expo/vector-icons';
+import { router } from 'expo-router';
 import { BookmarkButton } from '@/components/main/BookmarkButton';
 import { useBookmark } from '@/app/BookmarkContext';
 import { ThemedText } from '@/components/ThemedText';
@@ -139,6 +141,14 @@ export default function CommunityPost() {
     return (
         <ScrollView>
             <SafeAreaView>
+                <View style={{ position: 'absolute', top: 70, left: 15, zIndex: 10 }}>
+                    <Ionicons
+                        name="chevron-back"
+                        size={20}
+                        color="textsecondary"
+                        onPress={() => router.push('/community')}
+                    />
+                </View>
                 <View style={styles.container}>
                     <View style={styles.headerRow}>
                         <ThemedText size="2xl" weight="bold" style={styles.title}>
@@ -195,11 +205,11 @@ export default function CommunityPost() {
 
 const styles = StyleSheet.create({
     container: {
-        padding: 20,
+        padding: 15,
         backgroundColor: Colors.white,
     },
     headerRow: {
-        marginTop: 80,
+        marginTop: 50,
         marginBottom: 30,
         flexDirection: 'row',
         justifyContent: 'space-between',

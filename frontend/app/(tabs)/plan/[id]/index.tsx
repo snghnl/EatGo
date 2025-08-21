@@ -6,6 +6,7 @@ import PlaceCardSwiper from '@/components/main/PlaceCardSwiper';
 import Header from '@/components/common/Header';
 import ActionButtons from '@/components/common/ActionButtons';
 import { Colors } from '@/constants/Colors';
+import { Ionicons } from '@expo/vector-icons';
 
 // 코스 데이터 인터페이스
 interface CourseData {
@@ -288,6 +289,14 @@ export default function PlanDetailScreen() {
 
     return (
         <SafeAreaView style={styles.container}>
+            <View style={{ position: 'absolute', top: 70, left: 15, zIndex: 10 }}>
+                <Ionicons
+                    name="chevron-back"
+                    size={20}
+                    color={Colors.textPrimary}
+                    onPress={() => router.push('/(tabs)/plan')}
+                />
+            </View>
             <Header title={courseData.title} subtitle={courseData.subtitle} />
             <View style={styles.actionSection}>
                 <ActionButtons actions={[{ label: '편집', onPress: handleEdit }]} />

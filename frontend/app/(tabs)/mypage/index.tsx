@@ -106,12 +106,7 @@ const styles = StyleSheet.create({
     dropdownWrapper: {
         marginBottom: 10,
     },
-    cardWrapper: {
-        gap: 10,
-        paddingHorizontal: 20,
-        paddingBottom: 20,
-        minHeight: 300, // 추가
-    },
+
     headerSection: {
         width: '100%',
         backgroundColor: Colors.listbackground,

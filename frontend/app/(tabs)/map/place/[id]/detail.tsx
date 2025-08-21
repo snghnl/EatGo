@@ -11,6 +11,8 @@ import { ThemedText } from '@/components/ThemedText';
 import { Colors } from '@/constants/Colors';
 import placesData from '@/mock-data/places.json';
 import { CourseListExample } from '@/components/plan';
+import { Ionicons } from '@expo/vector-icons';
+import { router } from 'expo-router';
 
 export default function PlaceDetailScreen() {
     const router = useRouter();
@@ -86,6 +88,14 @@ export default function PlaceDetailScreen() {
     return (
         <SafeAreaView style={styles.container}>
             <ScrollView style={styles.scrollView} showsVerticalScrollIndicator={false}>
+                <View style={{ position: 'absolute', top: 20, left: 15, zIndex: 10 }}>
+                    <Ionicons
+                        name="chevron-back"
+                        size={20}
+                        color={Colors.textPrimary}
+                        onPress={() => router.push('/(tabs)/map')} //backbutton 수정 필요
+                    />
+                </View>{' '}
                 <PlaceHeader
                     placeName={place.place_name}
                     category={place.category_name}
@@ -100,10 +110,8 @@ export default function PlaceDetailScreen() {
                 <View style={styles.separator} />
                 <PlaceInfo place={place} />
                 <View style={styles.separator} />
-
                 <PlaceMenu menuItems={mockMenuItems} />
                 <View style={styles.separator} />
-
                 <View style={styles.titleWrapper}>
                     <ThemedText size="lg" weight="bold" style={styles.title}>
                         다른 여행객분들은{'\n'}

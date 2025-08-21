@@ -1,4 +1,4 @@
-import React, { useRef, useCallback, useMemo } from "react";
+import React, { useRef, useCallback, useMemo } from 'react';
 import {
     View,
     Text,
@@ -8,12 +8,12 @@ import {
     Linking,
     GestureResponderEvent,
     TouchableOpacity,
-} from "react-native";
-import Swiper from "react-native-swiper";
-import placesData from "@/mock-data/places.json";
-import { useRouter } from "expo-router";
+} from 'react-native';
+import Swiper from 'react-native-swiper';
+import placesData from '@/mock-data/places.json';
+import { useRouter } from 'expo-router';
 
-const { width } = Dimensions.get("window");
+const { width } = Dimensions.get('window');
 
 interface Props {
     onClose: () => void;
@@ -30,7 +30,7 @@ export default function PlaceCardSwiper({ onClose, onPlaceSelect }: Props) {
     const handleTouchStart = useCallback((e: GestureResponderEvent) => {
         touchStartY.current = e.nativeEvent.pageY;
         isDragging.current = false;
-        console.log("Touch start Y:", touchStartY.current);
+        console.log('Touch start Y:', touchStartY.current);
     }, []);
 
     const handleTouchMove = useCallback((e: GestureResponderEvent) => {
@@ -47,9 +47,9 @@ export default function PlaceCardSwiper({ onClose, onPlaceSelect }: Props) {
 
             const touchEndY = e.nativeEvent.pageY;
             const deltaY = touchEndY - touchStartY.current;
-            console.log("Touch delta Y:", deltaY);
+            console.log('Touch delta Y:', deltaY);
             if (deltaY > 15) {
-                console.log("Closing swiper via touch");
+                console.log('Closing swiper via touch');
                 onClose();
             }
             isDragging.current = false;
@@ -59,24 +59,23 @@ export default function PlaceCardSwiper({ onClose, onPlaceSelect }: Props) {
 
     const handleCardPress = useCallback(
         (place: any) => {
-            console.log("Card pressed:", place.place_name);
-            router.push(`/place/${place.id}/detail`);
+            router.push(`/map/place/${place.id}/detail`);
         },
         [router]
     );
 
-    const handleMorePress = useCallback((placeUrl: string) => {
-        Linking.openURL(placeUrl);
-    }, []);
+    // 더보기 버튼도 상세 페이지로 이동
+    const handleMorePress = useCallback(
+        (place: any) => {
+            handleCardPress(place);
+        },
+        [handleCardPress]
+    );
 
     const renderPlaceCard = useCallback(
         (place: any, index: number) => (
             <View key={`${place.id}-${index}`} style={styles.cardWrapper}>
-                <TouchableOpacity
-                    style={styles.card}
-                    onPress={() => handleCardPress(place)}
-                    activeOpacity={0.8}
-                >
+                <TouchableOpacity style={styles.card} onPress={() => handleCardPress(place)} activeOpacity={0.8}>
                     <Image
                         source={{
                             uri: `https://source.unsplash.com/300x300/?food,restaurant&sig=${index}`,
@@ -88,9 +87,7 @@ export default function PlaceCardSwiper({ onClose, onPlaceSelect }: Props) {
                             <Text style={styles.title} numberOfLines={1}>
                                 {place.place_name}
                             </Text>
-                            <TouchableOpacity
-                                onPress={() => handleMorePress(place.place_url)}
-                            >
+                            <TouchableOpacity onPress={() => handleMorePress(place)}>
                                 <Text style={styles.more}>더보기 ›</Text>
                             </TouchableOpacity>
                         </View>
@@ -98,16 +95,14 @@ export default function PlaceCardSwiper({ onClose, onPlaceSelect }: Props) {
                             {place.category_name}
                         </Text>
                         <Text style={styles.text} numberOfLines={1}>
-                            전화번호: {place.phone || "정보 없음"}
+                            전화번호: {place.phone || '정보 없음'}
                         </Text>
                         <Text style={styles.text} numberOfLines={1}>
                             주소: {place.road_address_name}
                         </Text>
                         <View style={styles.badgeRow}>
                             <View style={styles.badge}>
-                                <Text style={styles.badgeText}>
-                                    푸짐한 인심
-                                </Text>
+                                <Text style={styles.badgeText}>푸짐한 인심</Text>
                             </View>
                             <View style={styles.badge}>
                                 <Text style={styles.badgeText}>인기 음식</Text>
@@ -157,29 +152,29 @@ export default function PlaceCardSwiper({ onClose, onPlaceSelect }: Props) {
 
 const styles = StyleSheet.create({
     container: {
-        position: "absolute",
+        position: 'absolute',
         bottom: 50,
         left: 0,
         right: 0,
         height: 200,
-        backgroundColor: "transparent",
+        backgroundColor: 'transparent',
         zIndex: 1000,
     },
     dragHandle: {
         height: 30,
-        justifyContent: "center",
-        alignItems: "center",
-        backgroundColor: "transparent",
+        justifyContent: 'center',
+        alignItems: 'center',
+        backgroundColor: 'transparent',
     },
     dragIndicator: {
         width: 40,
         height: 4,
-        backgroundColor: "#ccc",
+        backgroundColor: '#ccc',
         borderRadius: 2,
     },
     dragText: {
         fontSize: 10,
-        color: "#888",
+        color: '#888',
         marginTop: 3,
     },
     swiperWrapper: {
@@ -190,15 +185,15 @@ const styles = StyleSheet.create({
     },
     cardWrapper: {
         flex: 1,
-        justifyContent: "center",
-        alignItems: "center",
+        justifyContent: 'center',
+        alignItems: 'center',
         paddingHorizontal: 20,
     },
     pagination: {
         bottom: 10,
     },
     dot: {
-        backgroundColor: "rgba(255,255,255,.3)",
+        backgroundColor: 'rgba(255,255,255,.3)',
         width: 6,
         height: 6,
         borderRadius: 3,
@@ -206,7 +201,7 @@ const styles = StyleSheet.create({
         marginRight: 3,
     },
     activeDot: {
-        backgroundColor: "#e94e77",
+        backgroundColor: '#e94e77',
         width: 6,
         height: 6,
         borderRadius: 3,
@@ -216,11 +211,11 @@ const styles = StyleSheet.create({
     card: {
         width: width - 40,
         height: 140,
-        backgroundColor: "#fff",
+        backgroundColor: '#fff',
         borderRadius: 10,
-        flexDirection: "row",
+        flexDirection: 'row',
         padding: 15,
-        shadowColor: "#000",
+        shadowColor: '#000',
         shadowOpacity: 0.1,
         shadowOffset: { width: 0, height: 2 },
         shadowRadius: 4,
@@ -230,64 +225,64 @@ const styles = StyleSheet.create({
         width: 100,
         height: 110,
         borderRadius: 10,
-        backgroundColor: "#f0f0f0",
+        backgroundColor: '#f0f0f0',
     },
     infoBlock: {
         flex: 1,
         marginLeft: 10,
-        justifyContent: "space-between",
+        justifyContent: 'space-between',
     },
     titleRow: {
-        flexDirection: "row",
-        justifyContent: "space-between",
-        alignItems: "flex-start",
+        flexDirection: 'row',
+        justifyContent: 'space-between',
+        alignItems: 'flex-start',
     },
     title: {
         fontSize: 17,
-        fontWeight: "bold",
+        fontWeight: 'bold',
         flex: 1,
         marginRight: 10,
     },
     sub: {
-        color: "#888",
+        color: '#888',
         fontSize: 12,
         marginBottom: 2,
     },
     text: {
         fontSize: 12,
-        color: "#444",
+        color: '#444',
         marginBottom: 1,
     },
     more: {
         fontSize: 12,
-        color: "#e94e77",
-        fontWeight: "500",
+        color: '#e94e77',
+        fontWeight: '500',
     },
     badgeRow: {
-        flexDirection: "row",
+        flexDirection: 'row',
         marginTop: 4,
         gap: 6,
     },
     badge: {
-        backgroundColor: "#f8f8f8",
+        backgroundColor: '#f8f8f8',
         borderRadius: 999,
         paddingHorizontal: 8,
         paddingVertical: 2,
     },
     badgeText: {
         fontSize: 10,
-        color: "#e94e77",
-        fontWeight: "500",
+        color: '#e94e77',
+        fontWeight: '500',
     },
     buttonWrapper: {
-        alignItems: "center",
-        justifyContent: "space-between",
+        alignItems: 'center',
+        justifyContent: 'space-between',
         height: 140,
         paddingHorizontal: 10,
     },
     arrow: {
         fontSize: 40,
-        color: "#e94e77",
-        fontWeight: "bold",
+        color: '#e94e77',
+        fontWeight: 'bold',
     },
 });
