@@ -1,172 +1,149 @@
-import React, { useState } from 'react';
-import { StyleSheet, View, TouchableOpacity, SafeAreaView, Alert } from 'react-native';
-import { useLocalSearchParams, router } from 'expo-router';
-import { RecommendationList } from '@/components/plan';
-import PlaceCardSwiper from '@/components/main/PlaceCardSwiper';
-import Header from '@/components/common/Header';
-import { ThemedText } from '@/components/ThemedText';
-import { Colors } from '@/constants/Colors';
+// (tabs)/plan/[id]/recommendation/index.tsx
+import React, { useEffect, useMemo, useState, useCallback } from "react";
+import {
+    StyleSheet,
+    View,
+    TouchableOpacity,
+    SafeAreaView,
+    Alert,
+    ActivityIndicator,
+} from "react-native";
+import { useLocalSearchParams } from "expo-router";
+import { RecommendationList } from "@/components/plan";
+import PlaceCardSwiper from "@/components/main/PlaceCardSwiper";
+import Header from "@/components/common/Header";
+import { ThemedText } from "@/components/ThemedText";
+import { Colors } from "@/constants/Colors";
 
-// 추천 코스 데이터 인터페이스
-interface RecommendationData {
-    courseId: string;
-    startDate: string;
-    endDate: string;
-    destinations: string[];
-    foods: string[];
+interface RecommendationPlace {
+    id: string;
+    category: string;
+    name: string;
+}
+interface RecommendationItem {
+    id: string;
+    title: string;
+    places: RecommendationPlace[];
 }
 
-// 샘플 추천 데이터
-const sampleRecommendations = [
-    {
-        id: 'rec-1',
-        title: '한옥마을',
-        places: [
-            {
-                id: 'rec-1-1',
-                category: '한식',
-                name: '왕비빔밥',
-            },
-            {
-                id: 'rec-1-2',
-                category: '카페',
-                name: '노을집',
-            },
-            {
-                id: 'rec-1-3',
-                category: '디저트',
-                name: '국밥집',
-            },
-        ],
-    },
-    {
-        id: 'rec-2',
-        title: '한옥마을',
-        places: [
-            {
-                id: 'rec-2-1',
-                category: '해산물',
-                name: '주전자',
-            },
-            {
-                id: 'rec-2-2',
-                category: '베이커리',
-                name: '전주 빵집',
-            },
-            {
-                id: 'rec-2-3',
-                category: '카페',
-                name: '커피집',
-            },
-        ],
-    },
-    {
-        id: 'rec-3',
-        title: '해운대',
-        places: [
-            {
-                id: 'rec-3-1',
-                category: '해산물',
-                name: '고모네',
-            },
-            {
-                id: 'rec-3-2',
-                category: '카페',
-                name: '이모네',
-            },
-            {
-                id: 'rec-3-3',
-                category: '디저트',
-                name: '한옥빵',
-            },
-        ],
-    },
-    {
-        id: 'rec-4',
-        title: '해운대',
-        places: [
-            {
-                id: 'rec-4-1',
-                category: '한식',
-                name: '해운대',
-            },
-            {
-                id: 'rec-4-2',
-                category: '베이커리',
-                name: '보석빵집',
-            },
-            {
-                id: 'rec-4-3',
-                category: '카페',
-                name: '커피좋아',
-            },
-        ],
-    },
-    {
-        id: 'rec-5',
-        title: '순천만',
-        places: [
-            {
-                id: 'rec-5-1',
-                category: '해산물',
-                name: '게장집',
-            },
-            {
-                id: 'rec-5-2',
-                category: '베이커리',
-                name: '순두부빵집',
-            },
-            {
-                id: 'rec-5-3',
-                category: '카페',
-                name: '순만커피',
-            },
-        ],
-    },
-];
+const API_BASE = process.env.EXPO_PUBLIC_API_BASE || "http://10.0.2.2:8000"; // SOURCE: ???
+const ENDPOINT_RECOMMENDATIONS = `${API_BASE}/api/travel-courses/:courseId/recommendations`; // SOURCE: ???
+
+const defaultHeaders: Record<string, string> = {
+    Accept: "application/json",
+    // Authorization: `Bearer ${token}`, // SOURCE: ???
+};
+
+function mapResponseToItems(data: any): RecommendationItem[] {
+    if (!Array.isArray(data)) return [];
+    return data.map((rec: any) => ({
+        id: String(rec.id ?? rec.uuid ?? rec.recommendation_id), // SOURCE: ???
+        title: String(rec.title ?? rec.region ?? "추천 경로"), // SOURCE: ???
+        places: Array.isArray(rec.places)
+            ? rec.places.map((p: any) => ({
+                  id: String(p.id ?? p.place_id ?? p.uuid), // SOURCE: ???
+                  category: String(p.category ?? p.category_name ?? ""), // SOURCE: ???
+                  name: String(p.name ?? p.place_name ?? ""), // SOURCE: ???
+              }))
+            : [],
+    }));
+}
+
+async function fetchRecommendations(params: {
+    courseId: string;
+    mode: "region" | "theme";
+    startDate?: string;
+    endDate?: string;
+    destinations?: string;
+    foods?: string;
+}): Promise<RecommendationItem[]> {
+    const { courseId, mode, startDate, endDate, destinations, foods } = params;
+    const q = new URLSearchParams();
+    q.set("mode", mode);
+    if (startDate) q.set("start", startDate); // SOURCE: ???
+    if (endDate) q.set("end", endDate); // SOURCE: ???
+    if (destinations) q.set("destinations", destinations);
+    if (foods) q.set("foods", foods);
+    const url = `${ENDPOINT_RECOMMENDATIONS.replace(
+        ":courseId",
+        courseId
+    )}?${q.toString()}`;
+    const res = await fetch(url, {
+        method: "GET",
+        headers: defaultHeaders /*, credentials: 'include'*/,
+    }); // SOURCE: ???
+    if (!res.ok) throw new Error(`HTTP ${res.status}`);
+    const data = await res.json();
+    return mapResponseToItems(data);
+}
 
 export default function RecommendationScreen() {
-    const { courseId, startDate, endDate, destinations, foods } = useLocalSearchParams<{
-        courseId: string;
-        startDate?: string;
-        endDate?: string;
-        destinations?: string;
-        foods?: string;
-    }>();
+    const { courseId, startDate, endDate, destinations, foods } =
+        useLocalSearchParams<{
+            courseId: string;
+            startDate?: string;
+            endDate?: string;
+            destinations?: string;
+            foods?: string;
+        }>();
 
-    const [activeTab, setActiveTab] = useState<'region' | 'theme'>('region');
-    const [selectedRecommendations, setSelectedRecommendations] = useState<string[]>([]);
-    const [selectedRecommendationId, setSelectedRecommendationId] = useState<string | null>(null);
+    const [activeTab, setActiveTab] = useState<"region" | "theme">("region");
+    const [recommendations, setRecommendations] = useState<
+        RecommendationItem[]
+    >([]);
+    const [loading, setLoading] = useState(false);
+    const [error, setError] = useState<string | null>(null);
+
+    const [selectedRecommendations, setSelectedRecommendations] = useState<
+        string[]
+    >([]);
+    const [selectedRecommendationId, setSelectedRecommendationId] = useState<
+        string | null
+    >(null);
     const [selectedPlaceId, setSelectedPlaceId] = useState<string | null>(null);
     const [showPlaceCardSwiper, setShowPlaceCardSwiper] = useState(false);
 
-    // 지역 이름 추출
-    const getRegionName = () => {
+    const regionName = useMemo(() => {
         if (destinations) {
-            const destinationList = destinations.split(',');
-            return destinationList[0] || '전주';
+            const list = String(destinations).split(",");
+            return list[0] || "전주";
         }
-        return '전주';
-    };
+        return "전주";
+    }, [destinations]);
 
-    const handleTabPress = (tab: 'region' | 'theme') => {
-        setActiveTab(tab);
-    };
+    const load = useCallback(async () => {
+        if (!courseId) return;
+        setLoading(true);
+        setError(null);
+        try {
+            const items = await fetchRecommendations({
+                courseId: String(courseId),
+                mode: activeTab,
+                startDate: startDate ? String(startDate) : undefined,
+                endDate: endDate ? String(endDate) : undefined,
+                destinations: destinations ? String(destinations) : undefined,
+                foods: foods ? String(foods) : undefined,
+            });
+            setRecommendations(items);
+        } catch (e: any) {
+            setError(e?.message || "Failed to fetch");
+        } finally {
+            setLoading(false);
+        }
+    }, [courseId, activeTab, startDate, endDate, destinations, foods]);
 
-    const handleLongPress = (recommendationId: string) => {
-        console.log('PlanCard long press:', recommendationId);
+    useEffect(() => {
+        load();
+    }, [load]);
+
+    const handleTabPress = (tab: "region" | "theme") => setActiveTab(tab);
+    const handleLongPress = (recommendationId: string) =>
         setSelectedRecommendationId(recommendationId);
-    };
 
     const handlePlacePress = (recommendationId: string, placeId: string) => {
-        console.log('Place pressed:', recommendationId, placeId);
         if (selectedRecommendationId === recommendationId) {
-            // 선택된 추천의 place를 터치한 경우
             setSelectedPlaceId(placeId);
             setShowPlaceCardSwiper(true);
-        } else {
-            // 일반적인 place 터치
-            console.log('장소 클릭:', recommendationId, placeId);
         }
     };
 
@@ -177,104 +154,127 @@ export default function RecommendationScreen() {
     };
 
     const handlePlaceSelect = (selectedPlace: any) => {
-        console.log('Place selected for replacement:', selectedPlace);
-        Alert.alert(`${selectedPlace.place_name}로 교체하시겠습니까?`, '교체하면 기존 장소가 삭제됩니다.', [
-            { text: '취소', style: 'cancel' },
-            {
-                text: '교체',
-                onPress: () => {
-                    console.log(`교체 시도: ${selectedPlace.place_name} (ID: ${selectedPlace.id})`);
-                    alert(`${selectedPlace.place_name}로 교체되었습니다!`);
+        Alert.alert(
+            `${selectedPlace.place_name}로 교체하시겠습니까?`,
+            "교체하면 기존 장소가 삭제됩니다.",
+            [
+                { text: "취소", style: "cancel" },
+                {
+                    text: "교체",
+                    onPress: () => {
+                        // PUT /api/travel-courses/:courseId/recommendations/:recId/places // SOURCE: ???
+                    },
                 },
-            },
-        ]);
+            ]
+        );
     };
 
-    const handleCardPress = (recommendationId: string) => {
-        console.log('카드 클릭:', recommendationId);
-        // TODO: 카드 전체 액션 (예: 스와이프 저장)
-    };
-
+    const handleCardPress = (_recommendationId: string) => {};
     const handleSave = (recommendationId: string) => {
-        console.log('저장:', recommendationId);
-        // 선택된 추천 코스에 추가
-        setSelectedRecommendations((prev) => {
-            if (prev.includes(recommendationId)) {
-                return prev.filter((id) => id !== recommendationId);
-            } else {
-                return [...prev, recommendationId];
-            }
-        });
+        setSelectedRecommendations((prev) =>
+            prev.includes(recommendationId)
+                ? prev.filter((id) => id !== recommendationId)
+                : [...prev, recommendationId]
+        );
+        // POST /api/.../save // SOURCE: ???
     };
 
     return (
         <SafeAreaView style={styles.container}>
-            <Header title={`잇고 추천 ${getRegionName()} 맛집 경로`} subtitle="당신의 선호 기반" />
+            <Header
+                title={`잇고 추천 ${regionName} 맛집 경로`}
+                subtitle="당신의 선호 기반"
+            />
 
-            {/* 탭 버튼 */}
             <View style={styles.tabContainer}>
-                <TouchableOpacity onPress={() => handleTabPress('region')} style={styles.tabButton}>
+                <TouchableOpacity
+                    onPress={() => handleTabPress("region")}
+                    style={styles.tabButton}
+                >
                     <ThemedText
                         size="base"
-                        color={activeTab === 'region' ? 'primary' : 'textSecondary'}
+                        color={
+                            activeTab === "region" ? "primary" : "textSecondary"
+                        }
                         weight="medium"
                     >
                         세부지역별
                     </ThemedText>
                 </TouchableOpacity>
-
-                <TouchableOpacity onPress={() => handleTabPress('theme')} style={styles.tabButton}>
-                    <ThemedText size="base" color={activeTab === 'theme' ? 'primary' : 'textSecondary'} weight="medium">
+                <TouchableOpacity
+                    onPress={() => handleTabPress("theme")}
+                    style={styles.tabButton}
+                >
+                    <ThemedText
+                        size="base"
+                        color={
+                            activeTab === "theme" ? "primary" : "textSecondary"
+                        }
+                        weight="medium"
+                    >
                         테마별
                     </ThemedText>
                 </TouchableOpacity>
             </View>
 
-            {/* 간격 추가 */}
             <View style={styles.spacer} />
 
-            <RecommendationList
-                recommendations={sampleRecommendations}
-                onPlacePress={handlePlacePress}
-                onCardPress={handleCardPress}
-                onSave={handleSave}
-                onLongPress={handleLongPress}
-                selectedPlaceId={selectedPlaceId}
-                activeRecommendationId={selectedRecommendationId}
-            />
+            {loading ? (
+                <View style={styles.center}>
+                    <ActivityIndicator />
+                    <ThemedText color="textSecondary" style={{ marginTop: 8 }}>
+                        추천 경로 불러오는 중…
+                    </ThemedText>
+                    <ThemedText color="textSecondary" style={{ marginTop: 4 }}>
+                        API_BASE: {API_BASE}
+                    </ThemedText>
+                </View>
+            ) : error ? (
+                <View style={styles.center}>
+                    <ThemedText color="danger">
+                        불러오기 실패: {error}
+                    </ThemedText>
+                    <TouchableOpacity onPress={load} style={{ marginTop: 8 }}>
+                        <ThemedText weight="semibold">다시 시도</ThemedText>
+                    </TouchableOpacity>
+                    <ThemedText color="textSecondary" style={{ marginTop: 6 }}>
+                        API_BASE: {API_BASE}
+                    </ThemedText>
+                </View>
+            ) : (
+                <RecommendationList
+                    recommendations={recommendations}
+                    onPlacePress={handlePlacePress}
+                    onCardPress={handleCardPress}
+                    onSave={handleSave}
+                    onLongPress={handleLongPress}
+                    selectedPlaceId={selectedPlaceId}
+                    activeRecommendationId={selectedRecommendationId}
+                />
+            )}
 
-            {/* PlaceCardSwiper */}
             {showPlaceCardSwiper && (
-                <PlaceCardSwiper onClose={handleClosePlaceCardSwiper} onPlaceSelect={handlePlaceSelect} />
+                <PlaceCardSwiper
+                    onClose={handleClosePlaceCardSwiper}
+                    onPlaceSelect={handlePlaceSelect}
+                />
             )}
         </SafeAreaView>
     );
 }
 
 const styles = StyleSheet.create({
-    container: {
-        flex: 1,
-        backgroundColor: Colors.background,
-    },
+    container: { flex: 1, backgroundColor: Colors.background },
     tabContainer: {
-        flexDirection: 'row',
+        flexDirection: "row",
         backgroundColor: Colors.white,
         paddingVertical: 8,
         paddingHorizontal: 16,
-        alignItems: 'center',
-        justifyContent: 'center',
+        alignItems: "center",
+        justifyContent: "center",
         gap: 40,
     },
-    tabButton: {
-        paddingVertical: 4,
-    },
-    actionSection: {
-        backgroundColor: Colors.white,
-        paddingVertical: 8,
-        paddingHorizontal: 16,
-        alignItems: 'flex-end',
-    },
-    spacer: {
-        height: 20, // 원하는 간격 크기
-    },
+    tabButton: { paddingVertical: 4 },
+    spacer: { height: 20 },
+    center: { flex: 1, alignItems: "center", justifyContent: "center" },
 });

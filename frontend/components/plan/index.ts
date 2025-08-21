@@ -1,7 +1,6 @@
 export { CourseCard } from "./CourseCard";
 export { AddCourseCard } from "./AddCourseCard";
 export { CourseList } from "./CourseList";
-export { CourseListExample } from "./CourseListExample";
 export { DateInput } from "./DateInput";
 export { DestinationSelector } from "./DestinationSelector";
 export { DestinationButton } from "./DestinationButton";

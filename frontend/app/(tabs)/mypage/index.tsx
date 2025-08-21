@@ -7,7 +7,7 @@ import { MyPageTabs } from '@/components/mypage/MyPageTabs';
 import DropdownSort from '@/components/mypage/DropdownSort';
 import { PlaceCard } from '@/components/main/PlaceCard';
 import placesData from '@/mock-data/places.json';
-import { CourseListExample, CourseCard } from '@/components/plan';
+import { CourseList, CourseCard } from '@/components/plan';
 import { SAMPLE_COURSES } from '@/constants/Data';
 import { ThemedText } from '@/components/ThemedText';
 import { Colors } from '@/constants/Colors';
@@ -62,7 +62,7 @@ const MyPageTab = () => {
 
                     {activeTab === 'courses' && (
                         <View>
-                            <CourseListExample />
+                            <CourseList />
                         </View>
                     )}
                     {activeTab === 'saved' && (
