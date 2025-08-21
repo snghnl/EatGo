@@ -2,6 +2,32 @@
 
 import { z } from 'zod';
 
+export const zTokenObtainPair = z.object({
+    username: z.string().min(1),
+    password: z.string().min(1)
+});
+
+export const zTokenRefresh = z.object({
+    refresh: z.string().min(1),
+    access: z.optional(z.string().min(1).readonly())
+});
+
+export const zTokenVerify = z.object({
+    token: z.string().min(1)
+});
+
+export const zCategory = z.object({
+    id: z.optional(z.uuid().readonly()),
+    name: z.string().min(1).max(255),
+    description: z.optional(z.string()),
+    icon: z.optional(z.string().max(255)),
+    color: z.optional(z.string().max(255)),
+    category_type: z.optional(z.string().max(255)),
+    is_active: z.optional(z.boolean()),
+    created_at: z.optional(z.iso.datetime().readonly()),
+    updated_at: z.optional(z.iso.datetime().readonly())
+});
+
 export const zRoute = z.object({
     id: z.optional(z.uuid().readonly()),
     created_at: z.optional(z.iso.datetime().readonly()),
@@ -81,6 +107,90 @@ export const zTravelCourse = z.object({
     description: z.optional(z.string()),
     routes: z.array(zTravelCourseRoute)
 });
+
+export const zAccountsMeListData = z.object({
+    body: z.optional(z.never()),
+    path: z.optional(z.never()),
+    query: z.optional(z.never())
+});
+
+export const zAuthTokenCreateData = z.object({
+    body: zTokenObtainPair,
+    path: z.optional(z.never()),
+    query: z.optional(z.never())
+});
+
+export const zAuthTokenCreateResponse = zTokenObtainPair;
+
+export const zAuthTokenRefreshCreateData = z.object({
+    body: zTokenRefresh,
+    path: z.optional(z.never()),
+    query: z.optional(z.never())
+});
+
+export const zAuthTokenRefreshCreateResponse = zTokenRefresh;
+
+export const zAuthTokenVerifyCreateData = z.object({
+    body: zTokenVerify,
+    path: z.optional(z.never()),
+    query: z.optional(z.never())
+});
+
+export const zAuthTokenVerifyCreateResponse = zTokenVerify;
+
+export const zCategoriesListData = z.object({
+    body: z.optional(z.never()),
+    path: z.optional(z.never()),
+    query: z.optional(z.never())
+});
+
+export const zCategoriesListResponse = z.array(zCategory);
+
+export const zCategoriesCreateData = z.object({
+    body: zCategory,
+    path: z.optional(z.never()),
+    query: z.optional(z.never())
+});
+
+export const zCategoriesCreateResponse = zCategory;
+
+export const zCategoriesDeleteData = z.object({
+    body: z.optional(z.never()),
+    path: z.object({
+        id: z.uuid()
+    }),
+    query: z.optional(z.never())
+});
+
+export const zCategoriesReadData = z.object({
+    body: z.optional(z.never()),
+    path: z.object({
+        id: z.uuid()
+    }),
+    query: z.optional(z.never())
+});
+
+export const zCategoriesReadResponse = zCategory;
+
+export const zCategoriesPartialUpdateData = z.object({
+    body: zCategory,
+    path: z.object({
+        id: z.uuid()
+    }),
+    query: z.optional(z.never())
+});
+
+export const zCategoriesPartialUpdateResponse = zCategory;
+
+export const zCategoriesUpdateData = z.object({
+    body: zCategory,
+    path: z.object({
+        id: z.uuid()
+    }),
+    query: z.optional(z.never())
+});
+
+export const zCategoriesUpdateResponse = zCategory;
 
 export const zKakaomapDistanceListData = z.object({
     body: z.optional(z.never()),
