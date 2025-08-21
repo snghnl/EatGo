@@ -52,6 +52,10 @@ export default function RootLayout() {
                 <View style={{ flex: 1, backgroundColor: Colors.background }}>
                     <Stack>
                         <Stack.Screen
+                            name="onboarding"
+                            options={{ headerShown: false }}
+                        />
+                        <Stack.Screen
                             name="(tabs)"
                             options={{ headerShown: false }}
                         />
