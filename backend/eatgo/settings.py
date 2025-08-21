@@ -152,3 +152,8 @@ REST_FRAMEWORK = {
         "rest_framework.authentication.SessionAuthentication",
     ]
 }
+
+# drf_yasg configuration for Swagger/OpenAPI generation
+SWAGGER_SETTINGS = {
+    "DEFAULT_INFO": "eatgo.urls.api_info",
+}

@@ -23,12 +23,15 @@ from drf_yasg.views import get_schema_view
 from drf_yasg import openapi
 
 
+# Export a top-level Info object for drf_yasg DEFAULT_INFO import string
+api_info = openapi.Info(
+    title="EatGo API",
+    default_version="v1",
+    description="EatGo API",
+)
+
 schema_view = get_schema_view(
-    openapi.Info(
-        title="EatGo API",
-        default_version="v1",
-        description="EatGo API",
-    ),
+    api_info,
     public=True,
     permission_classes=(permissions.AllowAny,),
 )
