@@ -45,7 +45,7 @@ urlpatterns = [
         name="schema-swagger-ui",
     ),
     path("admin/", admin.site.urls),
-    path("/redoc/", schema_view.with_ui("redoc", cache_timeout=0), name="schema-redoc"),
+    path("redoc/", schema_view.with_ui("redoc", cache_timeout=0), name="schema-redoc"),
     # api
     path(settings.API_VERSION + "/kakaomap/", include("kakaomap.urls")),
     path(settings.API_VERSION + "/routes/", include("routes.urls")),
