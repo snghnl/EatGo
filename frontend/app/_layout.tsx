@@ -13,6 +13,7 @@ import { GestureHandlerRootView } from "react-native-gesture-handler";
 import { useColorScheme } from "@/hooks/useColorScheme";
 import AppContainer from "@/components/common/AppContainer";
 import { Colors } from "@/constants/Colors";
+import { client } from "@/src/client/client.gen";
 
 export const viewport = {
     width: "device-width",
@@ -21,6 +22,17 @@ export const viewport = {
     maximumScale: 1.0,
     userScalable: false,
 };
+
+// configure internal service client
+client.setConfig({
+    // set default base url for requests
+    // TODO: change to production url
+    baseUrl: "http://localhost:8000",
+    // set default headers for requests
+    headers: {
+        Authorization: "Bearer <token_from_service_client>",
+    },
+});
 
 export default function RootLayout() {
     const colorScheme = useColorScheme();
