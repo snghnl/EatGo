@@ -53,7 +53,7 @@ export type Category = {
     /**
      * Category type
      */
-    category_type?: string;
+    category_type?: 'korean' | 'western' | 'japanese' | 'chinese' | 'asian' | 'snack' | 'hamburger' | 'pizza' | 'seafood' | 'meat' | 'bakery' | 'pub';
     /**
      * Is active
      */

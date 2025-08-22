@@ -22,7 +22,20 @@ export const zCategory = z.object({
     description: z.optional(z.string()),
     icon: z.optional(z.string().max(255)),
     color: z.optional(z.string().max(255)),
-    category_type: z.optional(z.string().max(255)),
+    category_type: z.optional(z.enum([
+        'korean',
+        'western',
+        'japanese',
+        'chinese',
+        'asian',
+        'snack',
+        'hamburger',
+        'pizza',
+        'seafood',
+        'meat',
+        'bakery',
+        'pub'
+    ])),
     is_active: z.optional(z.boolean()),
     created_at: z.optional(z.iso.datetime().readonly()),
     updated_at: z.optional(z.iso.datetime().readonly())
