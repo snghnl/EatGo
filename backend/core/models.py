@@ -1,6 +1,7 @@
 import uuid
 from django.db import models
 
+
 # Create your models here.
 class BaseModel(models.Model):
     """
@@ -11,6 +12,7 @@ class BaseModel(models.Model):
         created_at (DateTimeField): The date and time when the instance was created.
         updated_at (DateTimeField): The date and time when the instance was last updated.
     """
+
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
 
@@ -18,21 +20,39 @@ class BaseModel(models.Model):
         abstract = True
 
 
+class CategoryType(models.TextChoices):
+    """
+    A class representing the type of category in the database.
+    """
+
+    KOREAN = "korean"
+    WESTERN = "western"
+    JAPANESE = "japanese"
+    CHINESE = "chinese"
+    ASIAN = "asian"
+    SNACK = "snack"
+    HAMBURGER = "hamburger"
+    PIZZA = "pizza"
+    SEAFOOD = "seafood"
+    MEAT = "meat"
+    BAKERY = "bakery"
+    PUB = "pub"
+
 
 class Category(BaseModel):
     """
     A model representing a category of user preferences in the database.
     """
+
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
     name = models.CharField(max_length=255, unique=True)
     description = models.TextField(blank=True)
     icon = models.CharField(max_length=255, blank=True)
     color = models.CharField(max_length=255, blank=True)
-    category_type = models.CharField(max_length=255, blank=True)
+    category_type = models.CharField(
+        max_length=255, blank=True, choices=CategoryType.choices
+    )
     is_active = models.BooleanField(default=True)
 
     def __str__(self) -> str:
         return self.name
-
-
-
