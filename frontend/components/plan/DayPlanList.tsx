@@ -1,8 +1,8 @@
-import React from "react";
-import { StyleSheet, View, ScrollView } from "react-native";
-import { ThemedView } from "../ThemedView";
-import { DayPlan } from "./DayPlan";
-import { Colors } from "../../constants/Colors";
+import React from 'react';
+import { StyleSheet, View, ScrollView } from 'react-native';
+import { ThemedView } from '../ThemedView';
+import { DayPlan } from './DayPlan';
+import { Colors } from '../../constants/Colors';
 
 interface PlaceItem {
     id: string;
@@ -49,9 +49,7 @@ export const DayPlanList: React.FC<DayPlanListProps> = ({
                         day={dayPlan.day}
                         title={dayPlan.title}
                         places={dayPlan.places}
-                        onPlacePress={(placeId) =>
-                            onPlacePress?.(dayPlan.id, placeId)
-                        }
+                        onPlacePress={(placeId) => onPlacePress?.(dayPlan.id, placeId)}
                         onCardPress={() => onCardPress?.(dayPlan.id)}
                         onLongPress={() => onLongPress?.(dayPlan.id)}
                         onSave={() => onSave?.(dayPlan.id)}

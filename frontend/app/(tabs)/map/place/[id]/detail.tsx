@@ -1,6 +1,6 @@
 // app/place/[id]/detail.tsx
-import React from 'react';
-import { useBookmark } from '@/app/BookmarkContext';
+import React, { useState } from 'react';
+import { useBookmark } from '@/store/BookmarkContext';
 import { ScrollView, View, StyleSheet, SafeAreaView } from 'react-native';
 import { useRouter, useLocalSearchParams } from 'expo-router';
 import { PlaceHeader } from '@/components/main/place/PlaceHeader';
@@ -10,7 +10,7 @@ import { PlaceMenu } from '@/components/main/place/PlaceMenu';
 import { ThemedText } from '@/components/ThemedText';
 import { Colors } from '@/constants/Colors';
 import placesData from '@/mock-data/places.json';
-import { CourseListExample } from '@/components/plan';
+import { CourseList } from '@/components/plan/CourseList';
 import { Ionicons } from '@expo/vector-icons';
 import { router } from 'expo-router';
 
@@ -19,6 +19,7 @@ export default function PlaceDetailScreen() {
     const { id } = useLocalSearchParams<{ id: string }>();
     const { bookmarkedPlaceIds, toggleBookmark } = useBookmark();
     const isBookmarked = bookmarkedPlaceIds.includes(id);
+    const [courses, setCourses] = useState([]); // ✅ 실제 데이터 연결시 여기에 fetch 결과 반영
 
     const place = placesData.documents.find((item) => item.id === id);
 
@@ -123,7 +124,7 @@ export default function PlaceDetailScreen() {
                         </ThemedText>
                     </ThemedText>
                 </View>
-                <CourseListExample />
+                <CourseList courses={courses} />
             </ScrollView>
         </SafeAreaView>
     );

@@ -9,7 +9,8 @@ import { GestureHandlerRootView } from 'react-native-gesture-handler';
 import { useColorScheme } from '@/hooks/useColorScheme';
 import AppContainer from '@/components/common/AppContainer';
 import { Colors } from '@/constants/Colors';
-import { BookmarkProvider } from '@/app/BookmarkContext';
+import { BookmarkProvider } from '@/store/BookmarkContext';
+import { PostProvider } from '@/store/posts';
 
 export const viewport = {
     width: 'device-width',
@@ -44,21 +45,25 @@ export default function RootLayout() {
     return (
         <ThemeProvider value={colorScheme === 'dark' ? DarkTheme : DefaultTheme}>
             <BookmarkProvider>
-                <GestureHandlerRootView style={{ flex: 1 }}>
-                    <View style={{ flex: 1, backgroundColor: Colors.background }}>
-                        <Stack>
-                            <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
-                            <Stack.Screen
-                                name="placelist/[category]/index"
-                                options={{
-                                    title: '',
-                                    headerBackVisible: true,
-                                }}
-                            />
-                        </Stack>
-                        <StatusBar style="auto" />
-                    </View>
-                </GestureHandlerRootView>
+                <PostProvider>
+                    <GestureHandlerRootView style={{ flex: 1 }}>
+                        <View style={{ flex: 1, backgroundColor: Colors.background }}>
+                            <Stack>
+                                <Stack.Screen name="onboarding" options={{ headerShown: false }} />
+                                <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
+                                <Stack.Screen
+                                    name="placelist/[category]/index"
+                                    options={{
+                                        title: '',
+                                        headerBackVisible: true,
+                                    }}
+                                />
+                            </Stack>
+                            <StatusBar style="auto" />
+                        </View>
+                        \{' '}
+                    </GestureHandlerRootView>
+                </PostProvider>
             </BookmarkProvider>
         </ThemeProvider>
     );

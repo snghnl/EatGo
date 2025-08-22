@@ -18,6 +18,7 @@ import { SAMPLE_COURSES } from '@/constants/Data';
 import { router } from 'expo-router';
 import PostImagePicker from '@/components/community/PostImagePicker';
 import { Fonts } from '@/constants/Fonts';
+import { usePostStore } from '@/store/posts';
 
 export default function PostEditor() {
     const [title, setTitle] = useState('');
@@ -27,8 +28,21 @@ export default function PostEditor() {
 
     const { courseId } = useLocalSearchParams<{ courseId?: string }>();
     const course = SAMPLE_COURSES.find((c) => c.id === courseId);
+    const { addPost } = usePostStore();
+    const genId = () => `${Date.now()}-${Math.random().toString(36).slice(2, 8)}`;
 
-    const handleSubmit = () => {};
+    const handleSubmit = () => {
+        if (!title.trim() || !content.trim()) return;
+        addPost({
+            id: genId(),
+            title,
+            content,
+            images,
+            courseId: courseId ? String(courseId) : undefined, // ✅ 문자열 통일
+        });
+
+        router.push('/(tabs)/mypage'); // 마이페이지로 이동
+    };
 
     // 실제 데이터 구조에 맞게 subtitle/title을 활용
     const dateRange = course?.subtitle || '여행 일정';

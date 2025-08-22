@@ -1,154 +1,91 @@
-import React from 'react';
+import React, { useMemo, useState } from 'react';
 import { View, ScrollView, StyleSheet, SafeAreaView } from 'react-native';
-import routes from '@/mock-data/routes.json';
-import placesData from '@/mock-data/places.json';
-import { DayPlanList } from '@/components/plan/DayPlanList';
-import { useLocalSearchParams } from 'expo-router';
-import posts from '@/mock-data/posts.json';
-import users from '@/mock-data/users.json';
+import { useLocalSearchParams, router } from 'expo-router';
+import { Ionicons } from '@expo/vector-icons';
+import { ThemedText } from '@/components/ThemedText';
+import { Colors } from '@/constants/Colors';
+import { useBookmark } from '@/store/BookmarkContext';
+import { BookmarkButton } from '@/components/main/BookmarkButton';
+import { DayPlanListContainer } from '@/components/plan/DayPlanListContainer';
+
 import { CommunityDetailUser } from '@/components/community/CommunityDetailUser';
 import { CommunityDetailContent } from '@/components/community/CommunityDetailContent';
 
-import Header from '@/components/common/Header';
-import { Ionicons } from '@expo/vector-icons';
-import { router } from 'expo-router';
-import { BookmarkButton } from '@/components/main/BookmarkButton';
-import { useBookmark } from '@/app/BookmarkContext';
-import { ThemedText } from '@/components/ThemedText';
-import { Colors } from '@/constants/Colors';
+import { usePostStore } from '@/store/posts';
+import mockPosts from '@/mock-data/posts.json';
+import users from '@/mock-data/users.json';
 
 export default function CommunityPost() {
-    const { id } = useLocalSearchParams();
-    const post = posts.find((p) => p.id === id);
-    const user = users.find((u) => u.id === post?.user_id);
+    const { id: rawId } = useLocalSearchParams<{ id?: string | string[] }>();
+    const id = typeof rawId === 'string' ? rawId : Array.isArray(rawId) ? rawId[0] : undefined;
+
+    const [selectedPlaceId, setSelectedPlaceId] = useState<string | null>(null);
+    const [selectedDayPlanId, setSelectedDayPlanId] = useState<string | null>(null);
+
+    const { getPostById } = usePostStore();
+    const storePost = id ? getPostById(id) : undefined;
+    const mockPost = !storePost && id ? (mockPosts as any[]).find((p) => String(p.id) === String(id)) : undefined;
+
+    const post: any = useMemo(() => {
+        if (storePost) return storePost;
+        if (mockPost) {
+            return {
+                id: String(mockPost.id),
+                title: mockPost.title,
+                content: mockPost.content,
+                images: mockPost.images ?? [],
+                courseId: String(mockPost.course_id ?? ''),
+                createdAt: mockPost.created_at ?? Date.now(),
+                user_id: mockPost.user_id,
+            };
+        }
+        return undefined;
+    }, [storePost, mockPost]);
+
+    const user = post ? users.find((u) => String(u.id) === String(post.user_id ?? u?.id)) ?? users[0] : undefined;
     const { bookmarkedCourseIds, toggleCourseBookmark } = useBookmark();
 
-    const MOCK_ROUTES: { [key: string]: { location: string; season: string; duration: string; images: string[] } } = {
-        'route-001': {
-            location: '서울',
-            season: '봄',
-            duration: '2일',
-            images: [
-                'https://example.com/image1.jpg',
-                'https://example.com/image2.jpg',
-                'https://example.com/image3.jpg',
-            ],
-        },
-        'route-002': {
-            location: '서울',
-            season: '여름',
-            duration: '1박 2일',
-            images: ['https://example.com/image4.jpg', 'https://example.com/image5.jpg'],
-        },
-        'route-003': {
-            location: '강남',
-            season: '가을',
-            duration: '1박 2일',
-            images: ['https://example.com/image6.jpg'],
-        },
-        'route-004': {
-            location: '부산',
-            season: '여름',
-            duration: '2박 3일',
-            images: ['https://example.com/image7.jpg', 'https://example.com/image8.jpg'],
-        },
-        'route-005': {
-            location: '제주',
-            season: '봄',
-            duration: '2박 3일',
-            images: ['https://example.com/image9.jpg'],
-        },
-        'route-006': {
-            location: '대구',
-            season: '겨울',
-            duration: '2박 3일',
-            images: ['https://example.com/image10.jpg'],
-        },
+    if (!id || !post || !user) {
+        return (
+            <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center', padding: 24 }}>
+                <ThemedText>게시글을 찾을 수 없어요.</ThemedText>
+            </View>
+        );
+    }
+
+    // ✅ 날짜만 표시 (YYYY. MM. DD)
+    const dateText = useMemo(() => {
+        const d = new Date(post.createdAt ?? Date.now());
+        const y = d.getFullYear();
+        const m = String(d.getMonth() + 1).padStart(2, '0');
+        const day = String(d.getDate()).padStart(2, '0');
+        return `${y}. ${m}. ${day}`;
+    }, [post.createdAt]);
+
+    const courseKey = String(post.courseId ?? '');
+    const isBookmarked = bookmarkedCourseIds.includes(courseKey);
+
+    const handlePlacePress = (dayPlanId: string, placeId: string) => {
+        setSelectedDayPlanId(dayPlanId);
+        setSelectedPlaceId(placeId);
     };
+    const handleCardPress = (dayPlanId: string) => setSelectedDayPlanId(dayPlanId);
+    const handleLongPress = (dayPlanId: string) => {};
+    const handleSave = (dayPlanId: string) => {};
 
-    // 샘플 DayPlan 데이터 (이 페이지에서만 사용)
-    const sampleDayPlans = [
-        {
-            id: '1',
-            day: 1,
-            title: '전주 한옥마을',
-            places: [
-                { id: '1-1', category: '회/해산물', name: '우리횟집' },
-                { id: '1-2', category: '카페', name: '커피집' },
-                { id: '1-3', category: '낙곱새', name: '개미집' },
-            ],
-        },
-        {
-            id: '2',
-            day: 2,
-            title: '순천만',
-            places: [
-                { id: '2-1', category: '돈카츠', name: '톤쇼우' },
-                { id: '2-2', category: '베이커리', name: '코스피어' },
-                { id: '2-3', category: '백반', name: '김가네' },
-            ],
-        },
-        {
-            id: '3',
-            day: 3,
-            title: '해운대',
-            places: [
-                { id: '3-1', category: '돈카츠', name: '톤쇼우' },
-                { id: '3-2', category: '베이커리', name: '코스피어' },
-                { id: '3-3', category: '백반', name: '김가네' },
-            ],
-        },
-    ];
-
-    const routeMeta = post ? MOCK_ROUTES[post.course_id] : undefined;
-    const dateRange = post.created_at ? post.created_at.slice(0, 10) : '2025. 05. 04 - 05. 06';
-    const location = routeMeta?.location || '전주시 무슨동';
-    // 코스 id는 post.route_id에서 추출 (예: 'route-001' -> '1')
-    let courseId = '';
-    if (post && post.course_id) {
-        // 'route-001' -> '1', 'route-002' -> '2' 등으로 변환
-        courseId = post.course_id.replace('route-00', '').replace('route-0', '').replace('route-', '');
-    }
-    const isBookmarked = bookmarkedCourseIds.includes(courseId);
-
-    if (!post || !user) return null;
-
-    const route = routes.find((r) => r.id === post.course_id);
-    const placeMap = Object.fromEntries((placesData.documents || []).map((p) => [p.id, p]));
-
-    const showSample = true; // 테스트용
-
-    let dayPlans = [];
-    if (showSample) {
-        dayPlans = sampleDayPlans;
-    } else if (route && route.places?.length > 0) {
-        dayPlans = [
-            {
-                id: '1',
-                day: 1,
-                title: route.title || '여행 코스',
-                places: route.places.map((p) => {
-                    const place = placeMap[p.id] || {};
-                    return {
-                        id: place.id || p.id,
-                        category: place.category_name || '-',
-                        name: place.place_name || '-',
-                    };
-                }),
-            },
-        ];
-    }
     return (
         <ScrollView>
             <SafeAreaView>
-                <View style={{ position: 'absolute', top: 70, left: 15, zIndex: 10 }}>
+                {/* ✅ 뒤로가기 버튼 (UI 참고: 상단 고정, 색상 수정) */}
+                <View style={{ position: 'absolute', top: 30, left: 15, zIndex: 10 }}>
                     <Ionicons
                         name="chevron-back"
                         size={20}
-                        color="textsecondary"
-                        onPress={() => router.push('/community')}
+                        color={Colors.textSecondary}
+                        onPress={() => router.back()}
                     />
                 </View>
+
                 <View style={styles.container}>
                     <View style={styles.headerRow}>
                         <ThemedText size="2xl" weight="bold" style={styles.title}>
@@ -156,58 +93,50 @@ export default function CommunityPost() {
                         </ThemedText>
                         <BookmarkButton
                             isBookmarked={isBookmarked}
-                            onPress={() => toggleCourseBookmark(courseId)}
+                            onPress={() => toggleCourseBookmark(courseKey)}
                             size={28}
                         />
                     </View>
+
                     <View style={styles.userRow}>
                         <CommunityDetailUser
                             nickname={user.username || user.id}
                             profileImageUrl={user.profile_image || ''}
-                            subInfo={post.created_at ? `이웃 수 NN명` : undefined}
-                        />
-                    </View>
-                    <View style={styles.metaRow}>
-                        <ThemedText style={styles.metaText}>
-                            {dateRange} <ThemedText color="primary">📍 {location}</ThemedText>
-                        </ThemedText>
-                    </View>
-                    <View style={styles.contentRow}>
-                        <CommunityDetailContent
-                            content={
-                                post.content ||
-                                '에브리바디 컴 투 광안리\n부산 비강스 강스 강스를 가보자\n의미있는 삶이 무엇인지 고민 될 찰나\n나에게 부산 바다가 찾아왔다'
-                            }
+                            subInfo={`작성: ${dateText}`} // ✅ 날짜만
                         />
                     </View>
 
-                    <View style={styles.titleWrapper}>
-                        <ThemedText size="lg" weight="bold" style={styles.title}>
-                            다른 여행객분들은{'\n'}
-                            <ThemedText size="lg" weight="bold" style={styles.title}>
-                                <ThemedText size="lg" color="primary" weight="bold">
-                                    이 코스
-                                </ThemedText>
-                                로 방문하셨어요
-                            </ThemedText>
+                    <View style={styles.metaRow}>
+                        <ThemedText style={styles.metaText}>
+                            <ThemedText>여행 기간</ThemedText>
+                            <ThemedText color="primary">📍 지역: {courseKey || '-'}</ThemedText>
                         </ThemedText>
                     </View>
-                </View>
-                {dayPlans.length > 0 && (
-                    <View style={styles.dayplan}>
-                        <DayPlanList dayPlans={dayPlans} />
+
+                    <View style={styles.contentRow}>
+                        <CommunityDetailContent content={post.content ?? ''} />
                     </View>
-                )}
+                </View>
+
+                <View style={styles.dayplan}>
+                    <DayPlanListContainer
+                        courseId={courseKey}
+                        isNewCourse={false}
+                        onPlacePress={handlePlacePress}
+                        onCardPress={handleCardPress}
+                        onSave={handleSave}
+                        onLongPress={handleLongPress}
+                        selectedPlaceId={selectedPlaceId}
+                        activeDayPlanId={selectedDayPlanId}
+                    />
+                </View>
             </SafeAreaView>
         </ScrollView>
     );
 }
 
 const styles = StyleSheet.create({
-    container: {
-        padding: 15,
-        backgroundColor: Colors.white,
-    },
+    container: { padding: 15, backgroundColor: Colors.white },
     headerRow: {
         marginTop: 50,
         marginBottom: 30,
@@ -215,14 +144,7 @@ const styles = StyleSheet.create({
         justifyContent: 'space-between',
         alignItems: 'flex-start',
     },
-    title: {
-        lineHeight: 35,
-        marginTop: 0,
-        paddingTop: 0,
-    },
-    BookmarkButton: {
-        alignSelf: 'flex-start',
-    },
+    title: { lineHeight: 35, marginTop: 0, paddingTop: 0 },
     userRow: {
         flexDirection: 'row',
         alignItems: 'center',
@@ -230,20 +152,8 @@ const styles = StyleSheet.create({
         borderBottomWidth: 1,
         paddingBottom: 15,
     },
-    metaRow: {
-        marginTop: 20,
-    },
-    metaText: {
-        color: Colors.textSecondary,
-    },
-    titleWrapper: {
-        paddingTop: 40,
-        paddingBottom: 10,
-    },
-    dayplan: {
-        backgroundColor: Colors.backgroundGray,
-        paddingTop: 0,
-        marginTop: 0,
-        margin: 0,
-    },
+    metaRow: { marginTop: 20 },
+    metaText: { color: Colors.textSecondary },
+    contentRow: { marginTop: 16 },
+    dayplan: { backgroundColor: Colors.backgroundGray, paddingTop: 0, marginTop: 0, margin: 0 },
 });

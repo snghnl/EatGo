@@ -43,10 +43,12 @@ export default function PostCourseSelect() {
                     { paddingBottom: TAB_BAR_HEIGHT + insets.bottom + 12 }, // 탭바 가림 방지
                 ]}
             >
-                <View style={styles.addbtn}>
-                    <AddCourseCard onPress={() => router.push('/plan')} />
-                </View>
-                <CourseList courses={[...SAMPLE_COURSES]} onCoursePress={(id) => handleSelect({ id })} />
+                {' '}
+                <CourseList
+                    courses={[...SAMPLE_COURSES]}
+                    onCoursePress={(id) => handleSelect({ id })}
+                    onAddCourse={() => router.push('/plan')}
+                />
             </View>
         </SafeAreaView>
     );

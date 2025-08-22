@@ -1,5 +1,5 @@
 import React from 'react';
-import { useBookmark } from '@/app/BookmarkContext';
+import { useBookmark } from '@/store/BookmarkContext';
 import { router } from 'expo-router';
 import { Ionicons } from '@expo/vector-icons';
 import { View, FlatList, StyleSheet } from 'react-native';

@@ -1,10 +1,10 @@
 // src/components/plan/DayPlanListContainer.tsx
-import React from "react";
-import { ActivityIndicator, View, StyleSheet } from "react-native";
-import { DayPlanList } from "./DayPlanList";
-import { fetchDayPlans, DayPlanItem } from "../../src/api/dayPlans"; //출처 맞는지 확인필요!!!
-import { ThemedText } from "../ThemedText";
-import { Colors } from "@/constants/Colors";
+import React from 'react';
+import { ActivityIndicator, View, StyleSheet } from 'react-native';
+import { DayPlanList } from './DayPlanList';
+import { fetchDayPlans, DayPlanItem } from '../../src/api/dayPlans'; //출처 맞는지 확인필요!!!
+import { ThemedText } from '../ThemedText';
+import { Colors } from '@/constants/Colors';
 
 interface Props {
     courseId: string;
@@ -45,7 +45,7 @@ export const DayPlanListContainer: React.FC<Props> = ({
             })
             .catch((e) => {
                 if (!mounted) return;
-                setError(e instanceof Error ? e.message : "Unknown error");
+                setError(e instanceof Error ? e.message : 'Unknown error');
             })
             .finally(() => mounted && setLoading(false));
 
@@ -91,8 +91,8 @@ export const DayPlanListContainer: React.FC<Props> = ({
 const styles = StyleSheet.create({
     center: {
         flex: 1,
-        alignItems: "center",
-        justifyContent: "center",
+        alignItems: 'center',
+        justifyContent: 'center',
         backgroundColor: Colors.background,
     },
 });

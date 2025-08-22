@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { useBookmark } from '@/app/BookmarkContext';
+import { useBookmark } from '@/store/BookmarkContext';
 import { View, ScrollView, StyleSheet } from 'react-native';
 import MyPageHeader from '@/components/mypage/MyPageHeader';
 import usersData from '@/mock-data/users.json';
@@ -11,15 +11,17 @@ import { CourseList, CourseCard } from '@/components/plan';
 import { SAMPLE_COURSES } from '@/constants/Data';
 import { ThemedText } from '@/components/ThemedText';
 import { Colors } from '@/constants/Colors';
+import { usePostStore } from '@/store/posts';
+import { router } from 'expo-router';
 
 const MyPageTab = () => {
     const [activeTab, setActiveTab] = useState<'places' | 'courses' | 'saved'>('places');
     const [sortOption, setSortOption] = useState('최신순');
     const { bookmarkedPlaceIds, toggleBookmark, bookmarkedCourseIds, toggleCourseBookmark } = useBookmark();
-
     const user = usersData[0];
     const sortedPlaces = placesData.documents.slice(0, 3);
     const allPlaces = placesData.documents;
+    const { posts, getPostsByCourse } = usePostStore();
 
     return (
         <View style={styles.container}>
@@ -62,7 +64,33 @@ const MyPageTab = () => {
 
                     {activeTab === 'courses' && (
                         <View>
-                            <CourseList />
+                            {SAMPLE_COURSES.map((course) => {
+                                const post = getPostsByCourse(String(course.id))[0];
+                                console.log(
+                                    '[types]',
+                                    typeof courseId,
+                                    posts.map((p) => typeof (p as any).courseId)
+                                );
+
+                                return (
+                                    <CourseCard
+                                        key={course.id}
+                                        subtitle={course.subtitle}
+                                        title={course.title}
+                                        hasImages={course.hasImages}
+                                        onPress={() => {
+                                            if (post) {
+                                                router.push({
+                                                    pathname: '/community/[id]',
+                                                    params: { id: post.id }, // ✅ app/community/[id]/index.tsx 로 진입
+                                                });
+                                            } else {
+                                                alert('해당 코스에 작성된 게시글이 없습니다.');
+                                            }
+                                        }}
+                                    />
+                                );
+                            })}
                         </View>
                     )}
                     {activeTab === 'saved' && (

@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { useBookmark } from '@/app/BookmarkContext';
+import { useBookmark } from '@/store/BookmarkContext';
 import { View, FlatList, StyleSheet } from 'react-native';
 import { useLocalSearchParams, useRouter } from 'expo-router';
 import { PlaceCard } from '@/components/main/PlaceCard';
