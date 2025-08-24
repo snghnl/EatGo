@@ -2,6 +2,34 @@
 
 import { z } from 'zod';
 
+export const zUserDetail = z.object({
+    id: z.optional(z.int().readonly()),
+    username: z.string().min(1).max(50),
+    email: z.email().min(1).max(254),
+    login_method: z.optional(z.enum([
+        'email',
+        'kakao',
+        'google'
+    ])),
+    profile_image_url: z.optional(z.union([
+        z.url().max(500),
+        z.null()
+    ])),
+    date_joined: z.optional(z.iso.datetime().readonly())
+});
+
+export const zUser = z.object({
+    username: z.string().min(1).max(50),
+    email: z.email().min(1).max(254),
+    password: z.string().min(1),
+    password_confirm: z.string().min(1),
+    login_method: z.optional(z.enum([
+        'email',
+        'kakao',
+        'google'
+    ]))
+});
+
 export const zTokenObtainPair = z.object({
     username: z.string().min(1),
     password: z.string().min(1)
@@ -121,11 +149,21 @@ export const zTravelCourse = z.object({
     routes: z.array(zTravelCourseRoute)
 });
 
-export const zAccountsMeListData = z.object({
+export const zAccountsMeReadData = z.object({
     body: z.optional(z.never()),
     path: z.optional(z.never()),
     query: z.optional(z.never())
 });
+
+export const zAccountsMeReadResponse = zUserDetail;
+
+export const zAccountsSignupCreateData = z.object({
+    body: zUser,
+    path: z.optional(z.never()),
+    query: z.optional(z.never())
+});
+
+export const zAccountsSignupCreateResponse = zUser;
 
 export const zAuthTokenCreateData = z.object({
     body: zTokenObtainPair,
