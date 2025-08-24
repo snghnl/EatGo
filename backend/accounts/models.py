@@ -10,8 +10,8 @@ class User(AbstractUser, BaseModel):
     # Override username to match SRS specification (name field)
     username = models.CharField(max_length=50, unique=True, verbose_name="Name")
 
-    # Email field (already exists in AbstractUser but ensuring it's unique)
-    email = models.EmailField(unique=True, verbose_name="Email")
+    # Email field (optional for social login, but can be required at application level)
+    email = models.EmailField(blank=True, null=True, verbose_name="Email")
 
     # Login method to track authentication method (Kakao, email, etc.)
     login_method = models.CharField(

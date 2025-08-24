@@ -218,7 +218,7 @@ class TourismAPIViewSet(viewsets.GenericViewSet):
     def get_serializer_class(self):
         """액션에 따른 serializer 클래스 반환"""
         if self.action == "regional":
-        return RegionalTourismRequestSerializer
+            return RegionalTourismRequestSerializer
 
     @action(detail=False, methods=["post"])
     def regional(self, request):
