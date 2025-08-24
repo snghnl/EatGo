@@ -47,6 +47,7 @@ urlpatterns = [
     path("admin/", admin.site.urls),
     path("redoc/", schema_view.with_ui("redoc", cache_timeout=0), name="schema-redoc"),
     # api
+    path("api/v1/auth/", include("accounts.urls")),
     path(settings.API_VERSION + "/kakaomap/", include("kakaomap.urls")),
     path(settings.API_VERSION + "/routes/", include("routes.urls")),
     path(settings.API_VERSION + "/travel_courses/", include("travel_courses.urls")),

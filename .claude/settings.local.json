@@ -1,0 +1,15 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(python manage.py shell:*)",
+      "Bash(uv sync:*)",
+      "Bash(uv run:*)",
+      "Bash(curl:*)",
+      "Bash(__NEW_LINE__ echo \"=== 3. 온보딩 선호도 설정 (한식, 양식, 일식 선택) ===\")",
+      "Bash(__NEW_LINE__ echo \"=== 4. 설정된 선호도 조회 ===\")",
+      "WebFetch(domain:github.com)"
+    ],
+    "deny": [],
+    "ask": []
+  }
+}

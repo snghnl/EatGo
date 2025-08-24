@@ -6,13 +6,14 @@ import {
 import { useFonts } from "expo-font";
 import { Stack } from "expo-router";
 import { StatusBar } from "expo-status-bar";
-import { View } from "react-native";
+import { View, Platform } from "react-native";
 import "react-native-reanimated";
 import "react-native-gesture-handler";
 import { GestureHandlerRootView } from "react-native-gesture-handler";
 import { useColorScheme } from "@/hooks/useColorScheme";
 import AppContainer from "@/components/common/AppContainer";
 import { Colors } from "@/constants/Colors";
+import { useEffect } from "react";
 
 export const viewport = {
     width: "device-width",
@@ -27,6 +28,7 @@ export default function RootLayout() {
     const [loaded, error] = useFonts({
         Pretendard: require("../assets/fonts/Pretendard-Regular.ttf"),
     });
+
 
     // If fonts are still loading, show a loading state instead of null
     if (!loaded && !error) {

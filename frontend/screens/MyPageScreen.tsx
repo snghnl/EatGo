@@ -1,6 +1,9 @@
 import { View, Text, StyleSheet, Image, TouchableOpacity } from 'react-native';
+import { useRouter } from 'expo-router';
 
 export default function MyPageScreen() {
+    const router = useRouter();
+
     // 임시 페이지 상태
     const user = {
         name: '홍길동',
@@ -23,7 +26,7 @@ export default function MyPageScreen() {
                 <TouchableOpacity style={styles.menuItem}>
                     <Text style={styles.menuText}>설정</Text>
                 </TouchableOpacity>
-                <TouchableOpacity style={styles.menuItem}>
+                <TouchableOpacity style={styles.menuItem} onPress={() => router.push('/onboarding')}>
                     <Text style={[styles.menuText, { color: 'red' }]}>로그아웃</Text>
                 </TouchableOpacity>
             </View>

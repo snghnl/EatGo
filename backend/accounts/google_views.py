@@ -11,10 +11,10 @@ from django.http import HttpResponse
 User = get_user_model()
 
 
-class KakaoLoginView(APIView):
+class GoogleLoginView(APIView):
     """
-    카카오 소셜 로그인 API
-    POST /auth/kakao/login/
+    구글 소셜 로그인 API
+    POST /auth/google/login/
     """
 
     permission_classes = [AllowAny]
@@ -30,26 +30,24 @@ class KakaoLoginView(APIView):
                 access_token = self._get_access_token_from_code(code, redirect_uri)
             elif not access_token:
                 return Response(
-                    {
-                        "error": "카카오 액세스 토큰 또는 authorization code가 필요합니다."
-                    },
+                    {"error": "구글 액세스 토큰 또는 authorization code가 필요합니다."},
                     status=status.HTTP_400_BAD_REQUEST,
                 )
 
-            # 카카오 사용자 정보 조회
-            kakao_user_info = self._get_kakao_user_info(access_token)
+            # 구글 사용자 정보 조회
+            google_user_info = self._get_google_user_info(access_token)
 
             # 사용자 조회 또는 생성
-            user, created = self._get_or_create_user(kakao_user_info)
+            user, created = self._get_or_create_user(google_user_info)
 
             # JWT 토큰 생성
             refresh = RefreshToken.for_user(user)
 
             return Response(
                 {
-                    "message": "카카오 회원가입이 완료되었습니다"
+                    "message": "구글 회원가입이 완료되었습니다"
                     if created
-                    else "카카오 로그인 성공",
+                    else "구글 로그인 성공",
                     "tokens": {
                         "refresh": str(refresh),
                         "access": str(refresh.access_token),
@@ -68,16 +66,17 @@ class KakaoLoginView(APIView):
 
         except Exception as e:
             return Response(
-                {"error": f"카카오 로그인 실패: {str(e)}"},
+                {"error": f"구글 로그인 실패: {str(e)}"},
                 status=status.HTTP_400_BAD_REQUEST,
             )
 
     def _get_access_token_from_code(self, code, redirect_uri):
         """Authorization Code로 Access Token 획득"""
-        token_url = "https://kauth.kakao.com/oauth/token"
+        token_url = "https://oauth2.googleapis.com/token"
         token_data = {
             "grant_type": "authorization_code",
-            "client_id": getattr(settings, "KAKAO_REST_API_KEY", ""),
+            "client_id": getattr(settings, "GOOGLE_CLIENT_ID", ""),
+            "client_secret": getattr(settings, "GOOGLE_CLIENT_SECRET", ""),
             "code": code,
             "redirect_uri": redirect_uri,
         }
@@ -85,55 +84,52 @@ class KakaoLoginView(APIView):
         response = requests.post(token_url, data=token_data, timeout=10)
 
         if response.status_code != 200:
-            raise Exception(f"카카오 토큰 획득 실패: {response.status_code}")
+            raise Exception(f"구글 토큰 획득 실패: {response.status_code}")
 
         token_data = response.json()
         access_token = token_data.get("access_token")
 
         if not access_token:
-            raise Exception("카카오 액세스 토큰을 받지 못했습니다.")
+            raise Exception("구글 액세스 토큰을 받지 못했습니다.")
 
         return access_token
 
-    def _get_kakao_user_info(self, access_token):
-        """카카오 API로 사용자 정보 조회"""
+    def _get_google_user_info(self, access_token):
+        """구글 API로 사용자 정보 조회"""
         headers = {
             "Authorization": f"Bearer {access_token}",
-            "Content-Type": "application/x-www-form-urlencoded;charset=utf-8",
         }
 
         response = requests.get(
-            "https://kapi.kakao.com/v2/user/me", headers=headers, timeout=10
+            "https://www.googleapis.com/oauth2/v2/userinfo", headers=headers, timeout=10
         )
 
         if response.status_code != 200:
-            raise Exception(f"카카오 API 호출 실패: {response.status_code}")
+            raise Exception(f"구글 API 호출 실패: {response.status_code}")
 
         return response.json()
 
-    def _get_or_create_user(self, kakao_user_info):
-        """카카오 사용자 정보로 계정 조회 또는 생성"""
-        print(f"카카오 사용자 정보: {kakao_user_info}")  # 디버깅용
-        kakao_id = str(kakao_user_info.get("id"))
-        if not kakao_id:
-            raise Exception("카카오 사용자 ID를 찾을 수 없습니다.")
+    def _get_or_create_user(self, google_user_info):
+        """구글 사용자 정보로 계정 조회 또는 생성"""
+        print(f"구글 사용자 정보: {google_user_info}")  # 디버깅용
+
+        google_id = str(google_user_info.get("id"))
+        if not google_id:
+            raise Exception("구글 사용자 ID를 찾을 수 없습니다.")
 
         # 계정 정보 추출
-        kakao_account = kakao_user_info.get("kakao_account", {})
-        profile = kakao_account.get("profile", {})
+        email = google_user_info.get("email")
+        picture = google_user_info.get("picture")
 
-        email = kakao_account.get("email")
-        profile_image = profile.get("profile_image_url")
-
-        # 카카오 ID로 기존 계정 확인 (username에 kakao_id 포함시켜서 구분)
-        kakao_username = f"kakao_{kakao_id}"
+        # 구글 ID로 기존 계정 확인 (username에 google_id 포함시켜서 구분)
+        google_username = f"google_{google_id}"
         try:
-            existing_user = User.objects.get(username=kakao_username)
+            existing_user = User.objects.get(username=google_username)
             # 기존 사용자 정보 업데이트
             if email:
                 existing_user.email = email
-            if profile_image:
-                existing_user.profile_image_url = profile_image
+            if picture:
+                existing_user.profile_image_url = picture
             existing_user.save()
             return existing_user, False
         except User.DoesNotExist:
@@ -141,36 +137,18 @@ class KakaoLoginView(APIView):
 
         # 새 계정 생성
         user = User.objects.create_user(
-            username=kakao_username,
+            username=google_username,
             email=email,
-            login_method="kakao",
-            profile_image_url=profile_image,
+            login_method="google",
+            profile_image_url=picture,
         )
         return user, True
 
-    def _generate_unique_username(self, base_username):
-        """중복되지 않는 사용자명 생성"""
-        clean_username = "".join(c for c in base_username if c.isalnum() or c in "_-")
-        if not clean_username:
-            clean_username = "kakao_user"
 
-        clean_username = clean_username[:20]
-        original_username = clean_username
-        counter = 1
-
-        while User.objects.filter(username=clean_username).exists():
-            clean_username = f"{original_username}_{counter}"
-            counter += 1
-            if len(clean_username) > 30:
-                clean_username = f"{original_username[:20]}_{counter}"
-
-        return clean_username
-
-
-class KakaoCallbackView(APIView):
+class GoogleCallbackView(APIView):
     """
-    카카오 OAuth callback 처리 API
-    GET /oauth/callback/?code=XXXX
+    구글 OAuth callback 처리 API
+    GET /oauth/google/callback/?code=XXXX
     """
 
     permission_classes = [AllowAny]
@@ -181,7 +159,7 @@ class KakaoCallbackView(APIView):
 
         if error:
             return Response(
-                {"error": f"카카오 인증 오류: {error}"},
+                {"error": f"구글 인증 오류: {error}"},
                 status=status.HTTP_400_BAD_REQUEST,
             )
 
@@ -196,8 +174,8 @@ class KakaoCallbackView(APIView):
             access_token = self._get_access_token_from_code(
                 code, request.build_absolute_uri()
             )
-            kakao_user_info = self._get_kakao_user_info(access_token)
-            user, created = self._get_or_create_user(kakao_user_info)
+            google_user_info = self._get_google_user_info(access_token)
+            user, created = self._get_or_create_user(google_user_info)
 
             # JWT 토큰 생성
             refresh = RefreshToken.for_user(user)
@@ -211,7 +189,7 @@ class KakaoCallbackView(APIView):
             <!DOCTYPE html>
             <html>
             <head>
-                <title>카카오 로그인 성공</title>
+                <title>구글 로그인 성공</title>
                 <meta charset="utf-8">
             </head>
             <body>
@@ -230,21 +208,22 @@ class KakaoCallbackView(APIView):
 
         except Exception as e:
             return Response(
-                {"error": f"카카오 로그인 실패: {str(e)}"},
+                {"error": f"구글 로그인 실패: {str(e)}"},
                 status=status.HTTP_400_BAD_REQUEST,
             )
 
     def _get_access_token_from_code(self, code, redirect_uri):
         """Authorization Code로 Access Token 획득"""
-        token_url = "https://kauth.kakao.com/oauth/token"
+        token_url = "https://oauth2.googleapis.com/token"
         # redirect_uri는 원래 요청 시 사용한 정확한 URI 사용
         original_redirect_uri = (
-            "https://7edfd67b542c.ngrok-free.app/api/v1/auth/kakao/callback/"
+            "https://7edfd67b542c.ngrok-free.app/api/v1/auth/google/callback/"
         )
 
         token_data = {
             "grant_type": "authorization_code",
-            "client_id": getattr(settings, "KAKAO_REST_API_KEY", ""),
+            "client_id": getattr(settings, "GOOGLE_CLIENT_ID", ""),
+            "client_secret": getattr(settings, "GOOGLE_CLIENT_SECRET", ""),
             "code": code,
             "redirect_uri": original_redirect_uri,
         }
@@ -253,61 +232,56 @@ class KakaoCallbackView(APIView):
 
         if response.status_code != 200:
             error_detail = response.text
-            print(
-                f"카카오 토큰 요청 실패: {response.status_code}, 응답: {error_detail}"
-            )
+            print(f"구글 토큰 요청 실패: {response.status_code}, 응답: {error_detail}")
             print(f"요청 데이터: {token_data}")
             raise Exception(
-                f"카카오 토큰 획득 실패: {response.status_code} - {error_detail}"
+                f"구글 토큰 획득 실패: {response.status_code} - {error_detail}"
             )
 
         token_response_data = response.json()
         access_token = token_response_data.get("access_token")
 
         if not access_token:
-            raise Exception("카카오 액세스 토큰을 받지 못했습니다.")
+            raise Exception("구글 액세스 토큰을 받지 못했습니다.")
 
         return access_token
 
-    def _get_kakao_user_info(self, access_token):
-        """카카오 API로 사용자 정보 조회"""
+    def _get_google_user_info(self, access_token):
+        """구글 API로 사용자 정보 조회"""
         headers = {
             "Authorization": f"Bearer {access_token}",
-            "Content-Type": "application/x-www-form-urlencoded;charset=utf-8",
         }
 
         response = requests.get(
-            "https://kapi.kakao.com/v2/user/me", headers=headers, timeout=10
+            "https://www.googleapis.com/oauth2/v2/userinfo", headers=headers, timeout=10
         )
 
         if response.status_code != 200:
-            raise Exception(f"카카오 API 호출 실패: {response.status_code}")
+            raise Exception(f"구글 API 호출 실패: {response.status_code}")
 
         return response.json()
 
-    def _get_or_create_user(self, kakao_user_info):
-        """카카오 사용자 정보로 계정 조회 또는 생성"""
-        print(f"카카오 사용자 정보: {kakao_user_info}")  # 디버깅용
-        kakao_id = str(kakao_user_info.get("id"))
-        if not kakao_id:
-            raise Exception("카카오 사용자 ID를 찾을 수 없습니다.")
+    def _get_or_create_user(self, google_user_info):
+        """구글 사용자 정보로 계정 조회 또는 생성"""
+        print(f"구글 사용자 정보: {google_user_info}")  # 디버깅용
+
+        google_id = str(google_user_info.get("id"))
+        if not google_id:
+            raise Exception("구글 사용자 ID를 찾을 수 없습니다.")
 
         # 계정 정보 추출
-        kakao_account = kakao_user_info.get("kakao_account", {})
-        profile = kakao_account.get("profile", {})
+        email = google_user_info.get("email")
+        picture = google_user_info.get("picture")
 
-        email = kakao_account.get("email")
-        profile_image = profile.get("profile_image_url")
-
-        # 카카오 ID로 기존 계정 확인 (username에 kakao_id 포함시켜서 구분)
-        kakao_username = f"kakao_{kakao_id}"
+        # 구글 ID로 기존 계정 확인 (username에 google_id 포함시켜서 구분)
+        google_username = f"google_{google_id}"
         try:
-            existing_user = User.objects.get(username=kakao_username)
+            existing_user = User.objects.get(username=google_username)
             # 기존 사용자 정보 업데이트
             if email:
                 existing_user.email = email
-            if profile_image:
-                existing_user.profile_image_url = profile_image
+            if picture:
+                existing_user.profile_image_url = picture
             existing_user.save()
             return existing_user, False
         except User.DoesNotExist:
@@ -315,27 +289,9 @@ class KakaoCallbackView(APIView):
 
         # 새 계정 생성
         user = User.objects.create_user(
-            username=kakao_username,
+            username=google_username,
             email=email,
-            login_method="kakao",
-            profile_image_url=profile_image,
+            login_method="google",
+            profile_image_url=picture,
         )
         return user, True
-
-    def _generate_unique_username(self, base_username):
-        """중복되지 않는 사용자명 생성"""
-        clean_username = "".join(c for c in base_username if c.isalnum() or c in "_-")
-        if not clean_username:
-            clean_username = "kakao_user"
-
-        clean_username = clean_username[:20]
-        original_username = clean_username
-        counter = 1
-
-        while User.objects.filter(username=clean_username).exists():
-            clean_username = f"{original_username}_{counter}"
-            counter += 1
-            if len(clean_username) > 30:
-                clean_username = f"{original_username[:20]}_{counter}"
-
-        return clean_username
