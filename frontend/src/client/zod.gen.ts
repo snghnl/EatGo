@@ -69,6 +69,45 @@ export const zCategory = z.object({
     updated_at: z.optional(z.iso.datetime().readonly())
 });
 
+export const zPlace = z.object({
+    id: z.optional(z.uuid().readonly()),
+    created_at: z.optional(z.iso.datetime().readonly()),
+    updated_at: z.optional(z.iso.datetime().readonly()),
+    name: z.string().min(1).max(255),
+    lat: z.number(),
+    lng: z.number(),
+    phone_number: z.optional(z.string().max(255)),
+    avg_rating: z.optional(z.union([
+        z.number(),
+        z.null()
+    ])),
+    place_type: z.optional(z.enum([
+        'RESTAURANT',
+        'ATTRACTION',
+        'SHOPPING',
+        'ETC'
+    ])),
+    address: z.optional(z.string().max(255)),
+    road_address: z.optional(z.string().max(255)),
+    external_id: z.string().min(1).max(255),
+    external_url: z.optional(z.url().max(200)),
+    created_by: z.optional(z.union([
+        z.int(),
+        z.null()
+    ]))
+});
+
+export const zMenuItem = z.object({
+    id: z.optional(z.uuid().readonly()),
+    created_at: z.optional(z.iso.datetime().readonly()),
+    updated_at: z.optional(z.iso.datetime().readonly()),
+    name: z.string().min(1).max(255),
+    price: z.int().gte(0).lte(9223372036854776000),
+    description: z.optional(z.string()),
+    is_active: z.optional(z.boolean()),
+    place: z.uuid()
+});
+
 export const zRoute = z.object({
     id: z.optional(z.uuid().readonly()),
     created_at: z.optional(z.iso.datetime().readonly()),
@@ -272,6 +311,34 @@ export const zKakaomapSearchListData = z.object({
     path: z.optional(z.never()),
     query: z.optional(z.never())
 });
+
+export const zPlacesListData = z.object({
+    body: z.optional(z.never()),
+    path: z.optional(z.never()),
+    query: z.optional(z.never())
+});
+
+export const zPlacesListResponse = z.array(zPlace);
+
+export const zPlacesReadData = z.object({
+    body: z.optional(z.never()),
+    path: z.object({
+        id: z.string()
+    }),
+    query: z.optional(z.never())
+});
+
+export const zPlacesReadResponse = zPlace;
+
+export const zPlacesMenuItemsListData = z.object({
+    body: z.optional(z.never()),
+    path: z.object({
+        id: z.string()
+    }),
+    query: z.optional(z.never())
+});
+
+export const zPlacesMenuItemsListResponse = z.array(zMenuItem);
 
 export const zRoutesListData = z.object({
     body: z.optional(z.never()),

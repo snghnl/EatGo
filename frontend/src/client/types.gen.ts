@@ -118,6 +118,100 @@ export type Category = {
     readonly updated_at?: string;
 };
 
+export type Place = {
+    /**
+     * Id
+     */
+    readonly id?: string;
+    /**
+     * Created at
+     */
+    readonly created_at?: string;
+    /**
+     * Updated at
+     */
+    readonly updated_at?: string;
+    /**
+     * Name
+     */
+    name: string;
+    /**
+     * Lat
+     */
+    lat: number;
+    /**
+     * Lng
+     */
+    lng: number;
+    /**
+     * Phone number
+     */
+    phone_number?: string;
+    /**
+     * Avg rating
+     */
+    avg_rating?: number | null;
+    /**
+     * Place type
+     */
+    place_type?: 'RESTAURANT' | 'ATTRACTION' | 'SHOPPING' | 'ETC';
+    /**
+     * Address
+     */
+    address?: string;
+    /**
+     * Road address
+     */
+    road_address?: string;
+    /**
+     * External id
+     */
+    external_id: string;
+    /**
+     * External url
+     */
+    external_url?: string;
+    /**
+     * Created by
+     */
+    created_by?: number | null;
+};
+
+export type MenuItem = {
+    /**
+     * Id
+     */
+    readonly id?: string;
+    /**
+     * Created at
+     */
+    readonly created_at?: string;
+    /**
+     * Updated at
+     */
+    readonly updated_at?: string;
+    /**
+     * Name
+     */
+    name: string;
+    /**
+     * Price
+     */
+    price: number;
+    /**
+     * Description
+     */
+    description?: string;
+    /**
+     * Is active
+     */
+    is_active?: boolean;
+    /**
+     * Place
+     */
+    place: string;
+};
+
 export type Route = {
     /**
      * Id
@@ -575,6 +669,49 @@ export type KakaomapSearchListData = {
 export type KakaomapSearchListResponses = {
     200: unknown;
 };
+
+export type PlacesListData = {
+    body?: never;
+    path?: never;
+    query?: never;
+    url: '/places/';
+};
+
+export type PlacesListResponses = {
+    200: Array<Place>;
+};
+
+export type PlacesListResponse = PlacesListResponses[keyof PlacesListResponses];
+
+export type PlacesReadData = {
+    body?: never;
+    path: {
+        id: string;
+    };
+    query?: never;
+    url: '/places/{id}/';
+};
+
+export type PlacesReadResponses = {
+    200: Place;
+};
+
+export type PlacesReadResponse = PlacesReadResponses[keyof PlacesReadResponses];
+
+export type PlacesMenuItemsListData = {
+    body?: never;
+    path: {
+        id: string;
+    };
+    query?: never;
+    url: '/places/{id}/menu-items/';
+};
+
+export type PlacesMenuItemsListResponses = {
+    200: Array<MenuItem>;
+};
+
+export type PlacesMenuItemsListResponse = PlacesMenuItemsListResponses[keyof PlacesMenuItemsListResponses];
 
 export type RoutesListData = {
     body?: never;
