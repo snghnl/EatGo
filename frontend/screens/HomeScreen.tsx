@@ -1,6 +1,6 @@
 import { View, Text } from 'react-native';
 import SearchBar from '@/components/SearchBar';
-import TopBar from '@/components/TopBar';
+import TopBar from '@/components/main/TopBar';
 import PlaceCardSwiper from '@/components/main/PlaceCardSwiper';
 import FloatingButton from '@/components/main/FloatingButton';
 import React, { useState } from 'react';

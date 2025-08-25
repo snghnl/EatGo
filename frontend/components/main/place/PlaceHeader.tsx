@@ -40,17 +40,17 @@ export const PlaceHeader: React.FC<PlaceHeaderProps> = ({
                     {placeName}
                 </ThemedText>
 
-                <View>
+                <View style={styles.metaInfo}>
                     {isOpenNow !== undefined && (
                         <ThemedText
-                            size="sm"
+                            type="body"
                             style={{ color: isOpenNow ? Colors.textPrimary : 'gray', fontWeight: '600' }}
                         >
                             {isOpenNow ? '영업중' : '영업 종료'}
                         </ThemedText>
                     )}
                     {address && (
-                        <ThemedText size="sm" style={styles.address} numberOfLines={1}>
+                        <ThemedText type="body" style={styles.address} numberOfLines={1}>
                             {address}
                         </ThemedText>
                     )}
@@ -59,9 +59,8 @@ export const PlaceHeader: React.FC<PlaceHeaderProps> = ({
                             <ThemedText weight="bold">전주역</ThemedText>
                             에서 {distance} km
                         </Text>
-
                         <TouchableOpacity style={styles.addRouteButton}>
-                            <ThemedText>+ 여행 경로 추가</ThemedText>
+                            <ThemedText size="sm">+ 여행경로 추가</ThemedText>
                         </TouchableOpacity>
                     </View>
                 </View>
@@ -94,7 +93,7 @@ const styles = StyleSheet.create({
         marginBottom: 8,
     },
     metaInfo: {
-        marginBottom: 16,
+        margin: 0,
     },
     rowBetween: {
         flexDirection: 'row',
@@ -104,12 +103,10 @@ const styles = StyleSheet.create({
     },
 
     distance: {
-        fontSize: 14,
         color: Colors.textSecondary,
         marginBottom: 2,
     },
     directionsLink: {
-        fontSize: 14,
         color: Colors.primary,
         textDecorationLine: 'underline',
     },
@@ -122,7 +119,6 @@ const styles = StyleSheet.create({
         borderColor: Colors.textSecondary,
     },
     address: {
-        fontSize: 12,
         color: Colors.textSecondary,
         marginBottom: 2,
     },

@@ -28,10 +28,10 @@ export const PlaceMenu: React.FC<PlaceMenuProps> = ({ menuItems }) => {
             <View style={styles.menuList}>
                 {MenuItems.map((item, index) => (
                     <View key={item.id || index} style={styles.menuRow}>
-                        <ThemedText size="md" style={styles.menuName}>
+                        <ThemedText type="body" style={styles.menuName}>
                             {item.name}
                         </ThemedText>
-                        <ThemedText size="md" weight="bold" style={styles.menuPrice}>
+                        <ThemedText type="body" weight="bold" style={styles.menuPrice}>
                             {formatPrice(item.price)}
                         </ThemedText>
                     </View>
