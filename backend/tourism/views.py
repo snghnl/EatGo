@@ -80,6 +80,14 @@ class TourismRecommendationViewSet(viewsets.GenericViewSet):
 
     permission_classes = [AllowAny]
 
+    def get_serializer_class(self):
+        """액션에 따른 serializer 클래스 반환"""
+        if self.action == "recommend":
+            return POIRecommendationRequestSerializer
+        elif self.action == "related":
+            return RelatedPOIRequestSerializer
+        return POIRecommendationRequestSerializer
+
     @action(detail=False, methods=["post"])
     def recommend(self, request):
         """
@@ -206,6 +214,11 @@ class TourismAPIViewSet(viewsets.GenericViewSet):
     """
 
     permission_classes = [AllowAny]
+
+    def get_serializer_class(self):
+        """액션에 따른 serializer 클래스 반환"""
+        if self.action == "regional":
+        return RegionalTourismRequestSerializer
 
     @action(detail=False, methods=["post"])
     def regional(self, request):

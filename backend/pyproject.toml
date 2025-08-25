@@ -10,6 +10,7 @@ dependencies = [
     "drf-yasg>=1.21.10",
     "python-dotenv",
     "requests",
+    "psycopg2-binary>=2.9.9",
 ]
 
 [dependency-groups]

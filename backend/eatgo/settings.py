@@ -21,6 +21,9 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # .env 파일 로드
 load_dotenv(BASE_DIR.parent / ".env.local")
 
+
+API_VERSION = "/api/v1"
+
 # KAKAO REST API KEY 환경변수 등록
 KAKAO_REST_API_KEY = os.environ.get("KAKAO_REST_API_KEY")
 
@@ -94,8 +97,12 @@ WSGI_APPLICATION = "eatgo.wsgi.application"
 
 DATABASES = {
     "default": {
-        "ENGINE": "django.db.backends.sqlite3",
-        "NAME": BASE_DIR / "db.sqlite3",
+        "ENGINE": os.environ.get("DB_ENGINE", "django.db.backends.postgresql"),
+        "NAME": os.environ.get("DB_NAME", "eatgo_db"),
+        "USER": os.environ.get("DB_USER", "admin"),
+        "PASSWORD": os.environ.get("DB_PASSWORD", ""),
+        "HOST": os.environ.get("DB_HOST", "localhost"),
+        "PORT": os.environ.get("DB_PORT", "5432"),
     }
 }
 

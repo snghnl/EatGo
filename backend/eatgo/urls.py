@@ -18,6 +18,7 @@ Including another URLconf
 from django.contrib import admin
 from django.urls import path, include
 from rest_framework import permissions
+from django.conf import settings
 from drf_yasg.views import get_schema_view
 from drf_yasg import openapi
 
@@ -43,12 +44,12 @@ urlpatterns = [
         schema_view.with_ui("swagger", cache_timeout=0),
         name="schema-swagger-ui",
     ),
+    path("admin/", admin.site.urls),
     path("redoc/", schema_view.with_ui("redoc", cache_timeout=0), name="schema-redoc"),
     # api
-    path("admin/", admin.site.urls),
-    path("kakaomap/", include("kakaomap.urls")),
-    path("routes/", include("routes.urls")),
-    path("travel_courses/", include("travel_courses.urls")),
-    path("api/tourism/", include("tourism.urls")),
+    path(settings.API_VERSION + "/kakaomap/", include("kakaomap.urls")),
+    path(settings.API_VERSION + "/routes/", include("routes.urls")),
+    path(settings.API_VERSION + "/travel_courses/", include("travel_courses.urls")),
+    path(settings.API_VERSION + "/tourism/", include("tourism.urls")),
     # path('api-auth/', include('rest_framework.urls')),
 ]
