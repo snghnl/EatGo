@@ -994,6 +994,19 @@ export type TravelCoursesCreateResponses = {
 
 export type TravelCoursesCreateResponse = TravelCoursesCreateResponses[keyof TravelCoursesCreateResponses];
 
+export type TravelCoursesMyListData = {
+    body?: never;
+    path?: never;
+    query?: never;
+    url: '/travel_courses/my/';
+};
+
+export type TravelCoursesMyListResponses = {
+    200: Array<TravelCourse>;
+};
+
+export type TravelCoursesMyListResponse = TravelCoursesMyListResponses[keyof TravelCoursesMyListResponses];
+
 export type TravelCoursesDeleteData = {
     body?: never;
     path: {
