@@ -102,7 +102,7 @@ export const zMenuItem = z.object({
     created_at: z.optional(z.iso.datetime().readonly()),
     updated_at: z.optional(z.iso.datetime().readonly()),
     name: z.string().min(1).max(255),
-    price: z.int().gte(0).lte(9223372036854776000),
+    price: z.int().gte(0).lte(2147483647),
     description: z.optional(z.string()),
     is_active: z.optional(z.boolean()),
     place: z.uuid()
@@ -141,7 +141,7 @@ export const zTourismPoi = z.object({
     signgu_nm: z.string().min(1).max(100),
     hub_ctgry_lcls_nm: z.optional(z.string().max(100)),
     hub_ctgry_mcls_nm: z.optional(z.string().max(100)),
-    hub_rank: z.int().gte(-9223372036854776000).lte(9223372036854776000),
+    hub_rank: z.int().gte(-2147483648).lte(2147483647),
     external_url: z.optional(z.url().max(200)),
     phone_number: z.optional(z.string().max(20)),
     address: z.optional(z.string()),
@@ -172,20 +172,32 @@ export const zRelatedTourism = z.object({
     rite_regn_nm: z.optional(z.string().max(100)),
     rite_ctgry_lcls_nm: z.optional(z.string().max(100)),
     rite_ctgry_mcls_nm: z.optional(z.string().max(100)),
-    rite_rank: z.int().gte(-9223372036854776000).lte(9223372036854776000),
+    rite_rank: z.int().gte(-2147483648).lte(2147483647),
     created_at: z.optional(z.iso.datetime().readonly())
 });
 
 export const zTravelCourseRoute = z.object({
     route_id: z.uuid(),
-    sequence: z.optional(z.int().gte(0).lte(9223372036854776000))
+    sequence: z.optional(z.int().gte(0).lte(2147483647))
 });
 
 export const zTravelCourse = z.object({
     id: z.optional(z.uuid().readonly()),
     title: z.string().min(1).max(255),
     description: z.optional(z.string()),
-    routes: z.array(zTravelCourseRoute)
+    routes: z.array(zTravelCourseRoute),
+    start_date: z.optional(z.union([
+        z.iso.date(),
+        z.null()
+    ])),
+    end_date: z.optional(z.union([
+        z.iso.date(),
+        z.null()
+    ])),
+    destination: z.optional(z.union([
+        z.string().max(255),
+        z.null()
+    ]))
 });
 
 export const zAccountsMeReadData = z.object({
