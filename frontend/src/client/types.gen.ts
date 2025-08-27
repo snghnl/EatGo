@@ -452,6 +452,18 @@ export type TravelCourse = {
      */
     description?: string;
     routes: Array<TravelCourseRoute>;
+    /**
+     * Start date
+     */
+    start_date?: string | null;
+    /**
+     * End date
+     */
+    end_date?: string | null;
+    /**
+     * Destination
+     */
+    destination?: string | null;
 };
 
 export type AccountsMeReadData = {
