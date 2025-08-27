@@ -1,35 +1,35 @@
 import React from "react";
 import { View, StyleSheet, Platform } from "react-native";
 import { WebView } from "react-native-webview";
+import { useBookmark } from "@/store/BookmarkContext";
+import { mapIcons } from "@/config/mapIcons";
 
 const KAKAO_JS_API_KEY = process.env.EXPO_PUBLIC_KAKAO_JS_API_KEY;
-
-// Kakao Maps SDK 타입 정의
-declare global {
-    interface Window {
-        kakao: {
-            maps: {
-                load: (callback: () => void) => void;
-                LatLng: new (lat: number, lng: number) => any;
-                Map: new (container: HTMLElement, options: any) => any;
-                Marker: new (options: any) => any;
-            };
-        };
-    }
-}
 
 type KakaoMapProps = {
     latitude: number;
     longitude: number;
-};
-
-type KakaoWebMapProps = {
-    latitude: number;
-    longitude: number;
+    placeId: string;     // ✅ 북마크 판별용
+    category: string;    // ✅ 아이콘 선택용
 };
 
 // 웹 전용 컴포넌트
-function KakaoWebMap({ latitude, longitude }: KakaoWebMapProps) {
+function KakaoWebMap({ latitude, longitude, placeId, category }: KakaoMapProps) {
+    const { bookmarkedPlaceIds } = useBookmark();
+
+    // ✅ 아이콘 결정 함수
+    function getMarkerImage(category: string, isBookmarked: boolean) {
+        const iconSet = mapIcons[category];
+        if (isBookmarked && iconSet?.on) {
+            return new window.kakao.maps.MarkerImage(
+                iconSet.on,
+                new window.kakao.maps.Size(32, 32),
+                { offset: new window.kakao.maps.Point(16, 32) }
+            );
+        }
+        return null; // off → Kakao 기본 아이콘
+    }
+
     React.useEffect(() => {
         const script = document.createElement("script");
         script.src = `https://dapi.kakao.com/v2/maps/sdk.js?appkey=${KAKAO_JS_API_KEY}&autoload=false`;
@@ -38,19 +38,18 @@ function KakaoWebMap({ latitude, longitude }: KakaoWebMapProps) {
                 const container = document.getElementById("kakao-map");
                 if (container) {
                     const options = {
-                        center: new window.kakao.maps.LatLng(
-                            latitude,
-                            longitude
-                        ),
+                        center: new window.kakao.maps.LatLng(latitude, longitude),
                         level: 3,
                     };
                     const map = new window.kakao.maps.Map(container, options);
 
+                    // ✅ 북마크 여부 확인
+                    const isBookmarked = bookmarkedPlaceIds.includes(placeId);
+                    const markerImage = getMarkerImage(category, isBookmarked);
+
                     const marker = new window.kakao.maps.Marker({
-                        position: new window.kakao.maps.LatLng(
-                            latitude,
-                            longitude
-                        ),
+                        position: new window.kakao.maps.LatLng(latitude, longitude),
+                        ...(markerImage ? { image: markerImage } : {}),
                     });
                     marker.setMap(map);
                 }
@@ -59,27 +58,24 @@ function KakaoWebMap({ latitude, longitude }: KakaoWebMapProps) {
         document.head.appendChild(script);
 
         return () => {
-            // cleanup
-            const existingScript = document.querySelector(
-                'script[src*="kakao"]'
-            );
+            const existingScript = document.querySelector('script[src*="kakao"]');
             if (existingScript) {
                 existingScript.remove();
             }
         };
-    }, [latitude, longitude]);
+    }, [latitude, longitude, bookmarkedPlaceIds, placeId, category]);
 
     return <div id="kakao-map" style={{ width: "100%", height: "100%" }} />;
 }
 
-export default function KakaoMap({ latitude, longitude }: KakaoMapProps) {
+export default function KakaoMap(props: KakaoMapProps) {
     // 플랫폼별 처리
     if (Platform.OS === "web") {
-        // 웹에서는 직접 렌더링
-        return <KakaoWebMap latitude={latitude} longitude={longitude} />;
+        return <KakaoWebMap {...props} />;
     }
 
-    // 모바일에서는 HTML 파일을 WebView로 렌더링
+    // 모바일은 WebView 그대로 (북마크 연동은 추후 추가 가능)
+    const { latitude, longitude } = props;
     const htmlContent = `
         <!DOCTYPE html>
         <html>
@@ -112,20 +108,12 @@ export default function KakaoMap({ latitude, longitude }: KakaoMapProps) {
                 style={styles.webview}
                 javaScriptEnabled={true}
                 domStorageEnabled={true}
-                onMessage={(event) =>
-                    console.log("KAKAO:", event.nativeEvent.data)
-                }
             />
         </View>
     );
 }
 
 const styles = StyleSheet.create({
-    container: {
-        width: "100%",
-        height: "100%",
-    },
-    webview: {
-        flex: 1,
-    },
+    container: { width: "100%", height: "100%" },
+    webview: { flex: 1 },
 });
