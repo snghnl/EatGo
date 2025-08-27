@@ -1,9 +1,9 @@
-import React from "react";
-import { StyleSheet, View, ScrollView } from "react-native";
-import { ThemedView } from "../ThemedView";
-import { ThemedText } from "../ThemedText";
-import { PlanCard } from "./PlanCard";
-import { Colors } from "../../constants/Colors";
+import React from 'react';
+import { StyleSheet, View, ScrollView } from 'react-native';
+import { ThemedView } from '../ThemedView';
+import { ThemedText } from '../ThemedText';
+import { PlanCard } from './PlanCard';
+import { Colors } from '../../constants/Colors';
 
 interface PlaceItem {
     id: string;
@@ -39,17 +39,14 @@ export const RecommendationList: React.FC<RecommendationListProps> = ({
     activeRecommendationId = null,
 }) => {
     // 제목별로 그룹화
-    const groupedRecommendations = recommendations.reduce(
-        (groups, recommendation) => {
-            const title = recommendation.title;
-            if (!groups[title]) {
-                groups[title] = [];
-            }
-            groups[title].push(recommendation);
-            return groups;
-        },
-        {} as Record<string, RecommendationItem[]>
-    );
+    const groupedRecommendations = recommendations.reduce((groups, recommendation) => {
+        const title = recommendation.title;
+        if (!groups[title]) {
+            groups[title] = [];
+        }
+        groups[title].push(recommendation);
+        return groups;
+    }, {} as Record<string, RecommendationItem[]>);
 
     return (
         <ThemedView style={styles.container}>
@@ -58,50 +55,26 @@ export const RecommendationList: React.FC<RecommendationListProps> = ({
                 contentContainerStyle={styles.scrollContent}
                 showsVerticalScrollIndicator={false}
             >
-                {Object.entries(groupedRecommendations).map(
-                    ([title, groupRecommendations]) => (
-                        <View key={title} style={styles.groupContainer}>
-                            <ThemedText
-                                size="xl"
-                                color="textPrimary"
-                                weight="bold"
-                                style={styles.groupTitle}
-                            >
-                                {title}
-                            </ThemedText>
-                            {groupRecommendations.map((recommendation) => (
-                                <View
-                                    key={recommendation.id}
-                                    style={styles.cardContainer}
-                                >
-                                    <PlanCard
-                                        places={recommendation.places}
-                                        onPlacePress={(placeId) =>
-                                            onPlacePress?.(
-                                                recommendation.id,
-                                                placeId
-                                            )
-                                        }
-                                        onCardPress={() =>
-                                            onCardPress?.(recommendation.id)
-                                        }
-                                        onSave={() =>
-                                            onSave?.(recommendation.id)
-                                        }
-                                        onLongPress={() =>
-                                            onLongPress?.(recommendation.id)
-                                        }
-                                        selectedPlaceId={selectedPlaceId}
-                                        isActive={
-                                            activeRecommendationId ===
-                                            recommendation.id
-                                        }
-                                    />
-                                </View>
-                            ))}
-                        </View>
-                    )
-                )}
+                {Object.entries(groupedRecommendations).map(([title, groupRecommendations]) => (
+                    <View key={title} style={styles.groupContainer}>
+                        <ThemedText size="xl" color="textPrimary" weight="bold" style={styles.groupTitle}>
+                            {title}
+                        </ThemedText>
+                        {groupRecommendations.map((recommendation) => (
+                            <View key={recommendation.id} style={styles.cardContainer}>
+                                <PlanCard
+                                    places={recommendation.places}
+                                    onPlacePress={(placeId) => onPlacePress?.(recommendation.id, placeId)}
+                                    onCardPress={() => onCardPress?.(recommendation.id)}
+                                    onSave={() => onSave?.(recommendation.id)}
+                                    onLongPress={() => onLongPress?.(recommendation.id)}
+                                    selectedPlaceId={selectedPlaceId}
+                                    isActive={activeRecommendationId === recommendation.id}
+                                />
+                            </View>
+                        ))}
+                    </View>
+                ))}
             </ScrollView>
         </ThemedView>
     );

@@ -1,8 +1,9 @@
 [
     {
         "id": "post-001",
+        "title": "명동 한식 투어 후기",
         "user_id": "user-001",
-        "route_id": "route-001",
+        "course_id": "route-001",
         "content": "명동에서 즐기는 전통 한식 투어 완료! 교자부터 빈대떡까지 서울의 맛을 한번에 즐겼어요. 특히 명동교자의 만두는 정말 쫄깃하고 맛있었습니다. 다음에 또 가고 싶어요!",
         "likes_count": 15,
         "comments_count": 3,
@@ -34,8 +35,9 @@
     },
     {
         "id": "post-002",
+        "title": "홍대 데이트 맛집 코스",
         "user_id": "user-002",
-        "route_id": "route-002",
+        "course_id": "route-002",
         "content": "홍대 데이트 코스 완료! 닭갈비부터 토스트까지 정말 맛있었어요. 특히 홍대 닭갈비의 양념이 정말 일품이었습니다. 데이트하기 좋은 코스였어요!",
         "likes_count": 23,
         "comments_count": 5,
@@ -60,8 +62,9 @@
     },
     {
         "id": "post-003",
+        "title": "강남 스테이크 와인 디너",
         "user_id": "user-003",
-        "route_id": "route-003",
+        "course_id": "route-003",
         "content": "강남 고급 레스토랑에서 특별한 저녁을 즐겼어요. 스테이크와 와인 페어링이 정말 완벽했습니다. 기념일이나 특별한 날에 추천해요!",
         "likes_count": 5,
         "comments_count": 1,
@@ -79,8 +82,9 @@
     },
     {
         "id": "post-004",
+        "title": "부산 해운대 해산물 여행",
         "user_id": "user-001",
-        "route_id": "route-004",
+        "course_id": "route-004",
         "content": "부산 해운대에서 신선한 해산물을 즐겼어요. 해물탕의 국물이 정말 진하고 맛있었습니다. 부산 여행 필수 코스!",
         "likes_count": 8,
         "comments_count": 2,
@@ -105,8 +109,9 @@
     },
     {
         "id": "post-005",
+        "title": "제주 흑돼지 삼겹살 후기",
         "user_id": "user-004",
-        "route_id": "route-005",
+        "course_id": "route-005",
         "content": "제주도에서 흑돼지 삼겹살을 즐겼어요. 고소하고 쫄깃한 맛이 정말 일품이었습니다. 제주도 특산품의 진수를 맛볼 수 있었어요!",
         "likes_count": 12,
         "comments_count": 4,
@@ -131,8 +136,9 @@
     },
     {
         "id": "post-006",
+        "title": "대구 막창 투어 체험기",
         "user_id": "user-002",
-        "route_id": "route-006",
+        "course_id": "route-006",
         "content": "대구 막창 투어 완료! 쫄깃하고 고소한 맛이 정말 일품이었어요. 대구의 대표 음식 막창의 진수를 맛볼 수 있었습니다.",
         "likes_count": 7,
         "comments_count": 2,

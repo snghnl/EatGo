@@ -26,18 +26,18 @@ export const PlaceInfo: React.FC<PlaceInfoProps> = ({ place }) => {
         <View style={styles.container}>
             <View style={styles.row}>
                 <View style={styles.labelPill}>
-                    <ThemedText size="sm" weight="semibold" style={styles.labelText}>
+                    <ThemedText type="body" weight="semibold" style={styles.labelText}>
                         운영시간
                     </ThemedText>
                 </View>
                 <View style={styles.valueBlock}>
-                    <ThemedText size="sm" style={styles.infoValue}>
+                    <ThemedText type="body" style={styles.infoValue}>
                         12:00~19:00
                     </ThemedText>
-                    <ThemedText size="sm" style={styles.infoValue}>
+                    <ThemedText type="body" style={styles.infoValue}>
                         브레이크 타임 - 16:00~17:30
                     </ThemedText>
-                    <ThemedText size="sm" style={styles.infoValue}>
+                    <ThemedText type="body" style={styles.infoValue}>
                         휴무일 - 월요일, 수요일
                     </ThemedText>
                 </View>
@@ -45,44 +45,38 @@ export const PlaceInfo: React.FC<PlaceInfoProps> = ({ place }) => {
 
             <View style={styles.row}>
                 <View style={styles.labelPill}>
-                    <ThemedText size="sm" weight="semibold" style={styles.labelText}>
+                    <ThemedText type="body" weight="semibold" style={styles.labelText}>
                         전화번호
                     </ThemedText>
                 </View>
                 <View style={styles.valueBlock}>
                     <TouchableOpacity onPress={handlePhonePress}>
-                        <ThemedText size="sm" style={[styles.infoValue, styles.linkText]}>
-                            {place.phone || '00-0000-0000'}
-                        </ThemedText>
+                        <ThemedText type="body">{place.phone || '00-0000-0000'}</ThemedText>
                     </TouchableOpacity>
                 </View>
             </View>
 
             <View style={styles.row}>
                 <View style={styles.labelPill}>
-                    <ThemedText size="sm" weight="semibold" style={styles.labelText}>
+                    <ThemedText type="body" weight="semibold" style={styles.labelText}>
                         사이트
                     </ThemedText>
                 </View>
                 <View style={styles.valueBlock}>
                     <TouchableOpacity onPress={handleWebsitePress}>
-                        <ThemedText size="sm" style={[styles.infoValue, styles.linkText]}>
-                            {place.place_url || 'http://00000000.com'}
-                        </ThemedText>
+                        <ThemedText type="body">{place.place_url || 'http://00000000.com'}</ThemedText>
                     </TouchableOpacity>
                 </View>
             </View>
 
             <View style={styles.row}>
                 <View style={styles.labelPill}>
-                    <ThemedText size="sm" weight="semibold" style={styles.labelText}>
+                    <ThemedText type="body" weight="semibold" style={styles.labelText}>
                         평점
                     </ThemedText>
                 </View>
                 <View style={styles.valueBlock}>
-                    <ThemedText size="sm" style={styles.infoValue}>
-                        {place.rating || 4.9} / 5.0
-                    </ThemedText>
+                    <ThemedText type="body">{place.rating || 4.9} / 5.0</ThemedText>
                 </View>
             </View>
         </View>

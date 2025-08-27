@@ -1,18 +1,9 @@
-import React, { useState, useEffect, useRef } from "react";
-import {
-    View,
-    TextInput,
-    StyleSheet,
-    Text,
-    FlatList,
-    Pressable,
-    Keyboard,
-    TouchableOpacity,
-} from "react-native";
-import { Ionicons } from "@expo/vector-icons";
-import { Colors } from "@/constants/Colors";
-import SearchListItem from "./SearchListItem";
-import { useRouter, useFocusEffect } from "expo-router";
+import React, { useState, useEffect, useRef } from 'react';
+import { View, TextInput, StyleSheet, Text, FlatList, Pressable, Keyboard, TouchableOpacity } from 'react-native';
+import { Ionicons } from '@expo/vector-icons';
+import { Colors } from '@/constants/Colors';
+import SearchListItem from './SearchListItem';
+import { useRouter, useFocusEffect } from 'expo-router';
 
 interface PlaceItem {
     id: string;
@@ -34,11 +25,8 @@ interface SearchBarProps {
     searchData?: PlaceItem[];
 }
 
-export default function SearchBar({
-    onSelectItem,
-    searchData = [],
-}: SearchBarProps) {
-    const [searchTerm, setSearchTerm] = useState("");
+export default function SearchBar({ onSelectItem, searchData = [] }: SearchBarProps) {
+    const [searchTerm, setSearchTerm] = useState('');
     const [results, setResults] = useState<PlaceItem[]>([]);
     const [isFocused, setIsFocused] = useState(false);
     const router = useRouter();
@@ -47,29 +35,26 @@ export default function SearchBar({
     // 페이지에 focus가 돌아왔을 때 search input 초기화
     useFocusEffect(
         React.useCallback(() => {
-            setSearchTerm("");
+            setSearchTerm('');
             setResults([]);
             setIsFocused(false);
         }, [])
     );
 
     useEffect(() => {
-        if (searchTerm === "") {
+        if (searchTerm === '') {
             setResults([]);
             return;
         }
         const term = searchTerm.toLowerCase();
         const filtered = searchData.filter((item) => {
-            return (
-                item.place_name.toLowerCase().includes(term) ||
-                item.category_name.toLowerCase().includes(term)
-            );
+            return item.place_name.toLowerCase().includes(term) || item.category_name.toLowerCase().includes(term);
         });
         setResults(filtered);
     }, [searchTerm, searchData]);
 
     const handleSelectItem = (item: PlaceItem) => {
-        console.log("SearchBar handleSelectItem called:", item.place_name);
+        console.log('SearchBar handleSelectItem called:', item.place_name);
         Keyboard.dismiss();
         setIsFocused(false);
         setSearchTerm(item.place_name);
@@ -81,7 +66,7 @@ export default function SearchBar({
             Keyboard.dismiss();
             setIsFocused(false);
             router.push({
-                pathname: "/placelist/searchresult",
+                pathname: '(tabs)/map/placelist/searchresult',
                 params: { query: searchTerm.trim() },
             });
         }
@@ -96,14 +81,10 @@ export default function SearchBar({
     };
 
     return (
-        <TouchableOpacity
-            style={styles.container}
-            onPress={handleContainerPress}
-            activeOpacity={1}
-        >
+        <TouchableOpacity style={styles.container} onPress={handleContainerPress} activeOpacity={1}>
             <TextInput
                 ref={textInputRef}
-                placeholder={isFocused ? "" : "지역, 맛집 등을 검색하세요"}
+                placeholder={isFocused ? '' : '지역, 맛집 등을 검색하세요'}
                 placeholderTextColor="#C7C7C7"
                 style={styles.input}
                 value={searchTerm}
@@ -118,10 +99,7 @@ export default function SearchBar({
                 selectionColor="transparent"
             />
             <Text style={styles.separator}>|</Text>
-            <TouchableOpacity
-                onPress={handleSearch}
-                style={styles.searchButton}
-            >
+            <TouchableOpacity onPress={handleSearch} style={styles.searchButton}>
                 <Ionicons name="search" size={25} color="#C7C7C7" />
             </TouchableOpacity>
 
@@ -130,12 +108,7 @@ export default function SearchBar({
                     <FlatList
                         data={results}
                         keyExtractor={(item) => item.id}
-                        renderItem={({ item }) => (
-                            <SearchListItem
-                                item={item}
-                                onSelectItem={handleSelectItem}
-                            />
-                        )}
+                        renderItem={({ item }) => <SearchListItem item={item} onSelectItem={handleSelectItem} />}
                         keyboardShouldPersistTaps="handled"
                         nestedScrollEnabled={true}
                         style={styles.flatListStyle}
@@ -149,15 +122,15 @@ export default function SearchBar({
 
 const styles = StyleSheet.create({
     container: {
-        position: "relative",
-        width: "100%",
+        position: 'relative',
+        width: '100%',
         height: 51,
-        flexDirection: "row",
-        alignItems: "center",
-        backgroundColor: "#FFFCFC",
+        flexDirection: 'row',
+        alignItems: 'center',
+        backgroundColor: '#FFFCFC',
         borderRadius: 10,
         paddingHorizontal: 15,
-        shadowColor: "#000",
+        shadowColor: '#000',
         shadowOpacity: 0.05,
         shadowOffset: { width: 0, height: 2 },
         shadowRadius: 4,
@@ -165,25 +138,25 @@ const styles = StyleSheet.create({
     },
     separator: {
         fontSize: 25,
-        color: "#C7C7C7",
+        color: '#C7C7C7',
         marginRight: 8,
     },
     input: {
         flex: 1,
         fontSize: 16,
-        color: "#000",
+        color: '#000',
     },
     searchButton: {
         padding: 5,
     },
     overlay: {
-        position: "absolute",
+        position: 'absolute',
         top: 95,
         left: 0,
         right: 0,
-        backgroundColor: "#fff",
+        backgroundColor: '#fff',
         borderRadius: 8,
-        shadowColor: "#000",
+        shadowColor: '#000',
         shadowOpacity: 0.1,
         shadowOffset: { width: 0, height: 2 },
         shadowRadius: 4,

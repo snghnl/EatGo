@@ -1,6 +1,7 @@
-import React, { useState } from 'react';
+import React from 'react';
+import { useBookmark } from '@/store/BookmarkContext';
 import { router } from 'expo-router';
-
+import { Ionicons } from '@expo/vector-icons';
 import { View, FlatList, StyleSheet } from 'react-native';
 import { useLocalSearchParams } from 'expo-router';
 import { PlaceCard } from '@/components/main/PlaceCard';
@@ -25,13 +26,8 @@ const titleMap: Record<string, { title: string; subtitle: string }> = {
 
 export default function PlaceListScreen() {
     const { category } = useLocalSearchParams<{ category: string }>();
-    const [bookmarkedPlaceIds, setBookmarkedPlaceIds] = useState<string[]>([]);
 
-    const toggleBookmark = (placeId: string) => {
-        setBookmarkedPlaceIds((prev) =>
-            prev.includes(placeId) ? prev.filter((id) => id !== placeId) : [...prev, placeId]
-        );
-    };
+    const { bookmarkedPlaceIds, toggleBookmark } = useBookmark();
 
     const documents = placesData.documents;
     const current = titleMap[category] || {
@@ -49,15 +45,25 @@ export default function PlaceListScreen() {
 
     return (
         <View style={styles.container}>
-            {
-                <Header
-                    title={current.title}
-                    subtitle={current.subtitle}
-                    titleColor={Colors.textPrimary}
-                    subtitleColor={Colors.textSecondary}
-                    align="left"
+            <View style={{ position: 'absolute', top: 50, left: 10, zIndex: 10 }}>
+                <Ionicons
+                    name="chevron-back"
+                    size={20}
+                    color={Colors.textPrimary}
+                    onPress={() => router.push('/(tabs)/map')}
                 />
-            }
+            </View>
+            <View style={styles.header}>
+                {
+                    <Header
+                        title={current.title}
+                        subtitle={current.subtitle}
+                        titleColor={Colors.textPrimary}
+                        subtitleColor={Colors.textSecondary}
+                        align="left"
+                    />
+                }
+            </View>
             <FlatList
                 data={filtered}
                 keyExtractor={(place) => place.id}
@@ -68,9 +74,12 @@ export default function PlaceListScreen() {
                         name={item.place_name}
                         category={item.category_name}
                         address={item.road_address_name}
+                        distance={item.distance || ''}
+                        description={item.category_name.split(' > ').pop() || ''}
+                        imageUrl={'https://source.unsplash.com/random/300x300?food'}
                         isBookmarked={bookmarkedPlaceIds.includes(item.id)}
                         onBookmark={() => toggleBookmark(item.id)}
-                        onPress={() => router.push(`/place/${item.id}/detail`)}
+                        onPress={() => router.push(`/map/place/${item.id}/detail`)}
                     />
                 )}
             />
@@ -81,6 +90,13 @@ const styles = StyleSheet.create({
     container: {
         flex: 1,
         backgroundColor: Colors.background,
+        paddingTop: 20,
+    },
+    header: {
+        width: '100%',
+        backgroundColor: Colors.background,
+        paddingHorizontal: 0,
+        paddingTop: 20,
     },
 
     listContent: {

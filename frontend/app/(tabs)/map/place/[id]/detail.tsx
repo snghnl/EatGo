@@ -1,5 +1,6 @@
 // app/place/[id]/detail.tsx
 import React, { useState } from 'react';
+import { useBookmark } from '@/store/BookmarkContext';
 import { ScrollView, View, StyleSheet, SafeAreaView } from 'react-native';
 import { useRouter, useLocalSearchParams } from 'expo-router';
 import { PlaceHeader } from '@/components/main/place/PlaceHeader';
@@ -9,12 +10,16 @@ import { PlaceMenu } from '@/components/main/place/PlaceMenu';
 import { ThemedText } from '@/components/ThemedText';
 import { Colors } from '@/constants/Colors';
 import placesData from '@/mock-data/places.json';
-import { CourseListExample } from '@/components/plan';
+import { CourseList } from '@/components/plan/CourseList';
+import { Ionicons } from '@expo/vector-icons';
+import { router } from 'expo-router';
 
 export default function PlaceDetailScreen() {
     const router = useRouter();
     const { id } = useLocalSearchParams<{ id: string }>();
-    const [isBookmarked, setIsBookmarked] = useState(false);
+    const { bookmarkedPlaceIds, toggleBookmark } = useBookmark();
+    const isBookmarked = bookmarkedPlaceIds.includes(id);
+    const [courses, setCourses] = useState([]); // ✅ 실제 데이터 연결시 여기에 fetch 결과 반영
 
     const place = placesData.documents.find((item) => item.id === id);
 
@@ -78,13 +83,20 @@ export default function PlaceDetailScreen() {
     };
 
     const handleBookmarkPress = () => {
-        setIsBookmarked(!isBookmarked);
-        // TODO: Implement bookmark API call
+        toggleBookmark(id);
     };
 
     return (
         <SafeAreaView style={styles.container}>
             <ScrollView style={styles.scrollView} showsVerticalScrollIndicator={false}>
+                <View style={{ position: 'absolute', top: 20, left: 15, zIndex: 10 }}>
+                    <Ionicons
+                        name="chevron-back"
+                        size={20}
+                        color={Colors.textPrimary}
+                        onPress={() => router.push('/(tabs)/map')} //backbutton 수정 필요
+                    />
+                </View>{' '}
                 <PlaceHeader
                     placeName={place.place_name}
                     category={place.category_name}
@@ -99,10 +111,8 @@ export default function PlaceDetailScreen() {
                 <View style={styles.separator} />
                 <PlaceInfo place={place} />
                 <View style={styles.separator} />
-
                 <PlaceMenu menuItems={mockMenuItems} />
                 <View style={styles.separator} />
-
                 <View style={styles.titleWrapper}>
                     <ThemedText size="lg" weight="bold" style={styles.title}>
                         다른 여행객분들은{'\n'}
@@ -114,7 +124,7 @@ export default function PlaceDetailScreen() {
                         </ThemedText>
                     </ThemedText>
                 </View>
-                <CourseListExample />
+                <CourseList courses={courses} />
             </ScrollView>
         </SafeAreaView>
     );

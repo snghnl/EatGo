@@ -1,28 +1,20 @@
-import React from "react";
-import { View, StyleSheet, TouchableOpacity } from "react-native";
-import { ThemedView } from "../ThemedView";
-import { ThemedText } from "../ThemedText";
-import { Colors } from "../../constants/Colors";
+import React from 'react';
+import { View, StyleSheet, TouchableOpacity } from 'react-native';
+import { ThemedView } from '../ThemedView';
+import { ThemedText } from '../ThemedText';
+import { Colors } from '../../constants/Colors';
 
 interface AddCourseCardProps {
     onPress?: () => void;
     text?: string;
 }
 
-export const AddCourseCard: React.FC<AddCourseCardProps> = ({
-    onPress,
-    text = "+ 새 여행경로 만들기",
-}) => {
+export const AddCourseCard: React.FC<AddCourseCardProps> = ({ onPress, text = '+ 새 여행경로 만들기' }) => {
     return (
         <TouchableOpacity onPress={onPress} activeOpacity={0.8}>
             <ThemedView style={styles.card}>
                 <View style={styles.content}>
-                    <ThemedText
-                        size="xs"
-                        color="textSecondary"
-                        weight="semibold"
-                        style={styles.subtitle}
-                    >
+                    <ThemedText size="xs" color="textSecondary" weight="semibold" style={styles.subtitle}>
                         {text}
                     </ThemedText>
                 </View>

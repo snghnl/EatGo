@@ -1,6 +1,6 @@
-import React from "react";
-import { View, StyleSheet } from "react-native";
-import { WebView } from "react-native-webview";
+import React from 'react';
+import { View, StyleSheet, Platform } from 'react-native';
+import { WebView } from 'react-native-webview';
 
 const KAKAO_JS_API_KEY = process.env.EXPO_PUBLIC_KAKAO_JS_API_KEY;
 
@@ -10,76 +10,57 @@ type KakaoMapProps = {
 };
 
 export default function KakaoMap({ latitude, longitude }: KakaoMapProps) {
-    const htmlContent = `
-    <!DOCTYPE html>
-    <html>
-      <head>
-        <meta name="viewport" content="width=device-width, initial-scale=1.0">
-        <script src="https://dapi.kakao.com/v2/maps/sdk.js?appkey=${KAKAO_JS_API_KEY}&libraries=services"></script>
-        <style>
-          body { margin: 0; padding: 0; height: 100%; }
-          html { height: 100%; }
-          #map { width: 100%; height: 100%; }
-        </style>
-      </head>
-      <body>
-        <div id="map"></div>
-        <script>
-          window.onload = function() {
-            console.log('Kakao Map API Loaded');
-            if (typeof kakao !== 'undefined' && kakao.maps) {
-              console.log('Kakao Maps is available');
-              const mapContainer = document.getElementById('map');
-              const mapOption = {
-                center: new kakao.maps.LatLng(${latitude}, ${longitude}),
-                level: 3
-              };
-              const map = new kakao.maps.Map(mapContainer, mapOption);
+    // 플랫폼별 처리
+    if (Platform.OS === 'web') {
+        // 웹에서는 직접 렌더링
+        return <KakaoWebMap latitude={latitude} longitude={longitude} />;
+    }
 
-              // 마커 추가 (선택 사항)
-              const markerPosition = new kakao.maps.LatLng(${latitude}, ${longitude});
-              const marker = new kakao.maps.Marker({
-                position: markerPosition
-              });
-              marker.setMap(map);
-            } else {
-              console.error('Kakao Maps is not available');
-            }
-          };
-        </script>
-      </body>
-    </html>
-  `;
-
-    console.log("api key", KAKAO_JS_API_KEY);
+    // 모바일에서는 외부 URL 사용
+    const mapUrl = `https://map.kakao.com/link/map/위치,${latitude},${longitude}`;
 
     return (
         <View style={styles.container}>
             <WebView
-                originWhitelist={["*"]}
-                source={{ html: htmlContent }}
+                source={{ uri: mapUrl }}
                 style={styles.webview}
                 javaScriptEnabled={true}
-                domStorageEnabled={true}
-                onLoad={() => console.log("WebView loaded successfully")}
-                onError={(e) => console.error("WebView error: ", e.nativeEvent)}
-                injectedJavaScript={`(function() {
-          window.console.log = function(message) {
-            window.ReactNativeWebView.postMessage(message);
-          }
-        })();`}
-                onMessage={(event) => console.log(event.nativeEvent.data)}
+                onMessage={(event) => console.log('KAKAO:', event.nativeEvent.data)}
             />
         </View>
     );
 }
 
+// 웹 전용 컴포넌트
+function KakaoWebMap({ latitude, longitude }) {
+    React.useEffect(() => {
+        const script = document.createElement('script');
+        script.src = `https://dapi.kakao.com/v2/maps/sdk.js?appkey=${KAKAO_JS_API_KEY}&autoload=false`;
+        script.onload = () => {
+            kakao.maps.load(() => {
+                const container = document.getElementById('kakao-map');
+                const options = {
+                    center: new kakao.maps.LatLng(latitude, longitude),
+                    level: 3,
+                };
+                const map = new kakao.maps.Map(container, options);
+
+                const marker = new kakao.maps.Marker({
+                    position: new kakao.maps.LatLng(latitude, longitude),
+                });
+                marker.setMap(map);
+            });
+        };
+        document.head.appendChild(script);
+    }, [latitude, longitude]);
+
+    return <div id="kakao-map" style={{ width: '100%', height: '100%' }} />;
+}
+
 const styles = StyleSheet.create({
     container: {
-        width: "100%",
-        height: "100%",
-        borderWidth: 1,
-        borderColor: "#ddd",
+        width: '100%',
+        height: '100%',
     },
     webview: {
         flex: 1,

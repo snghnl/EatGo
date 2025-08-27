@@ -1,8 +1,8 @@
-import React from "react";
-import { View, Text, TouchableOpacity, StyleSheet } from "react-native";
-import { FontAwesome } from "@expo/vector-icons";
-import { Colors } from "@/constants/Colors";
-import { useRouter } from "expo-router";
+import React from 'react';
+import { View, Text, TouchableOpacity, StyleSheet } from 'react-native';
+import { FontAwesome } from '@expo/vector-icons';
+import { Colors } from '@/constants/Colors';
+import { useRouter } from 'expo-router';
 
 interface PlaceItem {
     id: string;
@@ -24,17 +24,14 @@ interface SearchListItemProps {
     onSelectItem?: (item: PlaceItem) => void;
 }
 
-export default function SearchListItem({
-    item,
-    onSelectItem,
-}: SearchListItemProps) {
+export default function SearchListItem({ item, onSelectItem }: SearchListItemProps) {
     const router = useRouter();
 
     const handlePress = () => {
-        console.log("SearchListItem pressed:", item.place_name, item.id);
+        console.log('SearchListItem pressed:', item.place_name, item.id);
         onSelectItem?.(item);
         router.push({
-            pathname: "/placelist/[id]/detail",
+            pathname: '(tabs)/map/place/[id]/detail',
             params: { id: item.id },
         });
     };
@@ -42,22 +39,13 @@ export default function SearchListItem({
     return (
         <TouchableOpacity style={styles.itemContainer} onPress={handlePress}>
             <View style={styles.row}>
-                <FontAwesome
-                    name="map-marker"
-                    size={20}
-                    color={Colors.primary}
-                    style={styles.icon}
-                />
+                <FontAwesome name="map-marker" size={20} color={Colors.primary} style={styles.icon} />
                 <View style={styles.leftContent}>
-                    <Text style={styles.itemCategory}>
-                        {item.category_name.split(" > ").pop()}
-                    </Text>
+                    <Text style={styles.itemCategory}>{item.category_name.split(' > ').pop()}</Text>
                     <Text style={styles.itemTitle}>{item.place_name}</Text>
                 </View>
                 <View style={styles.rightContent}>
-                    <Text style={styles.itemAddress}>
-                        {item.road_address_name}
-                    </Text>
+                    <Text style={styles.itemAddress}>{item.road_address_name}</Text>
                     <Text style={styles.itemDistance}>{item.distance}</Text>
                 </View>
             </View>
@@ -70,19 +58,19 @@ const styles = StyleSheet.create({
         paddingVertical: 14,
         paddingHorizontal: 15,
         borderBottomWidth: 1,
-        borderColor: "#eee",
+        borderColor: '#eee',
     },
     row: {
-        flexDirection: "row",
-        alignItems: "flex-start",
-        justifyContent: "space-between",
+        flexDirection: 'row',
+        alignItems: 'flex-start',
+        justifyContent: 'space-between',
     },
     leftContent: {
         flex: 1,
         marginRight: 12,
     },
     rightContent: {
-        alignItems: "flex-end",
+        alignItems: 'flex-end',
         minWidth: 80,
     },
     icon: {
@@ -96,18 +84,18 @@ const styles = StyleSheet.create({
     },
     itemTitle: {
         fontSize: 16,
-        fontWeight: "bold",
+        fontWeight: 'bold',
         marginBottom: 2,
     },
     itemAddress: {
         fontSize: 13,
         color: Colors.textSecondary,
-        textAlign: "right",
+        textAlign: 'right',
     },
     itemDistance: {
         fontSize: 12,
         color: Colors.textSecondary,
-        textAlign: "right",
+        textAlign: 'right',
         marginTop: 2,
     },
 });
