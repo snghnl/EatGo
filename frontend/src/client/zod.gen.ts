@@ -508,6 +508,14 @@ export const zTravelCoursesCreateData = z.object({
 
 export const zTravelCoursesCreateResponse = zTravelCourse;
 
+export const zTravelCoursesMyListData = z.object({
+    body: z.optional(z.never()),
+    path: z.optional(z.never()),
+    query: z.optional(z.never())
+});
+
+export const zTravelCoursesMyListResponse = z.array(zTravelCourse);
+
 export const zTravelCoursesDeleteData = z.object({
     body: z.optional(z.never()),
     path: z.object({
