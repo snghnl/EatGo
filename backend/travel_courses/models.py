@@ -19,6 +19,8 @@ class TravelCourse(BaseModel):
     routes = models.ManyToManyField(
         Route, through="TravelCourseRoute", related_name="travel_courses"
     )
+    start_date = models.DateField()
+    end_date = models.DateField()
 
     def __str__(self) -> str:
         return self.title
