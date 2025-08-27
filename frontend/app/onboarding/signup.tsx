@@ -14,11 +14,10 @@ import {
 import { useRouter } from "expo-router";
 import { Colors } from "@/constants/Colors";
 import { Ionicons } from "@expo/vector-icons";
+import { Accounts } from "@/src/client/sdk.gen";
+import { AccountsSignupCreateData, User } from "@/src/client/types.gen";
 
-interface SignupForm {
-    email: string;
-    password: string;
-    confirmPassword: string;
+interface SignupForm extends User {
     agreeToTerms: boolean;
     agreeToPrivacy: boolean;
     agreeToThirdParty: boolean;
@@ -31,7 +30,9 @@ export default function SignupScreen() {
     const [form, setForm] = useState<SignupForm>({
         email: "",
         password: "",
-        confirmPassword: "",
+        password_confirm: "",
+        username: "",
+        login_method: "email",
         agreeToTerms: false,
         agreeToPrivacy: false,
         agreeToThirdParty: false,
@@ -76,7 +77,7 @@ export default function SignupScreen() {
 
     // 개인정보 수집 및 이용 동의 토글
     const togglePrivacyAgreement = () => {
-        setForm((prev) => ({ ...prev, agreeToPrivacy: !prev.agreePrivacy }));
+        setForm((prev) => ({ ...prev, agreeToPrivacy: !prev.agreeToPrivacy }));
         updateAgreementStatus();
     };
 
@@ -129,7 +130,11 @@ export default function SignupScreen() {
         }
 
         if (allRequirementsMet()) {
-            // TODO: 실제 가입 API 호출
+            Accounts.accountsSignupCreate({
+                body: form as User,
+            }).then((response) => {
+                console.log(response);
+            });
             console.log("가입 정보:", form);
             Alert.alert("가입 완료", "잇고에 오신 것을 환영합니다!", [
                 {
@@ -154,7 +159,7 @@ export default function SignupScreen() {
 
     // 비밀번호 일치 여부
     const isPasswordMatch =
-        form.confirmPassword && form.confirmPassword === form.password;
+        form.password_confirm && form.password_confirm === form.password;
 
     // 모든 요구사항 충족 여부
     const allRequirementsMet = () => {
@@ -283,9 +288,9 @@ export default function SignupScreen() {
                                     style={[styles.input, styles.passwordInput]}
                                     placeholder="비밀번호 확인"
                                     placeholderTextColor="#9CA3AF"
-                                    value={form.confirmPassword}
+                                    value={form.password_confirm}
                                     onChangeText={(value) =>
-                                        updateForm("confirmPassword", value)
+                                        updateForm("password_confirm", value)
                                     }
                                     secureTextEntry={!showConfirmPassword}
                                     autoCapitalize="none"

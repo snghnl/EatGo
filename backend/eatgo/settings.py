@@ -12,6 +12,7 @@ https://docs.djangoproject.com/en/5.2/ref/settings/
 
 from pathlib import Path
 import os
+from datetime import timedelta
 from dotenv import load_dotenv
 
 
@@ -22,7 +23,7 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 load_dotenv(BASE_DIR.parent / ".env.local")
 
 
-API_VERSION = "/api/v1"
+API_VERSION = "api/v1"
 
 # KAKAO REST API KEY 환경변수 등록
 KAKAO_REST_API_KEY = os.environ.get("KAKAO_REST_API_KEY")
@@ -153,6 +154,28 @@ AUTH_USER_MODEL = "accounts.User"
 
 REST_FRAMEWORK = {
     "DEFAULT_AUTHENTICATION_CLASSES": [
+        "rest_framework_simplejwt.authentication.JWTAuthentication",
         "rest_framework.authentication.SessionAuthentication",
-    ]
+    ],
+}
+
+# drf_yasg configuration for Swagger/OpenAPI generation
+SWAGGER_SETTINGS = {
+    "DEFAULT_INFO": "eatgo.urls.api_info",
+    "SECURITY_DEFINITIONS": {
+        "Bearer": {
+            "type": "apiKey",
+            "name": "Authorization",
+            "in": "header",
+            "description": "JWT Authorization header using the Bearer scheme. Example: 'Authorization: Bearer <token>'",
+        }
+    },
+}
+
+# SimpleJWT basic configuration (can be tuned later)
+
+SIMPLE_JWT = {
+    "ACCESS_TOKEN_LIFETIME": timedelta(minutes=60),
+    "REFRESH_TOKEN_LIFETIME": timedelta(days=7),
+    "AUTH_HEADER_TYPES": ("Bearer",),
 }

@@ -21,14 +21,22 @@ from rest_framework import permissions
 from django.conf import settings
 from drf_yasg.views import get_schema_view
 from drf_yasg import openapi
+from rest_framework_simplejwt.views import (
+    TokenObtainPairView,
+    TokenRefreshView,
+    TokenVerifyView,
+)
 
+
+# Export a top-level Info object for drf_yasg DEFAULT_INFO import string
+api_info = openapi.Info(
+    title="EatGo API",
+    default_version="v1",
+    description="EatGo API",
+)
 
 schema_view = get_schema_view(
-    openapi.Info(
-        title="EatGo API",
-        default_version="v1",
-        description="EatGo API",
-    ),
+    api_info,
     public=True,
     permission_classes=(permissions.AllowAny,),
 )
@@ -46,10 +54,29 @@ urlpatterns = [
     ),
     path("admin/", admin.site.urls),
     path("redoc/", schema_view.with_ui("redoc", cache_timeout=0), name="schema-redoc"),
+    # auth (JWT)
+    path(
+        settings.API_VERSION + "/auth/token",
+        TokenObtainPairView.as_view(),
+        name="token_obtain_pair",
+    ),
+    path(
+        settings.API_VERSION + "/auth/token/refresh",
+        TokenRefreshView.as_view(),
+        name="token_refresh",
+    ),
+    path(
+        settings.API_VERSION + "/auth/token/verify",
+        TokenVerifyView.as_view(),
+        name="token_verify",
+    ),
     # api
     path(settings.API_VERSION + "/kakaomap/", include("kakaomap.urls")),
+    path(settings.API_VERSION + "/accounts/", include("accounts.urls")),
+    path(settings.API_VERSION + "/", include("core.urls")),
     path(settings.API_VERSION + "/routes/", include("routes.urls")),
     path(settings.API_VERSION + "/travel_courses/", include("travel_courses.urls")),
     path(settings.API_VERSION + "/tourism/", include("tourism.urls")),
+    path(settings.API_VERSION + "/places/", include("places.urls")),
     # path('api-auth/', include('rest_framework.urls')),
 ]

@@ -11,6 +11,7 @@ import AppContainer from '@/components/common/AppContainer';
 import { Colors } from '@/constants/Colors';
 import { BookmarkProvider } from '@/store/BookmarkContext';
 import { PostProvider } from '@/store/posts';
+import { client } from "@/src/client/client.gen";
 
 export const viewport = {
     width: 'device-width',
@@ -19,6 +20,17 @@ export const viewport = {
     maximumScale: 1.0,
     userScalable: false,
 };
+
+// configure internal service client
+client.setConfig({
+    // set default base url for requests
+    // TODO: change to production url
+    baseUrl: "http://localhost:8000",
+    // set default headers for requests
+    headers: {
+        Authorization: "Bearer <token_from_service_client>",
+    },
+});
 
 export default function RootLayout() {
     const colorScheme = useColorScheme();
@@ -45,7 +57,9 @@ export default function RootLayout() {
     return (
         <ThemeProvider value={colorScheme === 'dark' ? DarkTheme : DefaultTheme}>
             <BookmarkProvider>
-                <PostProvider>
+                <
+              
+              >
                     <GestureHandlerRootView style={{ flex: 1 }}>
                         <View style={{ flex: 1, backgroundColor: Colors.background }}>
                             <Stack>
