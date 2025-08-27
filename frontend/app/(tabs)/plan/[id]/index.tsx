@@ -1,274 +1,345 @@
-// (tabs)/plan/[id]/index.ts
-import React, { useState, useEffect } from 'react';
-import { StyleSheet, View, SafeAreaView, Alert, ScrollView } from 'react-native';
-import { useLocalSearchParams, router } from 'expo-router';
-import { AddCourseCard } from '@/components/plan';
-import { DayPlanListContainer } from '@/components/plan/DayPlanListContainer'; // ✅ 컨테이너로 교체
-import PlaceCardSwiper from '@/components/main/PlaceCardSwiper';
-import Header from '@/components/common/Header';
-import ActionButtons from '@/components/common/ActionButtons';
-import { Colors } from '@/constants/Colors';
-import { Ionicons } from '@expo/vector-icons';
+// frontend/app/(tabs)/plan/[id]/index.tsx
+import React, { useState, useEffect, useMemo } from "react";
+import {
+    StyleSheet,
+    View,
+    SafeAreaView,
+    Alert,
+    ScrollView,
+} from "react-native";
+import { useLocalSearchParams, router } from "expo-router";
+import { AddCourseCard } from "@/components/plan";
+import { DayPlanListContainer } from "@/components/plan/DayPlanListContainer";
+import PlaceCardSwiper from "@/components/main/PlaceCardSwiper";
+import Header from "@/components/common/Header";
+import ActionButtons from "@/components/common/ActionButtons";
+import { Colors } from "@/constants/Colors";
+import { Ionicons } from "@expo/vector-icons";
 
-// 코스 데이터 인터페이스
+// ✅ 상대경로로 mock 데이터 로드 (현재 파일 위치 기준: app/(tabs)/plan/[id]/index.tsx)
+import routesMock from "../../../../mock-data/routes.json"; // ← 경로 주의!
+
 interface CourseData {
-  id: string;
-  startDate: string;
-  endDate: string;
-  selectedDestinations: string[];
-  selectedFoods: string[];
-  title: string;
-  subtitle: string;
+    id: string;
+    startDate: string;
+    endDate: string;
+    selectedDestinations: string[];
+    selectedFoods: string[];
+    title: string;
+    subtitle: string;
 }
 
 export default function PlanDetailScreen() {
-  const { id, startDate, endDate, destinations, foods, isNew } =
-    useLocalSearchParams<{
-      id: string;
-      startDate?: string;
-      endDate?: string;
-      destinations?: string;
-      foods?: string;
-      isNew?: string;
-    }>();
+    const { id, startDate, endDate, destinations, foods, isNew } =
+        useLocalSearchParams<{
+            id: string;
+            startDate?: string;
+            endDate?: string;
+            destinations?: string;
+            foods?: string;
+            isNew?: string;
+        }>();
 
-  const [courseData, setCourseData] = useState<CourseData | null>(null);
-  const [selectedDayPlanId, setSelectedDayPlanId] = useState<string | null>(null);
-  const [selectedPlaceId, setSelectedPlaceId] = useState<string | null>(null);
-  const [showPlaceCardSwiper, setShowPlaceCardSwiper] = useState(false);
-
-  // 새 코스인지 판단 (isNew 파라미터가 'true'이면 새 코스)
-  const isNewCourse = isNew === 'true';
-
-  // 제목/부제 생성 (현재는 URL 파라미터 기반, 추후 서버 데이터로 대체 가능)
-  const generateTitleAndSubtitle = () => {
-    let title = '새로운 여행 코스';
-    let subtitle = '새로운 여행 계획';
-
-    if (destinations) {
-      const destinationList = destinations.split(',');
-      if (destinationList.length > 0) {
-        const mainDestination = destinationList[0];
-        title = `${mainDestination} 여행 코스`;
-      }
-    }
-
-    if (startDate && endDate) {
-      const startMonth = parseInt(startDate.split('.')[1]);
-      const endMonth = parseInt(endDate.split('.')[1]);
-
-      if ((startMonth >= 6 && startMonth <= 8) || (endMonth >= 6 && endMonth <= 8)) {
-        subtitle = '이열치열 여름 나기';
-      } else if ((startMonth >= 3 && startMonth <= 5) || (endMonth >= 3 && endMonth <= 5)) {
-        subtitle = '봄바람 휘날리는 계절';
-      } else if ((startMonth >= 9 && startMonth <= 11) || (endMonth >= 9 && endMonth <= 11)) {
-        subtitle = '단풍 물든 가을 여행';
-      } else {
-        subtitle = '눈 내리는 겨울 풍경';
-      }
-    }
-
-    return { title, subtitle };
-  };
-
-  useEffect(() => {
-    if (!id) return;
-
-    // TODO: 실제로는 course 상세 API로부터 가져오길 권장
-    // SOURCE: ??? (예: GET https://api.example.com/courses/:courseId)
-    const { title, subtitle } = generateTitleAndSubtitle();
-
-    const newCourseData: CourseData = {
-      id: String(id),
-      startDate: startDate || '25.07.05', // SOURCE: URL 파라미터(임시값)
-      endDate: endDate || '25.07.07', // SOURCE: URL 파라미터(임시값)
-      selectedDestinations: destinations ? destinations.split(',') : ['전주', '순천'], // SOURCE: URL 파라미터(임시값)
-      selectedFoods: foods ? foods.split(',') : ['한식', '카페'], // SOURCE: URL 파라미터(임시값)
-      title,
-      subtitle,
-    };
-    setCourseData(newCourseData);
-  }, [id, startDate, endDate, destinations, foods]);
-
-  const handleEdit = () => {
-    console.log('코스 편집 버튼 클릭');
-    // TODO: 편집 화면 이동 또는 편집 모드 전환
-  };
-
-  const handleCardPress = (dayPlanId: string) => {
-    console.log('카드 클릭:', dayPlanId);
-    // TODO: 카드 전체 액션 (예: 스와이프 저장/상세 이동)
-  };
-
-  const handleSave = (dayPlanId: string) => {
-    console.log('저장:', dayPlanId);
-    // TODO: 해당 일차 계획 저장 API 호출
-    // SOURCE: ??? (예: POST /courses/:courseId/day-plans/:dayPlanId/save)
-  };
-
-  const handleRecommendationPress = (day: number) => {
-    console.log(`${day}일차 추천 여행경로 보러가기 클릭`);
-    router.push({
-      pathname: `/plan/${id}/recommendation` as any,
-      params: {
-        id: id,
-        courseId: id,
-        day: day.toString(),
-        startDate: startDate,
-        endDate: endDate,
-        destinations: destinations,
-        foods: foods,
-      },
-    });
-  };
-
-  const handleNewCourseRecommendationPress = () => {
-    console.log('새 코스 추천 여행경로 보러가기 클릭');
-    router.push({
-      pathname: `/plan/${id}/recommendation` as any,
-      params: {
-        id: id,
-        courseId: id,
-        startDate: startDate,
-        endDate: endDate,
-        destinations: destinations,
-        foods: foods,
-      },
-    });
-  };
-
-  const handleAddRecommendation = () => {
-    console.log('추천 경로 저장하기 클릭');
-    router.push({
-      pathname: `/plan/${id}/recommendation` as any,
-      params: {
-        courseId: id,
-        startDate: startDate,
-        endDate: endDate,
-        destinations: destinations,
-        foods: foods,
-      },
-    });
-  };
-
-  const handleLongPress = (dayPlanId: string) => {
-    console.log('PlanCard long press:', dayPlanId);
-    setSelectedDayPlanId(dayPlanId);
-  };
-
-  const handlePlacePress = (dayPlanId: string, placeId: string) => {
-    console.log('Place pressed:', dayPlanId, placeId);
-    if (selectedDayPlanId === dayPlanId) {
-      setSelectedPlaceId(placeId);
-      setShowPlaceCardSwiper(true);
-    } else {
-      // 일반적인 place 터치 (상세 페이지로 이동 등)
-      console.log('장소 클릭:', dayPlanId, placeId);
-      // TODO: 장소 상세로 이동
-      // SOURCE: ??? (예: router.push(`/place/${placeId}`))
-    }
-  };
-
-  const handleClosePlaceCardSwiper = () => {
-    setShowPlaceCardSwiper(false);
-    setSelectedPlaceId(null);
-    setSelectedDayPlanId(null);
-  };
-
-  const handlePlaceSelect = (selectedPlace: any) => {
-    console.log('Place selected for replacement:', selectedPlace);
-    Alert.alert(
-      `${selectedPlace.place_name}로 교체하시겠습니까?`,
-      '교체하면 기존 장소가 삭제됩니다.',
-      [
-        { text: '취소', style: 'cancel' },
-        {
-          text: '교체',
-          onPress: () => {
-            // TODO: 실제 교체 로직 (API 호출 후 재조회)
-            // SOURCE: ??? (예: PUT /courses/:courseId/day-plans/:dayPlanId/places)
-            console.log(
-              `교체 시도: ${selectedPlace.place_name} (ID: ${selectedPlace.id})`
-            );
-            alert(`${selectedPlace.place_name}로 교체되었습니다!`);
-          },
-        },
-      ]
+    const [courseData, setCourseData] = useState<CourseData | null>(null);
+    const [selectedDayPlanId, setSelectedDayPlanId] = useState<string | null>(
+        null
     );
-  };
+    const [selectedPlaceId, setSelectedPlaceId] = useState<string | null>(null);
+    const [showPlaceCardSwiper, setShowPlaceCardSwiper] = useState(false);
 
-  if (!courseData) return null; // 로딩 중 (필요시 스켈레톤 추가)
+    const isNewCourse = isNew === "true";
 
-  return (
-    <SafeAreaView style={styles.container}>
-      <View style={{ position: 'absolute', top: 70, left: 15, zIndex: 10 }}>
-        <Ionicons
-          name="chevron-back"
-          size={20}
-          color={Colors.textPrimary}
-          onPress={() => router.push('/(tabs)/plan')}
-        />
-      </View>
+    // ✅ id로 mock에서 해당 코스 찾기
+    const matchedRoute = useMemo(() => {
+        if (!id) return null;
+        try {
+            const list = Array.isArray(routesMock) ? routesMock : [];
+            // id는 문자열 비교 (예: "route-001")
+            return list.find((r: any) => String(r.id) === String(id)) || null;
+        } catch {
+            return null;
+        }
+    }, [id]);
 
-      <Header title={courseData.title} subtitle={courseData.subtitle} />
+    // 제목/부제 (신규 코스일 때만 사용)
+    const generateTitleAndSubtitle = () => {
+        let title = "새로운 여행 코스";
+        let subtitle = "새로운 여행 계획";
 
-      <View style={styles.actionSection}>
-        <ActionButtons actions={[{ label: '편집', onPress: handleEdit }]} />
-      </View>
+        if (destinations) {
+            const destinationList = destinations.split(",");
+            if (destinationList.length > 0) {
+                const mainDestination = destinationList[0];
+                title = `${mainDestination} 여행 코스`;
+            }
+        }
 
-      {/* 새 코스인 경우 AddCourseCard만 표시, 기존 코스인 경우 DayPlanListContainer 표시 */}
-      {isNewCourse ? (
-        <View style={styles.addRecommendationContainer}>
-          <AddCourseCard
-            onPress={handleNewCourseRecommendationPress}
-            text="추천 여행 경로 확인하기"
-          />
-        </View>
-      ) : (
-        <ScrollView style={styles.scrollContainer}>
-          {/* 기존 코스의 경우 추천 경로 저장하기 버튼 */}
-          <View style={styles.addRecommendationContainer}>
-            <AddCourseCard onPress={handleAddRecommendation} text="추천 경로 저장하기" />
-          </View>
+        if (startDate && endDate) {
+            const startMonth = parseInt(startDate.split(".")[1]);
+            const endMonth = parseInt(endDate.split(".")[1]);
 
-          {/* ✅ 실제 데이터 컨테이너: mock 제거 */}
-          <DayPlanListContainer
-            courseId={String(id)}
-            isNewCourse={false}
-            onPlacePress={handlePlacePress}
-            onCardPress={handleCardPress}
-            onSave={handleSave}
-            onRecommendationPress={handleRecommendationPress}
-            onLongPress={handleLongPress}
-            selectedPlaceId={selectedPlaceId}
-            activeDayPlanId={selectedDayPlanId}
-          />
-        </ScrollView>
-      )}
+            if (
+                (startMonth >= 6 && startMonth <= 8) ||
+                (endMonth >= 6 && endMonth <= 8)
+            ) {
+                subtitle = "이열치열 여름 나기";
+            } else if (
+                (startMonth >= 3 && startMonth <= 5) ||
+                (endMonth >= 3 && endMonth <= 5)
+            ) {
+                subtitle = "봄바람 휘날리는 계절";
+            } else if (
+                (startMonth >= 9 && startMonth <= 11) ||
+                (endMonth >= 9 && endMonth <= 11)
+            ) {
+                subtitle = "단풍 물든 가을 여행";
+            } else {
+                subtitle = "눈 내리는 겨울 풍경";
+            }
+        }
 
-      {/* PlaceCardSwiper */}
-      {showPlaceCardSwiper && (
-        <PlaceCardSwiper
-          onClose={handleClosePlaceCardSwiper}
-          onPlaceSelect={handlePlaceSelect}
-        />
-      )}
-    </SafeAreaView>
-  );
+        return { title, subtitle };
+    };
+
+    // ✅ 코스 데이터 구성
+    useEffect(() => {
+        if (!id) return;
+
+        // 1) 신규 코스면 URL 파라미터 기반으로 생성
+        if (isNewCourse) {
+            const { title, subtitle } = generateTitleAndSubtitle();
+            setCourseData({
+                id: String(id),
+                startDate: startDate || "25.07.05", // SOURCE: URL 파라미터(임시값)
+                endDate: endDate || "25.07.07", // SOURCE: URL 파라미터(임시값)
+                selectedDestinations: destinations
+                    ? destinations.split(",")
+                    : ["전주", "순천"], // SOURCE: URL 파라미터(임시값)
+                selectedFoods: foods ? foods.split(",") : ["한식", "카페"], // SOURCE: URL 파라미터(임시값)
+                title,
+                subtitle,
+            });
+            return;
+        }
+
+        // 2) 기존 코스면 mock에서 찾아서 제목/설명 반영
+        if (matchedRoute) {
+            const titleFromMock = String(matchedRoute.title ?? "여행 코스");
+            const subtitleFromMock = matchedRoute.description
+                ? String(matchedRoute.description)
+                : `${matchedRoute.places?.length ?? 0}곳 · ${
+                      matchedRoute.total_time ?? 0
+                  }분`;
+
+            setCourseData({
+                id: String(id),
+                // 날짜/선호는 아직 URL 파라미터에서만 받음(실제 API 연결 시 교체)
+                startDate: startDate || "25.07.05", // SOURCE: URL 파라미터(임시값)
+                endDate: endDate || "25.07.07", // SOURCE: URL 파라미터(임시값)
+                selectedDestinations: destinations
+                    ? destinations.split(",")
+                    : [], // SOURCE: URL 파라미터(임시값)
+                selectedFoods: foods ? foods.split(",") : [], // SOURCE: URL 파라미터(임시값)
+                title: titleFromMock,
+                subtitle: subtitleFromMock,
+            });
+            return;
+        }
+
+        // 3) 매칭되는 코스가 없으면 안전한 기본값 (이전 로직 유지)
+        const { title, subtitle } = generateTitleAndSubtitle();
+        setCourseData({
+            id: String(id),
+            startDate: startDate || "25.07.05",
+            endDate: endDate || "25.07.07",
+            selectedDestinations: destinations ? destinations.split(",") : [],
+            selectedFoods: foods ? foods.split(",") : [],
+            title,
+            subtitle,
+        });
+    }, [
+        id,
+        isNewCourse,
+        matchedRoute,
+        startDate,
+        endDate,
+        destinations,
+        foods,
+    ]);
+
+    const handleEdit = () => {
+        console.log("코스 편집 버튼 클릭");
+    };
+
+    const handleCardPress = (dayPlanId: string) => {
+        console.log("카드 클릭:", dayPlanId);
+    };
+
+    const handleSave = (dayPlanId: string) => {
+        console.log("저장:", dayPlanId);
+        // SOURCE: ??? (예: POST /courses/:courseId/day-plans/:dayPlanId/save)
+    };
+
+    const handleRecommendationPress = (day: number) => {
+        router.push({
+            pathname: `/plan/${id}/recommendation` as any,
+            params: {
+                id: id,
+                courseId: id,
+                day: day.toString(),
+                startDate,
+                endDate,
+                destinations,
+                foods,
+            },
+        });
+    };
+
+    const handleNewCourseRecommendationPress = () => {
+        router.push({
+            pathname: `/plan/${id}/recommendation` as any,
+            params: {
+                id: id,
+                courseId: id,
+                startDate,
+                endDate,
+                destinations,
+                foods,
+            },
+        });
+    };
+
+    const handleAddRecommendation = () => {
+        router.push({
+            pathname: `/plan/${id}/recommendation` as any,
+            params: {
+                courseId: id,
+                startDate,
+                endDate,
+                destinations,
+                foods,
+            },
+        });
+    };
+
+    const handleLongPress = (dayPlanId: string) => {
+        setSelectedDayPlanId(dayPlanId);
+    };
+
+    const handlePlacePress = (dayPlanId: string, placeId: string) => {
+        if (selectedDayPlanId === dayPlanId) {
+            setSelectedPlaceId(placeId);
+            setShowPlaceCardSwiper(true);
+        } else {
+            console.log("장소 클릭:", dayPlanId, placeId);
+            // SOURCE: ??? (예: router.push(`/place/${placeId}`))
+        }
+    };
+
+    const handleClosePlaceCardSwiper = () => {
+        setShowPlaceCardSwiper(false);
+        setSelectedPlaceId(null);
+        setSelectedDayPlanId(null);
+    };
+
+    const handlePlaceSelect = (selectedPlace: any) => {
+        Alert.alert(
+            `${selectedPlace.place_name}로 교체하시겠습니까?`,
+            "교체하면 기존 장소가 삭제됩니다.",
+            [
+                { text: "취소", style: "cancel" },
+                {
+                    text: "교체",
+                    onPress: () => {
+                        // SOURCE: ??? (예: PUT /courses/:courseId/day-plans/:dayPlanId/places)
+                        console.log(
+                            `교체 시도: ${selectedPlace.place_name} (ID: ${selectedPlace.id})`
+                        );
+                        alert(`${selectedPlace.place_name}로 교체되었습니다!`);
+                    },
+                },
+            ]
+        );
+    };
+
+    if (!courseData) return null;
+
+    return (
+        <SafeAreaView style={styles.container}>
+            <View
+                style={{ position: "absolute", top: 70, left: 15, zIndex: 10 }}
+            >
+                <Ionicons
+                    name="chevron-back"
+                    size={20}
+                    color={Colors.textPrimary}
+                    onPress={() => router.push("/(tabs)/plan")}
+                />
+            </View>
+
+            <Header title={courseData.title} subtitle={courseData.subtitle} />
+
+            <View style={styles.actionSection}>
+                <ActionButtons
+                    actions={[{ label: "편집", onPress: handleEdit }]}
+                />
+            </View>
+
+            {isNewCourse ? (
+                <View style={styles.addRecommendationContainer}>
+                    <AddCourseCard
+                        onPress={handleNewCourseRecommendationPress}
+                        text="추천 여행 경로 확인하기"
+                    />
+                </View>
+            ) : (
+                <ScrollView style={styles.scrollContainer}>
+                    <View style={styles.addRecommendationContainer}>
+                        <AddCourseCard
+                            onPress={handleAddRecommendation}
+                            text="추천 경로 저장하기"
+                        />
+                    </View>
+
+                    <DayPlanListContainer
+                        courseId={String(id)}
+                        isNewCourse={false}
+                        onPlacePress={handlePlacePress}
+                        onCardPress={handleCardPress}
+                        onSave={handleSave}
+                        onRecommendationPress={handleRecommendationPress}
+                        onLongPress={handleLongPress}
+                        selectedPlaceId={selectedPlaceId}
+                        activeDayPlanId={selectedDayPlanId}
+                    />
+                </ScrollView>
+            )}
+
+            {showPlaceCardSwiper && (
+                <PlaceCardSwiper
+                    onClose={handleClosePlaceCardSwiper}
+                    onPlaceSelect={handlePlaceSelect}
+                />
+            )}
+        </SafeAreaView>
+    );
 }
 
 const styles = StyleSheet.create({
-  container: { flex: 1, backgroundColor: Colors.background },
-  actionSection: {
-    backgroundColor: Colors.white,
-    paddingVertical: 8,
-    paddingHorizontal: 16,
-    alignItems: 'flex-end',
-  },
-  addRecommendationContainer: {
-    paddingTop: 8,
-    paddingHorizontal: 16,
-    paddingBottom: 8,
-  },
-  scrollContainer: { flex: 1 },
+    container: {
+        flex: 1,
+        backgroundColor: Colors.listbackground,
+    },
+    actionSection: {
+        backgroundColor: Colors.white,
+        paddingVertical: 8,
+        paddingHorizontal: 16,
+        alignItems: "flex-end",
+    },
+    addRecommendationContainer: {
+        paddingTop: 8,
+        paddingHorizontal: 16,
+        paddingBottom: 8,
+    },
+    scrollContainer: { flex: 1 },
 });
