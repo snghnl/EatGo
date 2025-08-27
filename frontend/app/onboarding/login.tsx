@@ -14,6 +14,7 @@ import {
 import { useRouter } from "expo-router";
 import { Colors } from "@/constants/Colors";
 import { Ionicons } from "@expo/vector-icons";
+import { Auth } from "@/src/client/sdk.gen";
 
 interface LoginForm {
     email: string;
@@ -40,7 +41,7 @@ export default function LoginScreen() {
     };
 
     // 로그인 처리
-    const handleLogin = () => {
+    const handleLogin = async () => {
         if (!form.email || !form.password) {
             Alert.alert("알림", "이메일과 비밀번호를 입력해주세요");
             return;
@@ -51,11 +52,18 @@ export default function LoginScreen() {
             return;
         }
 
-        // TODO: 실제 로그인 API 호출
-        console.log("로그인 정보:", form);
-
-        // 로그인 성공 시 바로 다음 페이지로 이동
-        router.push("/onboarding/food-preference");
+        await Auth.authTokenCreate({
+            body: {
+                username: form.email,
+                password: form.password,
+            },
+        })
+            .then((_) => {
+                router.push("/onboarding/food-preference");
+            })
+            .catch((error: unknown) => {
+                Alert.alert("알림", "로그인에 실패했습니다");
+            });
     };
 
     // 로그인 가능 여부
