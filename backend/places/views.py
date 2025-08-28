@@ -11,14 +11,20 @@ class PlaceListAPIView(ListAPIView):
 
 
 class PlaceRetrieveAPIView(RetrieveAPIView):
-    def get_queryset(self):
-        return Place.objects.filter(id=self.kwargs["pk"])
-
+    queryset = Place.objects.all()
     serializer_class = PlaceSerializer
 
 
 class MenuItemListAPIView(ListAPIView):
     def get_queryset(self):
-        return MenuItem.objects.filter(place_id=self.kwargs["pk"])
+        # During schema generation, kwargs may not include route params
+        if getattr(self, "swagger_fake_view", False):
+            return MenuItem.objects.none()
+
+        place_pk = self.kwargs.get("pk")
+        if not place_pk:
+            return MenuItem.objects.none()
+
+        return MenuItem.objects.filter(place_id=place_pk)
 
     serializer_class = MenuItemSerializer
