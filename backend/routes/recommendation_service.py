@@ -109,7 +109,11 @@ class RouteRecommendationService:
         return min(1.0, max(0.0, composite_score))
 
     def get_recommended_places(
-        self, user: User, limit: int = 20, category_filter: Optional[List[str]] = None
+        self,
+        user: User,
+        limit: int = 20,
+        category_filter: Optional[List[str]] = None,
+        custom_preferences: Optional[Dict[str, float]] = None,
     ) -> List[Dict]:
         """
         Get recommended places for a user sorted by composite score.
@@ -118,11 +122,16 @@ class RouteRecommendationService:
             user: User instance
             limit: Maximum number of places to return
             category_filter: Optional list of category names to filter by
+            custom_preferences: Optional custom preference dictionary to override stored preferences
 
         Returns:
             List of dictionaries containing place info and scores
         """
-        user_preferences = self.get_user_preferences(user)
+        # Use custom preferences if provided, otherwise get from database
+        if custom_preferences is not None:
+            user_preferences = custom_preferences
+        else:
+            user_preferences = self.get_user_preferences(user)
 
         if not user_preferences:
             # If user has no preferences, return popular places nearby
@@ -217,6 +226,7 @@ class RouteRecommendationService:
         user: User,
         max_places: int = 5,
         category_filter: Optional[List[str]] = None,
+        user_preferences: Optional[Dict[str, float]] = None,
     ) -> Dict:
         """
         Generate a complete route recommendation for a user.
@@ -225,13 +235,17 @@ class RouteRecommendationService:
             user: User instance
             max_places: Maximum number of places to include in route
             category_filter: Optional list of category names to filter by
+            user_preferences: Optional custom user preferences to override stored preferences
 
         Returns:
             Dictionary containing optimized route and metadata
         """
         # Get recommended places
         recommended_places = self.get_recommended_places(
-            user, limit=max_places * 2, category_filter=category_filter
+            user,
+            limit=max_places * 2,
+            category_filter=category_filter,
+            custom_preferences=user_preferences,
         )
 
         if not recommended_places:
