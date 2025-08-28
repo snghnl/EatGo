@@ -1,13 +1,12 @@
 from django.urls import path, include
 from rest_framework.routers import DefaultRouter
-from .views import RouteViewSet, user_preferences, categories_list
-
+from .views import RouteMyListView, RouteRecommendationView, RouteViewSet
 
 router = DefaultRouter()
-router.register(r"", RouteViewSet)
+router.register(r"", RouteViewSet, basename="route")
 
 urlpatterns = [
+    path("recommendations/", RouteRecommendationView.as_view(), name="recommendations"),
+    path("my/", RouteMyListView.as_view(), name="my"),
     path("", include(router.urls)),
-    path("preferences/", user_preferences, name="user_preferences"),
-    path("categories/", categories_list, name="categories_list"),
 ]
