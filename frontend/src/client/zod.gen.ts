@@ -121,6 +121,24 @@ export const zRoute = z.object({
     places: z.optional(z.array(z.uuid()).readonly())
 });
 
+/**
+ * User's category preferences with scores
+ */
+export const zCategoryPreference = z.object({
+    category_id: z.uuid(),
+    preference_score: z.number().gte(0).lte(1)
+});
+
+export const zRouteRecommendationInput = z.object({
+    lat: z.number().gte(-90).lte(90),
+    lng: z.number().gte(-180).lte(180),
+    max_distance_km: z.optional(z.number().gte(0.1).lte(100)).default(20),
+    limit: z.optional(z.int().gte(1).lte(50)).default(20),
+    category_filter: z.optional(z.array(z.string().min(1))),
+    preferences: z.optional(z.array(zCategoryPreference)),
+    use_stored_preferences: z.optional(z.boolean()).default(true)
+});
+
 export const zRegionalTourismRequest = z.object({
     area_cd: z.string().min(1),
     signgu_cd: z.string().min(1),
@@ -335,7 +353,7 @@ export const zPlacesListResponse = z.array(zPlace);
 export const zPlacesReadData = z.object({
     body: z.optional(z.never()),
     path: z.object({
-        id: z.string()
+        id: z.uuid()
     }),
     query: z.optional(z.never())
 });
@@ -368,31 +386,21 @@ export const zRoutesCreateData = z.object({
 
 export const zRoutesCreateResponse = zRoute;
 
-export const zRoutesCategoriesListData = z.object({
+export const zRoutesMyListData = z.object({
     body: z.optional(z.never()),
     path: z.optional(z.never()),
     query: z.optional(z.never())
 });
 
-export const zRoutesPreferencesListData = z.object({
-    body: z.optional(z.never()),
+export const zRoutesMyListResponse = z.array(zRoute);
+
+export const zRoutesRecommendationsCreateData = z.object({
+    body: zRouteRecommendationInput,
     path: z.optional(z.never()),
     query: z.optional(z.never())
 });
 
-export const zRoutesPreferencesCreateData = z.object({
-    body: z.optional(z.never()),
-    path: z.optional(z.never()),
-    query: z.optional(z.never())
-});
-
-export const zRoutesRecommendData = z.object({
-    body: zRoute,
-    path: z.optional(z.never()),
-    query: z.optional(z.never())
-});
-
-export const zRoutesRecommendResponse = zRoute;
+export const zRoutesRecommendationsCreateResponse = zRouteRecommendationInput;
 
 export const zRoutesDeleteData = z.object({
     body: z.optional(z.never()),

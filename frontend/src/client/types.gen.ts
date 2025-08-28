@@ -240,6 +240,56 @@ export type Route = {
     readonly places?: Array<string>;
 };
 
+/**
+ * User's category preferences with scores
+ */
+export type CategoryPreference = {
+    /**
+     * Category id
+     */
+    category_id: string;
+    /**
+     * Preference score
+     */
+    preference_score: number;
+};
+
+export type RouteRecommendationInput = {
+    /**
+     * Lat
+     * User's current latitude (-90 to 90)
+     */
+    lat: number;
+    /**
+     * Lng
+     * User's current longitude (-180 to 180)
+     */
+    lng: number;
+    /**
+     * Max distance km
+     * Maximum distance in kilometers for recommendations
+     */
+    max_distance_km?: number;
+    /**
+     * Limit
+     * Maximum number of places to recommend
+     */
+    limit?: number;
+    /**
+     * List of category names to filter by
+     */
+    category_filter?: Array<string>;
+    /**
+     * User's category preferences with scores
+     */
+    preferences?: Array<CategoryPreference>;
+    /**
+     * Use stored preferences
+     * Whether to use user's stored preferences from profile
+     */
+    use_stored_preferences?: boolean;
+};
+
 export type RegionalTourismRequest = {
     /**
      * Area cd
@@ -698,6 +748,9 @@ export type PlacesListResponse = PlacesListResponses[keyof PlacesListResponses];
 export type PlacesReadData = {
     body?: never;
     path: {
+        /**
+         * A UUID string identifying this place.
+         */
         id: string;
     };
     query?: never;
@@ -751,51 +804,31 @@ export type RoutesCreateResponses = {
 
 export type RoutesCreateResponse = RoutesCreateResponses[keyof RoutesCreateResponses];
 
-export type RoutesCategoriesListData = {
+export type RoutesMyListData = {
     body?: never;
     path?: never;
     query?: never;
-    url: '/routes/categories/';
+    url: '/routes/my/';
 };
 
-export type RoutesCategoriesListResponses = {
-    200: unknown;
+export type RoutesMyListResponses = {
+    200: Array<Route>;
 };
 
-export type RoutesPreferencesListData = {
-    body?: never;
+export type RoutesMyListResponse = RoutesMyListResponses[keyof RoutesMyListResponses];
+
+export type RoutesRecommendationsCreateData = {
+    body: RouteRecommendationInput;
     path?: never;
     query?: never;
-    url: '/routes/preferences/';
+    url: '/routes/recommendations/';
 };
 
-export type RoutesPreferencesListResponses = {
-    200: unknown;
+export type RoutesRecommendationsCreateResponses = {
+    201: RouteRecommendationInput;
 };
 
-export type RoutesPreferencesCreateData = {
-    body?: never;
-    path?: never;
-    query?: never;
-    url: '/routes/preferences/';
-};
-
-export type RoutesPreferencesCreateResponses = {
-    201: unknown;
-};
-
-export type RoutesRecommendData = {
-    body: Route;
-    path?: never;
-    query?: never;
-    url: '/routes/recommend/';
-};
-
-export type RoutesRecommendResponses = {
-    201: Route;
-};
-
-export type RoutesRecommendResponse = RoutesRecommendResponses[keyof RoutesRecommendResponses];
+export type RoutesRecommendationsCreateResponse = RoutesRecommendationsCreateResponses[keyof RoutesRecommendationsCreateResponses];
 
 export type RoutesDeleteData = {
     body?: never;
