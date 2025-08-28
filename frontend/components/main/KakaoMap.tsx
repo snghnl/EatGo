@@ -2,19 +2,24 @@ import React from "react";
 import { View, StyleSheet, Platform } from "react-native";
 import { WebView } from "react-native-webview";
 import { useBookmark } from "@/store/BookmarkContext";
-import { mapIcons } from "@/config/mapIcons";
+import { mapIcons } from "@/src/config/mapIcons";
 
 const KAKAO_JS_API_KEY = process.env.EXPO_PUBLIC_KAKAO_JS_API_KEY;
 
 type KakaoMapProps = {
     latitude: number;
     longitude: number;
-    placeId: string;     // ✅ 북마크 판별용
-    category: string;    // ✅ 아이콘 선택용
+    placeId: string; // ✅ 북마크 판별용
+    category: string; // ✅ 아이콘 선택용
 };
 
 // 웹 전용 컴포넌트
-function KakaoWebMap({ latitude, longitude, placeId, category }: KakaoMapProps) {
+function KakaoWebMap({
+    latitude,
+    longitude,
+    placeId,
+    category,
+}: KakaoMapProps) {
     const { bookmarkedPlaceIds } = useBookmark();
 
     // ✅ 아이콘 결정 함수
@@ -38,7 +43,10 @@ function KakaoWebMap({ latitude, longitude, placeId, category }: KakaoMapProps) 
                 const container = document.getElementById("kakao-map");
                 if (container) {
                     const options = {
-                        center: new window.kakao.maps.LatLng(latitude, longitude),
+                        center: new window.kakao.maps.LatLng(
+                            latitude,
+                            longitude
+                        ),
                         level: 3,
                     };
                     const map = new window.kakao.maps.Map(container, options);
@@ -48,7 +56,10 @@ function KakaoWebMap({ latitude, longitude, placeId, category }: KakaoMapProps) 
                     const markerImage = getMarkerImage(category, isBookmarked);
 
                     const marker = new window.kakao.maps.Marker({
-                        position: new window.kakao.maps.LatLng(latitude, longitude),
+                        position: new window.kakao.maps.LatLng(
+                            latitude,
+                            longitude
+                        ),
                         ...(markerImage ? { image: markerImage } : {}),
                     });
                     marker.setMap(map);
@@ -58,7 +69,9 @@ function KakaoWebMap({ latitude, longitude, placeId, category }: KakaoMapProps) 
         document.head.appendChild(script);
 
         return () => {
-            const existingScript = document.querySelector('script[src*="kakao"]');
+            const existingScript = document.querySelector(
+                'script[src*="kakao"]'
+            );
             if (existingScript) {
                 existingScript.remove();
             }
