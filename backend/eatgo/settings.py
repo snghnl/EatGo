@@ -58,7 +58,6 @@ INSTALLED_APPS = [
     "places",
     "routes",
     "travel_courses",
-    "kakaomap",
     "drf_yasg",
     "tourism",
     "third_party_maps",
@@ -202,31 +201,17 @@ LOGGING = {
             "formatter": "simple",
             "level": "INFO",  # Log INFO and above to the console
         },
-        "file": {
-            "class": "logging.handlers.RotatingFileHandler",
-            "formatter": "verbose",
-            "filename": os.path.join(BASE_DIR, "logs/django.log"),
-            "maxBytes": 1024 * 1024 * 5,  # 5 MB
-            "backupCount": 5,  # Keep 5 backup files
-            "level": "WARNING",  # Log WARNING and above to a file
-        },
     },
     "loggers": {
         "django": {
-            "handlers": ["console", "file"],
+            "handlers": ["console"],
             "level": "INFO",  # Capture INFO level messages from Django
             "propagate": True,
         },
         "django.request": {
-            "handlers": ["file"],
+            "handlers": ["console"],
             "level": "ERROR",  # Specifically send server error logs (5xx) to the file
             "propagate": False,  # Don't pass these logs up to the 'django' logger
-        },
-        # Add your app's logger here
-        "your_app_name": {
-            "handlers": ["console", "file"],
-            "level": "DEBUG",  # Log everything from DEBUG and up for your app
-            "propagate": True,
         },
     },
 }
