@@ -61,6 +61,7 @@ INSTALLED_APPS = [
     "kakaomap",
     "drf_yasg",
     "tourism",
+    "third_party_maps",
 ]
 
 MIDDLEWARE = [
@@ -178,4 +179,54 @@ SIMPLE_JWT = {
     "ACCESS_TOKEN_LIFETIME": timedelta(minutes=60),
     "REFRESH_TOKEN_LIFETIME": timedelta(days=7),
     "AUTH_HEADER_TYPES": ("Bearer",),
+}
+# In your settings.py
+
+
+LOGGING = {
+    "version": 1,
+    "disable_existing_loggers": False,  # This is important to keep Django's loggers running
+    "formatters": {
+        "verbose": {
+            "format": "{levelname} {asctime} {module} {process:d} {thread:d} {message}",
+            "style": "{",
+        },
+        "simple": {
+            "format": "{levelname} {message}",
+            "style": "{",
+        },
+    },
+    "handlers": {
+        "console": {
+            "class": "logging.StreamHandler",
+            "formatter": "simple",
+            "level": "INFO",  # Log INFO and above to the console
+        },
+        "file": {
+            "class": "logging.handlers.RotatingFileHandler",
+            "formatter": "verbose",
+            "filename": os.path.join(BASE_DIR, "logs/django.log"),
+            "maxBytes": 1024 * 1024 * 5,  # 5 MB
+            "backupCount": 5,  # Keep 5 backup files
+            "level": "WARNING",  # Log WARNING and above to a file
+        },
+    },
+    "loggers": {
+        "django": {
+            "handlers": ["console", "file"],
+            "level": "INFO",  # Capture INFO level messages from Django
+            "propagate": True,
+        },
+        "django.request": {
+            "handlers": ["file"],
+            "level": "ERROR",  # Specifically send server error logs (5xx) to the file
+            "propagate": False,  # Don't pass these logs up to the 'django' logger
+        },
+        # Add your app's logger here
+        "your_app_name": {
+            "handlers": ["console", "file"],
+            "level": "DEBUG",  # Log everything from DEBUG and up for your app
+            "propagate": True,
+        },
+    },
 }
