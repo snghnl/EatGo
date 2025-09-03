@@ -1,30 +1,42 @@
-from rest_framework.generics import ListAPIView, RetrieveAPIView
-from .models import Place, MenuItem
-from .serializers import PlaceSerializer, MenuItemSerializer
+from rest_framework.views import APIView
+from rest_framework.viewsets import ModelViewSet
+from rest_framework.response import Response
+
+from .models import Place
+from .serializers import (
+    PlaceSerializer,
+    PlaceRecommendInputSerializer,
+    PlaceRecommendOutputSerializer,
+)
+from third_party_maps.kakao_service import KakaoMapService
 
 # Create your views here.
 
 
-class PlaceListAPIView(ListAPIView):
-    queryset = Place.objects.all()
+class PlaceViewSet(ModelViewSet):
     serializer_class = PlaceSerializer
-
-
-class PlaceRetrieveAPIView(RetrieveAPIView):
     queryset = Place.objects.all()
-    serializer_class = PlaceSerializer
 
 
-class MenuItemListAPIView(ListAPIView):
-    def get_queryset(self):
-        # During schema generation, kwargs may not include route params
-        if getattr(self, "swagger_fake_view", False):
-            return MenuItem.objects.none()
+class PlaceRecommendView(APIView):
+    kakao_service = KakaoMapService()
 
-        place_pk = self.kwargs.get("pk")
-        if not place_pk:
-            return MenuItem.objects.none()
+    def get(self, request, *args, **kwargs):
+        serializer = PlaceRecommendInputSerializer(data=request.query_params)
+        serializer.is_valid(raise_exception=True)
+        validated_data = serializer.validated_data
 
-        return MenuItem.objects.filter(place_id=place_pk)
+        categories = validated_data.get("category_filter", [])
+        categories = ",".join(categories)
+        places = self.kakao_service.search_by_keyword(
+            query=categories,
+            x=validated_data["x"],
+            y=validated_data["y"],
+            radius=validated_data["radius"],
+            page=validated_data["page"],
+            size=validated_data["size"],
+            sort=validated_data["sort"],
+        )
+        response_serializer = PlaceRecommendOutputSerializer({"places": places})
 
-    serializer_class = MenuItemSerializer
+        return Response(response_serializer.data)
