@@ -1,16 +1,12 @@
 import { Tabs } from 'expo-router';
 import React from 'react';
 import { Platform } from 'react-native';
-import AppContainer from '@/components/common/AppContainer';
-import { useColorScheme } from '@/hooks/useColorScheme';
 import { Colors } from '@/constants/Colors';
-import { Fonts } from '@/constants/Fonts';
 import { HapticTab } from '@/components/HapticTab';
 import TabBarBackground from '@/components/ui/TabBarBackground';
 import { Ionicons } from '@expo/vector-icons';
 
 export default function TabLayout() {
-    const colorScheme = useColorScheme();
 
     return (
         <Tabs
