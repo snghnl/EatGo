@@ -1,6 +1,5 @@
 import React, { useState } from "react";
 import { StyleSheet, View } from "react-native";
-import { Colors } from "@/constants/Colors";
 import { JEONLA_DESTINATIONS } from "@/constants/Data";
 import { DestinationChangeHandler } from "@/types";
 import { DestinationButton } from "./DestinationButton";

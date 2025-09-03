@@ -1,5 +1,5 @@
 import React from 'react';
-import { StyleSheet, View, ScrollView } from 'react-native';
+import { StyleSheet, View } from 'react-native';
 import { ThemedView } from '../ThemedView';
 import { DayPlan } from './DayPlan';
 import { Colors } from '../../constants/Colors';

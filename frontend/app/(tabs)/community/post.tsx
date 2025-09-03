@@ -11,11 +11,9 @@ import {
     ScrollView,
 } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
-import { ThemedText } from '@/components/ThemedText';
 import { Colors } from '@/constants/Colors';
-import { useNavigation, useLocalSearchParams } from 'expo-router';
+import { useLocalSearchParams, router } from 'expo-router';
 import { SAMPLE_COURSES } from '@/constants/Data';
-import { router } from 'expo-router';
 import PostImagePicker from '@/components/community/PostImagePicker';
 import { Fonts } from '@/constants/Fonts';
 import { usePostStore } from '@/store/posts';

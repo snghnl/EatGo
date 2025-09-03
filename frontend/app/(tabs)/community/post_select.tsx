@@ -7,7 +7,6 @@ import { Ionicons } from '@expo/vector-icons';
 import { router } from 'expo-router';
 
 import Header from '@/components/common/Header';
-import { AddCourseCard } from '@/components/plan/AddCourseCard';
 import { CourseList } from '@/components/plan/CourseList';
 import { SAMPLE_COURSES } from '@/constants/Data';
 import { Colors } from '@/constants/Colors';
