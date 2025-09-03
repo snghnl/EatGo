@@ -7,7 +7,7 @@ from core.models import Category
 from places.models import Place, PlaceCategory
 from accounts.models import UserPreference
 from .models import Route
-from .recommendation_service import RouteRecommendationService
+from .service import RouteRecommendationService
 
 User = get_user_model()
 
@@ -443,6 +443,306 @@ class UserPreferencesAPITest(TestCase):
         # Verify preference was updated
         pref = UserPreference.objects.get(user=self.user, category=self.cafe_category)
         self.assertEqual(pref.preference_score, 0.9)
+
+
+class RouteRecommendationViewTest(APITestCase):
+    """Test cases for RouteRecommendationView"""
+
+    def setUp(self):
+        """Set up test data"""
+        self.user = User.objects.create_user(
+            username="testuser", email="test@example.com", password="testpass123"
+        )
+        self.client = APIClient()
+
+        # Create categories
+        self.cafe_category = Category.objects.create(
+            name="카페", description="커피전문점", is_active=True
+        )
+        self.restaurant_category = Category.objects.create(
+            name="한식", description="한국음식", is_active=True
+        )
+
+        # Create user preferences
+        UserPreference.objects.create(
+            user=self.user, category=self.cafe_category, preference_score=0.8
+        )
+        UserPreference.objects.create(
+            user=self.user, category=self.restaurant_category, preference_score=0.7
+        )
+
+        self.valid_request_data = {
+            "lat": 37.5665,
+            "lng": 126.9780,
+            "max_distance_km": 10.0,
+            "limit": 5,
+        }
+
+        self.sample_places_data = [
+            {
+                "id": "12345",
+                "place_name": "스타벅스 강남점",
+                "category_name": "카페",
+                "x": "127.0276",  # longitude
+                "y": "37.4979",  # latitude
+                "address_name": "서울 강남구 테헤란로 123",
+                "phone": "02-1234-5678",
+            },
+            {
+                "id": "67890",
+                "place_name": "한옥마을 한정식",
+                "category_name": "한식",
+                "x": "127.0300",
+                "y": "37.5000",
+                "address_name": "서울 강남구 역삼로 456",
+                "phone": "02-9876-5432",
+            },
+            {
+                "id": "11111",
+                "place_name": "맥도날드 신논현점",
+                "category_name": "패스트푸드",
+                "x": "127.0250",
+                "y": "37.4950",
+                "address_name": "서울 강남구 강남대로 789",
+                "phone": "02-5555-1234",
+            },
+        ]
+
+    def test_authentication_required(self):
+        """Test that authentication is required"""
+        response = self.client.post(
+            "/api/v1/routes/recommendations/", self.valid_request_data
+        )
+        self.assertEqual(response.status_code, status.HTTP_401_UNAUTHORIZED)
+
+    def test_valid_route_recommendation_request(self):
+        """Test successful route recommendation with valid data"""
+        self.client.force_authenticate(user=self.user)
+
+        request_data = self.valid_request_data.copy()
+        request_data["places_data"] = self.sample_places_data
+
+        response = self.client.post(
+            "/api/v1/routes/recommendations/", request_data, format="json"
+        )
+
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+
+        data = response.json()
+        self.assertIn("places", data)
+        self.assertIn("total_distance_km", data)
+        self.assertIn("estimated_duration_hours", data)
+        self.assertIn("user_location", data)
+
+        # Verify user location
+        self.assertEqual(data["user_location"]["lat"], 37.5665)
+        self.assertEqual(data["user_location"]["lng"], 126.9780)
+
+        # Verify places are returned
+        self.assertIsInstance(data["places"], list)
+        self.assertGreater(len(data["places"]), 0)
+
+    def test_missing_required_lat_field(self):
+        """Test validation error when lat is missing"""
+        self.client.force_authenticate(user=self.user)
+
+        invalid_data = self.valid_request_data.copy()
+        del invalid_data["lat"]
+        invalid_data["places_data"] = self.sample_places_data
+
+        response = self.client.post(
+            "/api/v1/routes/recommendations/", invalid_data, format="json"
+        )
+
+        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
+        self.assertIn("error", response.json())
+
+    def test_missing_required_lng_field(self):
+        """Test validation error when lng is missing"""
+        self.client.force_authenticate(user=self.user)
+
+        invalid_data = self.valid_request_data.copy()
+        del invalid_data["lng"]
+        invalid_data["places_data"] = self.sample_places_data
+
+        response = self.client.post(
+            "/api/v1/routes/recommendations/", invalid_data, format="json"
+        )
+
+        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
+        self.assertIn("error", response.json())
+
+    def test_invalid_lat_value(self):
+        """Test validation error with invalid latitude value"""
+        self.client.force_authenticate(user=self.user)
+
+        invalid_data = self.valid_request_data.copy()
+        invalid_data["lat"] = "invalid_lat"
+        invalid_data["places_data"] = self.sample_places_data
+
+        response = self.client.post(
+            "/api/v1/routes/recommendations/", invalid_data, format="json"
+        )
+
+        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
+
+    def test_invalid_lng_value(self):
+        """Test validation error with invalid longitude value"""
+        self.client.force_authenticate(user=self.user)
+
+        invalid_data = self.valid_request_data.copy()
+        invalid_data["lng"] = "invalid_lng"
+        invalid_data["places_data"] = self.sample_places_data
+
+        response = self.client.post(
+            "/api/v1/routes/recommendations/", invalid_data, format="json"
+        )
+
+        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
+
+    def test_missing_places_data(self):
+        """Test error when places_data is missing"""
+        self.client.force_authenticate(user=self.user)
+
+        response = self.client.post(
+            "/api/v1/routes/recommendations/", self.valid_request_data, format="json"
+        )
+
+        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
+        data = response.json()
+        self.assertIn("error", data)
+        self.assertIn("No places_data provided", data["error"])
+
+    def test_empty_places_data(self):
+        """Test error when places_data is empty"""
+        self.client.force_authenticate(user=self.user)
+
+        request_data = self.valid_request_data.copy()
+        request_data["places_data"] = []
+
+        response = self.client.post(
+            "/api/v1/routes/recommendations/", request_data, format="json"
+        )
+
+        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
+        data = response.json()
+        self.assertIn("error", data)
+        self.assertIn("No places_data provided", data["error"])
+
+    def test_optional_parameters(self):
+        """Test that optional parameters work correctly"""
+        self.client.force_authenticate(user=self.user)
+
+        # Test with minimal required data
+        minimal_data = {
+            "lat": 37.5665,
+            "lng": 126.9780,
+            "places_data": self.sample_places_data,
+        }
+
+        response = self.client.post(
+            "/api/v1/routes/recommendations/", minimal_data, format="json"
+        )
+
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+
+        # Test with all optional parameters
+        full_data = {
+            "lat": 37.5665,
+            "lng": 126.9780,
+            "max_distance_km": 15.0,
+            "limit": 3,
+            "places_data": self.sample_places_data,
+        }
+
+        response = self.client.post(
+            "/api/v1/routes/recommendations/", full_data, format="json"
+        )
+
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        data = response.json()
+
+        # Should limit to 3 places maximum
+        self.assertLessEqual(len(data["places"]), 3)
+
+    def test_service_handles_edge_cases_gracefully(self):
+        """Test that service handles edge cases gracefully"""
+        self.client.force_authenticate(user=self.user)
+
+        # Use coordinates that are far from places data but still technically valid
+        edge_case_data = {
+            "lat": 89.0,  # Near North Pole
+            "lng": 179.0,  # Near International Date Line
+            "places_data": self.sample_places_data,
+        }
+
+        response = self.client.post(
+            "/api/v1/routes/recommendations/", edge_case_data, format="json"
+        )
+
+        # Should handle gracefully and return successful response with empty results
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        data = response.json()
+        self.assertIn("places", data)
+        self.assertIn("total_distance_km", data)
+        self.assertIn("estimated_duration_hours", data)
+        self.assertIn("average_score", data)
+
+        # When no places are found, expect empty results
+        self.assertEqual(data["places"], [])
+        self.assertEqual(data["total_distance_km"], 0.0)
+        self.assertEqual(data["estimated_duration_hours"], 0.0)
+        self.assertEqual(data["average_score"], 0.0)
+
+    def test_with_category_filter(self):
+        """Test route recommendation with category filter"""
+        self.client.force_authenticate(user=self.user)
+
+        request_data = self.valid_request_data.copy()
+        request_data["places_data"] = self.sample_places_data
+        request_data["category_filter"] = ["카페"]
+
+        response = self.client.post(
+            "/api/v1/routes/recommendations/", request_data, format="json"
+        )
+
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        data = response.json()
+        self.assertIn("places", data)
+
+    def test_output_serializer_validation(self):
+        """Test that output is properly serialized"""
+        self.client.force_authenticate(user=self.user)
+
+        request_data = self.valid_request_data.copy()
+        request_data["places_data"] = self.sample_places_data
+
+        response = self.client.post(
+            "/api/v1/routes/recommendations/", request_data, format="json"
+        )
+
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        data = response.json()
+
+        # Verify output structure matches RouteRecommendationOutputSerializer
+        required_fields = [
+            "places",
+            "total_distance_km",
+            "estimated_duration_hours",
+            "user_location",
+        ]
+        for field in required_fields:
+            self.assertIn(field, data)
+
+        # Verify data types
+        self.assertIsInstance(data["places"], list)
+        self.assertIsInstance(data["total_distance_km"], (int, float))
+        self.assertIsInstance(data["estimated_duration_hours"], (int, float))
+        self.assertIsInstance(data["user_location"], dict)
+
+        # Verify user_location structure
+        self.assertIn("lat", data["user_location"])
+        self.assertIn("lng", data["user_location"])
 
 
 class CategoriesAPITest(TestCase):

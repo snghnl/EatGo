@@ -1,6 +1,7 @@
 from rest_framework import serializers
 from .models import Route
 from core.models import Category
+from places.serializers import PlaceSerializer
 
 
 class RouteSerializer(serializers.ModelSerializer):
@@ -25,58 +26,17 @@ class CategoryPreferenceSerializer(serializers.Serializer):
 class RouteRecommendationInputSerializer(serializers.Serializer):
     """Serializer for route recommendation input data."""
 
-    # Required location data
-    lat = serializers.FloatField(
-        min_value=-90.0, max_value=90.0, help_text="User's current latitude (-90 to 90)"
-    )
-    lng = serializers.FloatField(
-        min_value=-180.0,
-        max_value=180.0,
-        help_text="User's current longitude (-180 to 180)",
-    )
-
-    # Optional parameters
-    max_distance_km = serializers.FloatField(
-        default=20.0,
-        min_value=0.1,
-        max_value=100.0,
-        help_text="Maximum distance in kilometers for recommendations",
-    )
-    limit = serializers.IntegerField(
-        default=20,
-        min_value=1,
-        max_value=50,
-        help_text="Maximum number of places to recommend",
-    )
-
-    # Category filtering options
+    lat = serializers.FloatField(required=True)
+    lng = serializers.FloatField(required=True)
+    max_distance_km = serializers.FloatField(allow_null=True, required=False)
+    limit = serializers.IntegerField(allow_null=True, required=False)
     category_filter = serializers.ListField(
-        child=serializers.CharField(),
-        required=False,
-        allow_empty=True,
-        help_text="List of category names to filter by",
+        child=serializers.CharField(), allow_null=True, required=False
     )
 
-    # User preferences (optional)
-    preferences = CategoryPreferenceSerializer(
-        many=True, required=False, help_text="User's category preferences with scores"
-    )
 
-    # Whether to use stored user preferences from database
-    use_stored_preferences = serializers.BooleanField(
-        default=True, help_text="Whether to use user's stored preferences from profile"
-    )
-
-    def validate(self, data):
-        """Cross-field validation."""
-        preferences = data.get("preferences", [])
-        use_stored_preferences = data.get("use_stored_preferences", True)
-
-        # If preferences are provided, ensure they don't conflict with stored preferences flag
-        if preferences and use_stored_preferences:
-            raise serializers.ValidationError(
-                "Cannot provide both custom preferences and use stored preferences. "
-                "Set use_stored_preferences=false to use custom preferences."
-            )
-
-        return data
+class RouteRecommendationOutputSerializer(serializers.Serializer):
+    places = PlaceSerializer(many=True)
+    total_distance_km = serializers.FloatField()
+    estimated_duration_hours = serializers.FloatField()
+    user_location = serializers.DictField(child=serializers.FloatField())
