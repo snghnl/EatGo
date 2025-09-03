@@ -5,7 +5,7 @@ Route recommendation service based on user preferences and distance optimization
 import math
 from typing import List, Dict, Tuple, Optional
 from django.contrib.auth import get_user_model
-
+from third_party_maps.kakao_service import KakaoMapService
 from accounts.models import UserPreference
 
 User = get_user_model()
@@ -59,6 +59,28 @@ class RouteRecommendationService:
         self.user_lat = user_lat
         self.user_lng = user_lng
         self.max_distance_km = max_distance_km
+        self.kakao_service = KakaoMapService()
+
+    def get_places_data(
+        self,
+        lat: float,
+        lng: float,
+        max_distance_km: float = 20.0,
+        limit: int = 10,
+        categories: List[str] = None,
+    ):
+        """
+        Get places data from Kakao API.
+        """
+        categories = ",".join(categories)
+        response = self.kakao_service.search_by_keyword(
+            query=categories,
+            x=lng,
+            y=lat,
+            radius=max_distance_km * 1000,
+            size=limit,
+        )
+        return response.get("documents", [])
 
     def get_user_preferences(self, user: User) -> Dict[str, float]:
         """
@@ -324,6 +346,85 @@ class RouteRecommendationService:
         visit_time_hours = num_places * 1.0
 
         return travel_time_hours + visit_time_hours
+
+    def generate_multiple_routes(
+        self,
+        places_data: List[Dict],
+        user_preferences: Optional[Dict[str, float]] = None,
+        max_places: int = 5,
+        num_routes: int = 3,
+    ) -> Dict:
+        """
+        Generate multiple route variations.
+
+        Args:
+            places_data: List of place dictionaries from external API
+            user_preferences: Optional user category preferences
+            max_places: Maximum number of places to include in route
+            num_routes: Number of different routes to generate
+
+        Returns:
+            Dictionary containing multiple routes and user location
+        """
+        routes = []
+
+        # Generate routes with different max_places
+        place_counts = [max_places, max(3, max_places - 2), max(3, max_places - 4)]
+
+        for count in place_counts[:num_routes]:
+            route = self.generate_optimized_route(
+                places_data=places_data,
+                user_preferences=user_preferences,
+                max_places=count,
+            )
+            if route["places"]:
+                routes.append(route)
+
+        # If we need more routes and have data, create variations
+        import random
+
+        while len(routes) < num_routes and routes and len(places_data) > max_places:
+            # Create a route with different starting preference weights
+            modified_preferences = user_preferences.copy() if user_preferences else {}
+            if modified_preferences:
+                # Slightly modify preference weights for variation
+                for category in modified_preferences:
+                    modified_preferences[category] = min(
+                        1.0, modified_preferences[category] + random.uniform(-0.2, 0.2)
+                    )
+
+            alt_route = self.generate_optimized_route(
+                places_data=places_data,
+                user_preferences=modified_preferences,
+                max_places=max_places,
+            )
+
+            # Only add if it's different enough from existing routes
+            if alt_route["places"] and not self._is_similar_route(alt_route, routes):
+                routes.append(alt_route)
+            else:
+                break
+
+        return {
+            "routes": routes,
+            "user_location": {"lat": self.user_lat, "lng": self.user_lng},
+        }
+
+    def _is_similar_route(self, new_route: Dict, existing_routes: List[Dict]) -> bool:
+        """Check if a route is too similar to existing ones."""
+        new_place_names = set(place["name"] for place in new_route["places"])
+
+        for existing_route in existing_routes:
+            existing_place_names = set(
+                place["name"] for place in existing_route["places"]
+            )
+
+            # If more than 70% of places are the same, consider it similar
+            overlap = len(new_place_names.intersection(existing_place_names))
+            if overlap / len(new_place_names) > 0.7:
+                return True
+
+        return False
 
     def get_route_summary(self, optimized_route: List[Dict]) -> str:
         """

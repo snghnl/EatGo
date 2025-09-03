@@ -1,7 +1,6 @@
 from rest_framework import serializers
 from .models import Route
 from core.models import Category
-from places.serializers import PlaceSerializer
 
 
 class RouteSerializer(serializers.ModelSerializer):
@@ -24,7 +23,7 @@ class CategoryPreferenceSerializer(serializers.Serializer):
 
 
 class RouteRecommendationInputSerializer(serializers.Serializer):
-    """Serializer for route recommendation input data."""
+    """Query serializer for GET params only (no nested objects)."""
 
     lat = serializers.FloatField(required=True)
     lng = serializers.FloatField(required=True)
@@ -36,7 +35,8 @@ class RouteRecommendationInputSerializer(serializers.Serializer):
 
 
 class RouteRecommendationOutputSerializer(serializers.Serializer):
-    places = PlaceSerializer(many=True)
-    total_distance_km = serializers.FloatField()
-    estimated_duration_hours = serializers.FloatField()
+    routes = serializers.ListField(
+        child=serializers.DictField(),
+        help_text="List of route options with places, distances, and metadata",
+    )
     user_location = serializers.DictField(child=serializers.FloatField())

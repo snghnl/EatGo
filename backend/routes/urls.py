@@ -6,7 +6,7 @@ router = DefaultRouter()
 router.register(r"", RouteViewSet, basename="route")
 
 urlpatterns = [
-    path("recommendations/", RouteRecommendationView.as_view(), name="recommendations"),
+    path("recommend/", RouteRecommendationView.as_view(), name="route-recommend"),
     path("my/", RouteMyListView.as_view(), name="my"),
     path("", include(router.urls)),
 ]

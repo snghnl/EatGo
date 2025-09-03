@@ -1,4 +1,5 @@
 from django.contrib.auth import get_user_model
+from drf_yasg.utils import swagger_auto_schema
 
 from .models import Route
 from .serializers import (
@@ -37,8 +38,16 @@ class RouteRecommendationView(GenericAPIView):
     permission_classes = [IsAuthenticated]
     serializer_class = RouteRecommendationInputSerializer
 
-    def post(self, request, *args, **kwargs):
-        input_serializer = self.get_serializer(data=request.data)
+    @swagger_auto_schema(
+        query_serializer=RouteRecommendationInputSerializer,
+        responses={
+            200: RouteRecommendationOutputSerializer,
+            400: "Bad Request",
+            500: "Internal Server Error",
+        },
+    )
+    def get(self, request, *args, **kwargs):
+        input_serializer = self.get_serializer(data=request.query_params)
         if not input_serializer.is_valid():
             return Response(
                 {"error": "Invalid input data", "details": input_serializer.errors},
@@ -46,15 +55,6 @@ class RouteRecommendationView(GenericAPIView):
             )
 
         validated_data = input_serializer.validated_data
-        places_data = request.data.get("places_data", [])
-
-        if not places_data:
-            return Response(
-                {
-                    "error": "No places_data provided. Include places_data in request body for route generation."
-                },
-                status=status.HTTP_400_BAD_REQUEST,
-            )
 
         try:
             service = RouteRecommendationService(
@@ -65,10 +65,19 @@ class RouteRecommendationView(GenericAPIView):
 
             user_preferences = user_preferences_get(user=request.user)
 
-            result = service.generate_optimized_route(
+            places_data = service.get_places_data(
+                lat=validated_data["lat"],
+                lng=validated_data["lng"],
+                max_distance_km=validated_data.get("max_distance_km", 20.0),
+                limit=validated_data.get("limit", 10),
+                categories=validated_data.get("category_filter", []),
+            )
+
+            result = service.generate_multiple_routes(
                 places_data=places_data,
                 user_preferences=user_preferences,
                 max_places=validated_data.get("limit", 10),
+                num_routes=3,
             )
 
             output_serializer = RouteRecommendationOutputSerializer(data=result)
