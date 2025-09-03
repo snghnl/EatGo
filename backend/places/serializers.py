@@ -19,7 +19,20 @@ class PlaceRecommendInputSerializer(serializers.Serializer):
 
 
 class PlaceRecommendOutputSerializer(serializers.Serializer):
-    places = PlaceSerializer(many=True)
+    class PlaceRecommendSerializer(serializers.Serializer):
+        name = serializers.CharField(max_length=255, source="place_name")
+        lat = serializers.FloatField(required=True, source="y")
+        lng = serializers.FloatField(required=True, source="x")
+        phone_number = serializers.CharField(source="phone", allow_null=True)
+        place_type = serializers.CharField(source="category_name")
+        address = serializers.CharField(source="address_name", allow_null=True)
+        road_address = serializers.CharField(
+            source="road_address_name", allow_null=True
+        )
+        external_id = serializers.CharField(source="id")  # External API ID
+        external_url = serializers.URLField(allow_null=True, source="place_url")
+
+    places = PlaceRecommendSerializer(many=True)
 
 
 class PlaceCategorySerializer(serializers.ModelSerializer):
