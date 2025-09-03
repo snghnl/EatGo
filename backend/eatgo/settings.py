@@ -61,6 +61,7 @@ INSTALLED_APPS = [
     "drf_yasg",
     "tourism",
     "third_party_maps",
+    "districts",
 ]
 
 MIDDLEWARE = [
