@@ -97,15 +97,32 @@ export const zPlace = z.object({
     ]))
 });
 
-export const zMenuItem = z.object({
-    id: z.optional(z.uuid().readonly()),
-    created_at: z.optional(z.iso.datetime().readonly()),
-    updated_at: z.optional(z.iso.datetime().readonly()),
+export const zPlaceRecommend = z.object({
     name: z.string().min(1).max(255),
-    price: z.int().gte(0).lte(2147483647),
-    description: z.optional(z.string()),
-    is_active: z.optional(z.boolean()),
-    place: z.uuid()
+    lat: z.number(),
+    lng: z.number(),
+    phone_number: z.union([
+        z.string().min(1),
+        z.null()
+    ]),
+    place_type: z.string().min(1),
+    address: z.union([
+        z.string().min(1),
+        z.null()
+    ]),
+    road_address: z.union([
+        z.string().min(1),
+        z.null()
+    ]),
+    external_id: z.string().min(1),
+    external_url: z.union([
+        z.url().min(1),
+        z.null()
+    ])
+});
+
+export const zPlaceRecommendOutput = z.object({
+    places: z.array(zPlaceRecommend)
 });
 
 export const zRoute = z.object({
@@ -121,22 +138,12 @@ export const zRoute = z.object({
     places: z.optional(z.array(z.uuid()).readonly())
 });
 
-/**
- * User's category preferences with scores
- */
-export const zCategoryPreference = z.object({
-    category_id: z.uuid(),
-    preference_score: z.number().gte(0).lte(1)
-});
-
-export const zRouteRecommendationInput = z.object({
-    lat: z.number().gte(-90).lte(90),
-    lng: z.number().gte(-180).lte(180),
-    max_distance_km: z.optional(z.number().gte(0.1).lte(100)).default(20),
-    limit: z.optional(z.int().gte(1).lte(50)).default(20),
-    category_filter: z.optional(z.array(z.string().min(1))),
-    preferences: z.optional(z.array(zCategoryPreference)),
-    use_stored_preferences: z.optional(z.boolean()).default(true)
+export const zRouteRecommendationOutput = z.object({
+    routes: z.array(z.record(z.string(), z.union([
+        z.string(),
+        z.null()
+    ]))),
+    user_location: z.record(z.string(), z.number())
 });
 
 export const zRegionalTourismRequest = z.object({
@@ -312,36 +319,6 @@ export const zCategoriesUpdateData = z.object({
 
 export const zCategoriesUpdateResponse = zCategory;
 
-export const zKakaomapDistanceListData = z.object({
-    body: z.optional(z.never()),
-    path: z.optional(z.never()),
-    query: z.optional(z.never())
-});
-
-export const zKakaomapMapListData = z.object({
-    body: z.optional(z.never()),
-    path: z.optional(z.never()),
-    query: z.optional(z.never())
-});
-
-export const zKakaomapOptimizeRouteCreateData = z.object({
-    body: z.optional(z.never()),
-    path: z.optional(z.never()),
-    query: z.optional(z.never())
-});
-
-export const zKakaomapRouteListData = z.object({
-    body: z.optional(z.never()),
-    path: z.optional(z.never()),
-    query: z.optional(z.never())
-});
-
-export const zKakaomapSearchListData = z.object({
-    body: z.optional(z.never()),
-    path: z.optional(z.never()),
-    query: z.optional(z.never())
-});
-
 export const zPlacesListData = z.object({
     body: z.optional(z.never()),
     path: z.optional(z.never()),
@@ -349,6 +326,45 @@ export const zPlacesListData = z.object({
 });
 
 export const zPlacesListResponse = z.array(zPlace);
+
+export const zPlacesCreateData = z.object({
+    body: zPlace,
+    path: z.optional(z.never()),
+    query: z.optional(z.never())
+});
+
+export const zPlacesCreateResponse = zPlace;
+
+export const zPlacesRecommendListData = z.object({
+    body: z.optional(z.never()),
+    path: z.optional(z.never()),
+    query: z.object({
+        lat: z.number(),
+        lng: z.number(),
+        max_distance_km: z.optional(z.union([
+            z.number(),
+            z.null()
+        ])),
+        limit: z.optional(z.union([
+            z.int(),
+            z.null()
+        ])),
+        category_filter: z.optional(z.union([
+            z.array(z.string().min(1)),
+            z.null()
+        ]))
+    })
+});
+
+export const zPlacesRecommendListResponse = zPlaceRecommendOutput;
+
+export const zPlacesDeleteData = z.object({
+    body: z.optional(z.never()),
+    path: z.object({
+        id: z.uuid()
+    }),
+    query: z.optional(z.never())
+});
 
 export const zPlacesReadData = z.object({
     body: z.optional(z.never()),
@@ -360,15 +376,25 @@ export const zPlacesReadData = z.object({
 
 export const zPlacesReadResponse = zPlace;
 
-export const zPlacesMenuItemsListData = z.object({
-    body: z.optional(z.never()),
+export const zPlacesPartialUpdateData = z.object({
+    body: zPlace,
     path: z.object({
-        id: z.string()
+        id: z.uuid()
     }),
     query: z.optional(z.never())
 });
 
-export const zPlacesMenuItemsListResponse = z.array(zMenuItem);
+export const zPlacesPartialUpdateResponse = zPlace;
+
+export const zPlacesUpdateData = z.object({
+    body: zPlace,
+    path: z.object({
+        id: z.uuid()
+    }),
+    query: z.optional(z.never())
+});
+
+export const zPlacesUpdateResponse = zPlace;
 
 export const zRoutesListData = z.object({
     body: z.optional(z.never()),
@@ -394,13 +420,28 @@ export const zRoutesMyListData = z.object({
 
 export const zRoutesMyListResponse = z.array(zRoute);
 
-export const zRoutesRecommendationsCreateData = z.object({
-    body: zRouteRecommendationInput,
+export const zRoutesRecommendListData = z.object({
+    body: z.optional(z.never()),
     path: z.optional(z.never()),
-    query: z.optional(z.never())
+    query: z.object({
+        lat: z.number(),
+        lng: z.number(),
+        max_distance_km: z.optional(z.union([
+            z.number(),
+            z.null()
+        ])),
+        limit: z.optional(z.union([
+            z.int(),
+            z.null()
+        ])),
+        category_filter: z.optional(z.union([
+            z.array(z.string().min(1)),
+            z.null()
+        ]))
+    })
 });
 
-export const zRoutesRecommendationsCreateResponse = zRouteRecommendationInput;
+export const zRoutesRecommendListResponse = zRouteRecommendationOutput;
 
 export const zRoutesDeleteData = z.object({
     body: z.optional(z.never()),
