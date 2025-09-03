@@ -77,5 +77,6 @@ urlpatterns = [
     path(settings.API_VERSION + "/travel_courses/", include("travel_courses.urls")),
     path(settings.API_VERSION + "/tourism/", include("tourism.urls")),
     path(settings.API_VERSION + "/places/", include("places.urls")),
+    path(settings.API_VERSION + "/", include("districts.urls")),
     # path('api-auth/', include('rest_framework.urls')),
 ]
