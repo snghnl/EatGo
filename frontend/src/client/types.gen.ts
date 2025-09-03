@@ -177,39 +177,47 @@ export type Place = {
     created_by?: number | null;
 };
 
-export type MenuItem = {
-    /**
-     * Id
-     */
-    readonly id?: string;
-    /**
-     * Created at
-     */
-    readonly created_at?: string;
-    /**
-     * Updated at
-     */
-    readonly updated_at?: string;
+export type PlaceRecommend = {
     /**
      * Name
      */
     name: string;
     /**
-     * Price
+     * Lat
      */
-    price: number;
+    lat: number;
     /**
-     * Description
+     * Lng
      */
-    description?: string;
+    lng: number;
     /**
-     * Is active
+     * Phone number
      */
-    is_active?: boolean;
+    phone_number: string | null;
     /**
-     * Place
+     * Place type
      */
-    place: string;
+    place_type: string;
+    /**
+     * Address
+     */
+    address: string | null;
+    /**
+     * Road address
+     */
+    road_address: string | null;
+    /**
+     * External id
+     */
+    external_id: string;
+    /**
+     * External url
+     */
+    external_url: string | null;
+};
+
+export type PlaceRecommendOutput = {
+    places: Array<PlaceRecommend>;
 };
 
 export type Route = {
@@ -240,54 +248,19 @@ export type Route = {
     readonly places?: Array<string>;
 };
 
-/**
- * User's category preferences with scores
- */
-export type CategoryPreference = {
+export type RouteRecommendationOutput = {
     /**
-     * Category id
+     * List of route options with places, distances, and metadata
      */
-    category_id: string;
+    routes: Array<{
+        [key: string]: string | null;
+    }>;
     /**
-     * Preference score
+     * User location
      */
-    preference_score: number;
-};
-
-export type RouteRecommendationInput = {
-    /**
-     * Lat
-     * User's current latitude (-90 to 90)
-     */
-    lat: number;
-    /**
-     * Lng
-     * User's current longitude (-180 to 180)
-     */
-    lng: number;
-    /**
-     * Max distance km
-     * Maximum distance in kilometers for recommendations
-     */
-    max_distance_km?: number;
-    /**
-     * Limit
-     * Maximum number of places to recommend
-     */
-    limit?: number;
-    /**
-     * List of category names to filter by
-     */
-    category_filter?: Array<string>;
-    /**
-     * User's category preferences with scores
-     */
-    preferences?: Array<CategoryPreference>;
-    /**
-     * Use stored preferences
-     * Whether to use user's stored preferences from profile
-     */
-    use_stored_preferences?: boolean;
+    user_location: {
+        [key: string]: number;
+    };
 };
 
 export type RegionalTourismRequest = {
@@ -677,61 +650,6 @@ export type CategoriesUpdateResponses = {
 
 export type CategoriesUpdateResponse = CategoriesUpdateResponses[keyof CategoriesUpdateResponses];
 
-export type KakaomapDistanceListData = {
-    body?: never;
-    path?: never;
-    query?: never;
-    url: '/kakaomap/distance/';
-};
-
-export type KakaomapDistanceListResponses = {
-    200: unknown;
-};
-
-export type KakaomapMapListData = {
-    body?: never;
-    path?: never;
-    query?: never;
-    url: '/kakaomap/map/';
-};
-
-export type KakaomapMapListResponses = {
-    200: unknown;
-};
-
-export type KakaomapOptimizeRouteCreateData = {
-    body?: never;
-    path?: never;
-    query?: never;
-    url: '/kakaomap/optimize-route/';
-};
-
-export type KakaomapOptimizeRouteCreateResponses = {
-    201: unknown;
-};
-
-export type KakaomapRouteListData = {
-    body?: never;
-    path?: never;
-    query?: never;
-    url: '/kakaomap/route/';
-};
-
-export type KakaomapRouteListResponses = {
-    200: unknown;
-};
-
-export type KakaomapSearchListData = {
-    body?: never;
-    path?: never;
-    query?: never;
-    url: '/kakaomap/search/';
-};
-
-export type KakaomapSearchListResponses = {
-    200: unknown;
-};
-
 export type PlacesListData = {
     body?: never;
     path?: never;
@@ -744,6 +662,54 @@ export type PlacesListResponses = {
 };
 
 export type PlacesListResponse = PlacesListResponses[keyof PlacesListResponses];
+
+export type PlacesCreateData = {
+    body: Place;
+    path?: never;
+    query?: never;
+    url: '/places/';
+};
+
+export type PlacesCreateResponses = {
+    201: Place;
+};
+
+export type PlacesCreateResponse = PlacesCreateResponses[keyof PlacesCreateResponses];
+
+export type PlacesRecommendListData = {
+    body?: never;
+    path?: never;
+    query: {
+        lat: number;
+        lng: number;
+        max_distance_km?: number | null;
+        limit?: number | null;
+        category_filter?: Array<string> | null;
+    };
+    url: '/places/recommend/';
+};
+
+export type PlacesRecommendListResponses = {
+    200: PlaceRecommendOutput;
+};
+
+export type PlacesRecommendListResponse = PlacesRecommendListResponses[keyof PlacesRecommendListResponses];
+
+export type PlacesDeleteData = {
+    body?: never;
+    path: {
+        /**
+         * A UUID string identifying this place.
+         */
+        id: string;
+    };
+    query?: never;
+    url: '/places/{id}/';
+};
+
+export type PlacesDeleteResponses = {
+    204: unknown;
+};
 
 export type PlacesReadData = {
     body?: never;
@@ -763,20 +729,41 @@ export type PlacesReadResponses = {
 
 export type PlacesReadResponse = PlacesReadResponses[keyof PlacesReadResponses];
 
-export type PlacesMenuItemsListData = {
-    body?: never;
+export type PlacesPartialUpdateData = {
+    body: Place;
     path: {
+        /**
+         * A UUID string identifying this place.
+         */
         id: string;
     };
     query?: never;
-    url: '/places/{id}/menu-items/';
+    url: '/places/{id}/';
 };
 
-export type PlacesMenuItemsListResponses = {
-    200: Array<MenuItem>;
+export type PlacesPartialUpdateResponses = {
+    200: Place;
 };
 
-export type PlacesMenuItemsListResponse = PlacesMenuItemsListResponses[keyof PlacesMenuItemsListResponses];
+export type PlacesPartialUpdateResponse = PlacesPartialUpdateResponses[keyof PlacesPartialUpdateResponses];
+
+export type PlacesUpdateData = {
+    body: Place;
+    path: {
+        /**
+         * A UUID string identifying this place.
+         */
+        id: string;
+    };
+    query?: never;
+    url: '/places/{id}/';
+};
+
+export type PlacesUpdateResponses = {
+    200: Place;
+};
+
+export type PlacesUpdateResponse = PlacesUpdateResponses[keyof PlacesUpdateResponses];
 
 export type RoutesListData = {
     body?: never;
@@ -817,18 +804,35 @@ export type RoutesMyListResponses = {
 
 export type RoutesMyListResponse = RoutesMyListResponses[keyof RoutesMyListResponses];
 
-export type RoutesRecommendationsCreateData = {
-    body: RouteRecommendationInput;
+export type RoutesRecommendListData = {
+    body?: never;
     path?: never;
-    query?: never;
-    url: '/routes/recommendations/';
+    query: {
+        lat: number;
+        lng: number;
+        max_distance_km?: number | null;
+        limit?: number | null;
+        category_filter?: Array<string> | null;
+    };
+    url: '/routes/recommend/';
 };
 
-export type RoutesRecommendationsCreateResponses = {
-    201: RouteRecommendationInput;
+export type RoutesRecommendListErrors = {
+    /**
+     * Bad Request
+     */
+    400: unknown;
+    /**
+     * Internal Server Error
+     */
+    500: unknown;
 };
 
-export type RoutesRecommendationsCreateResponse = RoutesRecommendationsCreateResponses[keyof RoutesRecommendationsCreateResponses];
+export type RoutesRecommendListResponses = {
+    200: RouteRecommendationOutput;
+};
+
+export type RoutesRecommendListResponse = RoutesRecommendListResponses[keyof RoutesRecommendListResponses];
 
 export type RoutesDeleteData = {
     body?: never;
