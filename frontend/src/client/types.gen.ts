@@ -118,6 +118,100 @@ export type Category = {
     readonly updated_at?: string;
 };
 
+export type DistrictList = {
+    /**
+     * Id
+     */
+    readonly id?: string;
+    /**
+     * Name
+     */
+    name: string;
+    /**
+     * Name en
+     */
+    name_en?: string;
+    /**
+     * Longitude
+     */
+    longitude: string;
+    /**
+     * Latitude
+     */
+    latitude: string;
+    /**
+     * Province name
+     */
+    readonly province_name?: string;
+    /**
+     * Is active
+     */
+    is_active?: boolean;
+};
+
+export type Province = {
+    /**
+     * Id
+     */
+    readonly id?: string;
+    /**
+     * Created at
+     */
+    readonly created_at?: string;
+    /**
+     * Updated at
+     */
+    readonly updated_at?: string;
+    /**
+     * Name
+     */
+    name: string;
+    /**
+     * Name en
+     */
+    name_en?: string;
+    /**
+     * Is active
+     */
+    is_active?: boolean;
+};
+
+export type District = {
+    /**
+     * Id
+     */
+    readonly id?: string;
+    province?: Province;
+    /**
+     * Created at
+     */
+    readonly created_at?: string;
+    /**
+     * Updated at
+     */
+    readonly updated_at?: string;
+    /**
+     * Name
+     */
+    name: string;
+    /**
+     * Name en
+     */
+    name_en?: string;
+    /**
+     * Longitude
+     */
+    longitude: string;
+    /**
+     * Latitude
+     */
+    latitude: string;
+    /**
+     * Is active
+     */
+    is_active?: boolean;
+};
+
 export type Place = {
     /**
      * Id
@@ -650,6 +744,37 @@ export type CategoriesUpdateResponses = {
 
 export type CategoriesUpdateResponse = CategoriesUpdateResponses[keyof CategoriesUpdateResponses];
 
+export type DistrictsListData = {
+    body?: never;
+    path?: never;
+    query?: never;
+    url: '/districts/';
+};
+
+export type DistrictsListResponses = {
+    200: Array<DistrictList>;
+};
+
+export type DistrictsListResponse = DistrictsListResponses[keyof DistrictsListResponses];
+
+export type DistrictsReadData = {
+    body?: never;
+    path: {
+        /**
+         * A UUID string identifying this District.
+         */
+        id: string;
+    };
+    query?: never;
+    url: '/districts/{id}/';
+};
+
+export type DistrictsReadResponses = {
+    200: District;
+};
+
+export type DistrictsReadResponse = DistrictsReadResponses[keyof DistrictsReadResponses];
+
 export type PlacesListData = {
     body?: never;
     path?: never;
@@ -764,6 +889,37 @@ export type PlacesUpdateResponses = {
 };
 
 export type PlacesUpdateResponse = PlacesUpdateResponses[keyof PlacesUpdateResponses];
+
+export type ProvincesListData = {
+    body?: never;
+    path?: never;
+    query?: never;
+    url: '/provinces/';
+};
+
+export type ProvincesListResponses = {
+    200: Array<Province>;
+};
+
+export type ProvincesListResponse = ProvincesListResponses[keyof ProvincesListResponses];
+
+export type ProvincesReadData = {
+    body?: never;
+    path: {
+        /**
+         * A UUID string identifying this Province.
+         */
+        id: string;
+    };
+    query?: never;
+    url: '/provinces/{id}/';
+};
+
+export type ProvincesReadResponses = {
+    200: Province;
+};
+
+export type ProvincesReadResponse = ProvincesReadResponses[keyof ProvincesReadResponses];
 
 export type RoutesListData = {
     body?: never;

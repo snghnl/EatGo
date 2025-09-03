@@ -69,6 +69,37 @@ export const zCategory = z.object({
     updated_at: z.optional(z.iso.datetime().readonly())
 });
 
+export const zDistrictList = z.object({
+    id: z.optional(z.uuid().readonly()),
+    name: z.string().min(1).max(100),
+    name_en: z.optional(z.string().max(100)),
+    longitude: z.string(),
+    latitude: z.string(),
+    province_name: z.optional(z.string().min(1).readonly()),
+    is_active: z.optional(z.boolean())
+});
+
+export const zProvince = z.object({
+    id: z.optional(z.uuid().readonly()),
+    created_at: z.optional(z.iso.datetime().readonly()),
+    updated_at: z.optional(z.iso.datetime().readonly()),
+    name: z.string().min(1).max(100),
+    name_en: z.optional(z.string().max(100)),
+    is_active: z.optional(z.boolean())
+});
+
+export const zDistrict = z.object({
+    id: z.optional(z.uuid().readonly()),
+    province: z.optional(zProvince),
+    created_at: z.optional(z.iso.datetime().readonly()),
+    updated_at: z.optional(z.iso.datetime().readonly()),
+    name: z.string().min(1).max(100),
+    name_en: z.optional(z.string().max(100)),
+    longitude: z.string(),
+    latitude: z.string(),
+    is_active: z.optional(z.boolean())
+});
+
 export const zPlace = z.object({
     id: z.optional(z.uuid().readonly()),
     created_at: z.optional(z.iso.datetime().readonly()),
@@ -319,6 +350,24 @@ export const zCategoriesUpdateData = z.object({
 
 export const zCategoriesUpdateResponse = zCategory;
 
+export const zDistrictsListData = z.object({
+    body: z.optional(z.never()),
+    path: z.optional(z.never()),
+    query: z.optional(z.never())
+});
+
+export const zDistrictsListResponse = z.array(zDistrictList);
+
+export const zDistrictsReadData = z.object({
+    body: z.optional(z.never()),
+    path: z.object({
+        id: z.uuid()
+    }),
+    query: z.optional(z.never())
+});
+
+export const zDistrictsReadResponse = zDistrict;
+
 export const zPlacesListData = z.object({
     body: z.optional(z.never()),
     path: z.optional(z.never()),
@@ -395,6 +444,24 @@ export const zPlacesUpdateData = z.object({
 });
 
 export const zPlacesUpdateResponse = zPlace;
+
+export const zProvincesListData = z.object({
+    body: z.optional(z.never()),
+    path: z.optional(z.never()),
+    query: z.optional(z.never())
+});
+
+export const zProvincesListResponse = z.array(zProvince);
+
+export const zProvincesReadData = z.object({
+    body: z.optional(z.never()),
+    path: z.object({
+        id: z.uuid()
+    }),
+    query: z.optional(z.never())
+});
+
+export const zProvincesReadResponse = zProvince;
 
 export const zRoutesListData = z.object({
     body: z.optional(z.never()),
