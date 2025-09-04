@@ -14,40 +14,8 @@ import PlaceCardSwiper from "@/components/main/PlaceCardSwiper";
 import Header from "@/components/common/Header";
 import { ThemedText } from "@/components/ThemedText";
 import { Colors } from "@/constants/Colors";
-
-interface RecommendationPlace {
-    id: string;
-    category: string;
-    name: string;
-}
-interface RecommendationItem {
-    id: string;
-    title: string;
-    places: RecommendationPlace[];
-}
-
-const API_BASE = process.env.EXPO_PUBLIC_API_BASE || "http://10.0.2.2:8000"; // SOURCE: ???
-const ENDPOINT_RECOMMENDATIONS = `${API_BASE}/api/travel-courses/:courseId/recommendations`; // SOURCE: ???
-
-const defaultHeaders: Record<string, string> = {
-    Accept: "application/json",
-    // Authorization: `Bearer ${token}`, // SOURCE: ???
-};
-
-function mapResponseToItems(data: any): RecommendationItem[] {
-    if (!Array.isArray(data)) return [];
-    return data.map((rec: any) => ({
-        id: String(rec.id ?? rec.uuid ?? rec.recommendation_id), // SOURCE: ???
-        title: String(rec.title ?? rec.region ?? "추천 경로"), // SOURCE: ???
-        places: Array.isArray(rec.places)
-            ? rec.places.map((p: any) => ({
-                  id: String(p.id ?? p.place_id ?? p.uuid), // SOURCE: ???
-                  category: String(p.category ?? p.category_name ?? ""), // SOURCE: ???
-                  name: String(p.name ?? p.place_name ?? ""), // SOURCE: ???
-              }))
-            : [],
-    }));
-}
+import { Routes } from "@/src/client/sdk.gen";
+import { RouteRecommendationOutput } from "@/src/client/types.gen";
 
 async function fetchRecommendations(params: {
     courseId: string;
@@ -57,24 +25,19 @@ async function fetchRecommendations(params: {
     destinations?: string;
     foods?: string;
 }): Promise<RecommendationItem[]> {
-    const { courseId, mode, startDate, endDate, destinations, foods } = params;
-    const q = new URLSearchParams();
-    q.set("mode", mode);
-    if (startDate) q.set("start", startDate); // SOURCE: ???
-    if (endDate) q.set("end", endDate); // SOURCE: ???
-    if (destinations) q.set("destinations", destinations);
-    if (foods) q.set("foods", foods);
-    const url = `${ENDPOINT_RECOMMENDATIONS.replace(
-        ":courseId",
-        courseId
-    )}?${q.toString()}`;
-    const res = await fetch(url, {
-        method: "GET",
-        headers: defaultHeaders /*, credentials: 'include'*/,
-    }); // SOURCE: ???
-    if (!res.ok) throw new Error(`HTTP ${res.status}`);
-    const data = await res.json();
-    return mapResponseToItems(data);
+    const { mode, startDate, endDate, destinations, foods } = params;
+
+    const response = await Routes.routesRecommendList({
+        query: {
+            mode: mode,
+            start_date: startDate,
+            end_date: endDate,
+            destinations,
+            foods,
+        },
+    });
+
+    return mapResponseToItems(response.data);
 }
 
 export default function RecommendationScreen() {
@@ -226,7 +189,7 @@ export default function RecommendationScreen() {
                         추천 경로 불러오는 중…
                     </ThemedText>
                     <ThemedText color="textSecondary" style={{ marginTop: 4 }}>
-                        API_BASE: {API_BASE}
+                        Using SDK client
                     </ThemedText>
                 </View>
             ) : error ? (
@@ -238,7 +201,7 @@ export default function RecommendationScreen() {
                         <ThemedText weight="semibold">다시 시도</ThemedText>
                     </TouchableOpacity>
                     <ThemedText color="textSecondary" style={{ marginTop: 6 }}>
-                        API_BASE: {API_BASE}
+                        Using SDK client
                     </ThemedText>
                 </View>
             ) : (
