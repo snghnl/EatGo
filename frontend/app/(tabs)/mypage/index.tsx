@@ -32,6 +32,7 @@ const MyPageTab = () => {
                         username={user.username}
                         neighborCount={user.followers_count}
                         profileImageUrl={user.profile_image}
+                        onPressProfile={() => router.push('/onboarding')}
                     />
                     <MyPageTabs style={styles.tabs} onTabChange={(tab) => setActiveTab(tab)} />
                 </View>

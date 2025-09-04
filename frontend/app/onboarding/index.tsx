@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState, useRef } from "react";
 import {
     StyleSheet,
     View,
@@ -6,22 +6,30 @@ import {
     SafeAreaView,
     TouchableOpacity,
     Image,
+    Alert,
 } from "react-native";
 import { useRouter } from "expo-router";
 import { Colors } from "@/constants/Colors";
 import { Ionicons } from "@expo/vector-icons";
+import { KakaoLoginWebView } from "@/components/auth/KakaoLoginWebView";
+import { GoogleLoginWebView } from "@/components/auth/GoogleLoginWebView";
+import { useAuthStore, kakaoLogin, googleLogin } from "@/store/authStore";
 
 export default function OnboardingStartScreen() {
     const router = useRouter();
+    const { login, setLoading } = useAuthStore();
+    const [showKakaoWebView, setShowKakaoWebView] = useState(false);
+    const [showGoogleWebView, setShowGoogleWebView] = useState(false);
+    const googleLoginProcessingRef = useRef(false);
+    const kakaoLoginProcessingRef = useRef(false);
 
     const handleKakaoLogin = () => {
-        console.log("카카오 로그인");
-        // TODO: 카카오 로그인 구현
+        setShowKakaoWebView(true);
     };
 
-    const handleAppleLogin = () => {
-        console.log("애플 로그인");
-        // TODO: 애플 로그인 구현
+    const handleGoogleLogin = () => {
+        console.log("구글 로그인");
+        setShowGoogleWebView(true);
     };
 
     const handleEmailSignup = () => {
@@ -32,6 +40,110 @@ export default function OnboardingStartScreen() {
     const handleLogin = () => {
         console.log("로그인");
         router.push("/onboarding/login");
+    };
+
+    // 카카오 로그인 성공 처리
+    const handleKakaoLoginSuccess = async (authCode: string) => {
+        // 이미 처리 중이면 중복 호출 방지 (useRef로 동기 체크)
+        if (kakaoLoginProcessingRef.current) {
+            console.log('🚫 Kakao login already in progress, ignoring duplicate call');
+            return;
+        }
+
+        try {
+            console.log('🚀 Starting Kakao login process with auth code');
+            kakaoLoginProcessingRef.current = true;
+            setLoading(true);
+            setShowKakaoWebView(false);
+
+            // 백엔드 API 호출
+            const response = await kakaoLogin(authCode);
+
+            // 로그인 처리
+            await login(response.tokens, response.user);
+
+            // 음식 선호도 페이지로 이동
+            router.push("/onboarding/food-preference");
+
+        } catch (error) {
+            console.error('카카오 로그인 실패:', error);
+            Alert.alert(
+                '로그인 실패',
+                error instanceof Error ? error.message : '카카오 로그인에 실패했습니다.',
+                [{ text: '확인' }]
+            );
+        } finally {
+            setLoading(false);
+            kakaoLoginProcessingRef.current = false;
+        }
+    };
+
+    // 카카오 로그인 에러 처리
+    const handleKakaoLoginError = (error: string) => {
+        console.error('카카오 로그인 에러:', error);
+        setShowKakaoWebView(false);
+        Alert.alert(
+            '로그인 오류',
+            error,
+            [{ text: '확인' }]
+        );
+    };
+
+    // 카카오 웹뷰 닫기
+    const handleKakaoWebViewClose = () => {
+        setShowKakaoWebView(false);
+    };
+
+    // 구글 로그인 성공 처리
+    const handleGoogleLoginSuccess = async (authCode: string) => {
+        // 이미 처리 중이면 중복 호출 방지 (useRef로 동기 체크)
+        if (googleLoginProcessingRef.current) {
+            console.log('🚫 Google login already in progress, ignoring duplicate call');
+            return;
+        }
+
+        try {
+            console.log('🚀 Starting Google login process with auth code');
+            googleLoginProcessingRef.current = true;
+            setLoading(true);
+            setShowGoogleWebView(false);
+
+            // 백엔드 API 호출
+            const response = await googleLogin(authCode);
+
+            // 로그인 처리
+            await login(response.tokens, response.user);
+
+            // 음식 선호도 페이지로 이동
+            router.push("/onboarding/food-preference");
+
+        } catch (error) {
+            console.error('구글 로그인 실패:', error);
+            Alert.alert(
+                '로그인 실패',
+                error instanceof Error ? error.message : '구글 로그인에 실패했습니다.',
+                [{ text: '확인' }]
+            );
+        } finally {
+            setLoading(false);
+            googleLoginProcessingRef.current = false;
+        }
+    };
+
+    // 구글 로그인 에러 처리
+    const handleGoogleLoginError = (error: string) => {
+        console.error('구글 로그인 에러:', error);
+        setShowGoogleWebView(false);
+        Alert.alert(
+            '로그인 오류',
+            error,
+            [{ text: '확인' }]
+        );
+    };
+
+    // 구글 웹뷰 닫기
+    const handleGoogleWebViewClose = () => {
+        setShowGoogleWebView(false);
     };
 
     return (
@@ -63,14 +175,14 @@ export default function OnboardingStartScreen() {
                     <Text style={styles.kakaoButtonText}>카카오로 시작</Text>
                 </TouchableOpacity>
 
-                {/* 애플 로그인 버튼 */}
+                {/* 구글 로그인 버튼 */}
                 <TouchableOpacity
-                    style={[styles.socialButton, styles.appleButton]}
-                    onPress={handleAppleLogin}
+                    style={[styles.socialButton, styles.googleButton]}
+                    onPress={handleGoogleLogin}
                     activeOpacity={0.8}
                 >
-                    <Ionicons name="logo-apple" size={20} color="white" />
-                    <Text style={styles.appleButtonText}>애플로 시작</Text>
+                    <Ionicons name="logo-google" size={20} color="#4285F4" />
+                    <Text style={styles.googleButtonText}>구글로 시작</Text>
                 </TouchableOpacity>
 
                 {/* 하단 링크 */}
@@ -84,6 +196,22 @@ export default function OnboardingStartScreen() {
                     </TouchableOpacity>
                 </View>
             </View>
+
+            {/* 카카오 로그인 웹뷰 */}
+            <KakaoLoginWebView
+                visible={showKakaoWebView}
+                onClose={handleKakaoWebViewClose}
+                onSuccess={handleKakaoLoginSuccess}
+                onError={handleKakaoLoginError}
+            />
+
+            {/* 구글 로그인 웹뷰 */}
+            <GoogleLoginWebView
+                visible={showGoogleWebView}
+                onClose={handleGoogleWebViewClose}
+                onSuccess={handleGoogleLoginSuccess}
+                onError={handleGoogleLoginError}
+            />
         </SafeAreaView>
     );
 }
@@ -133,8 +261,10 @@ const styles = StyleSheet.create({
     kakaoButton: {
         backgroundColor: "#FEE500",
     },
-    appleButton: {
-        backgroundColor: "#000",
+    googleButton: {
+        backgroundColor: "#fff",
+        borderWidth: 1,
+        borderColor: "#dadce0",
     },
     socialIcon: {
         width: 20,
@@ -146,10 +276,10 @@ const styles = StyleSheet.create({
         fontWeight: "600",
         color: "#3C1E1E",
     },
-    appleButtonText: {
+    googleButtonText: {
         fontSize: 15,
         fontWeight: "600",
-        color: "white",
+        color: "#3c4043",
     },
     bottomLinks: {
         flexDirection: "row",

@@ -3,6 +3,7 @@ from django.db import models
 from django.conf import settings
 from core.models import BaseModel
 from routes.models import Route
+from django.utils import timezone
 
 
 class TravelCourse(BaseModel):
@@ -19,8 +20,8 @@ class TravelCourse(BaseModel):
     routes = models.ManyToManyField(
         Route, through="TravelCourseRoute", related_name="travel_courses"
     )
-    start_date = models.DateField()
-    end_date = models.DateField()
+    start_date = models.DateField(default=timezone.now)
+    end_date = models.DateField(null=True, blank=True)
 
     def __str__(self) -> str:
         return self.title

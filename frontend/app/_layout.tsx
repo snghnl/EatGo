@@ -7,6 +7,7 @@ import { useFonts } from "expo-font";
 import { Stack } from "expo-router";
 import { StatusBar } from "expo-status-bar";
 import { View } from "react-native";
+import { useEffect } from "react";
 import "react-native-reanimated";
 import "react-native-gesture-handler";
 import { GestureHandlerRootView } from "react-native-gesture-handler";
@@ -15,6 +16,7 @@ import AppContainer from "@/components/common/AppContainer";
 import { Colors } from "@/constants/Colors";
 import { BookmarkProvider } from "@/store/BookmarkContext";
 import { PostProvider } from "@/store/posts";
+import { useAuthStore } from "@/store/authStore";
 import { client } from "@/src/client/client.gen";
 
 export const viewport = {
@@ -38,9 +40,15 @@ client.setConfig({
 
 export default function RootLayout() {
     const colorScheme = useColorScheme();
+    const { loadAuthState } = useAuthStore();
     const [loaded, error] = useFonts({
         Pretendard: require("../assets/fonts/Pretendard-Regular.ttf"),
     });
+
+    // 앱 시작 시 인증 상태 로드
+    useEffect(() => {
+        loadAuthState();
+    }, [loadAuthState]);
 
     // If fonts are still loading, show a loading state instead of null
     if (!loaded && !error) {
