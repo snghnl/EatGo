@@ -16,6 +16,8 @@ import { Colors } from "@/constants/Colors";
 import { BookmarkProvider } from "@/store/BookmarkContext";
 import { PostProvider } from "@/store/posts";
 import { client } from "@/src/client/client.gen";
+import { AuthUtils } from "@/src/utils/auth";
+import { AuthProvider } from "@/src/contexts/AuthContext";
 
 export const viewport = {
     width: "device-width",
@@ -31,6 +33,9 @@ client.setConfig({
     // TODO: change to production url
     baseUrl: "http://localhost:8000/api/v1",
 });
+
+// Initialize auth on app start
+AuthUtils.initializeAuth();
 
 export default function RootLayout() {
     const colorScheme = useColorScheme();
@@ -58,15 +63,16 @@ export default function RootLayout() {
         <ThemeProvider
             value={colorScheme === "dark" ? DarkTheme : DefaultTheme}
         >
-            <BookmarkProvider>
-                <PostProvider>
-                    <GestureHandlerRootView style={{ flex: 1 }}>
-                        <View
-                            style={{
-                                flex: 1,
-                                backgroundColor: Colors.background,
-                            }}
-                        >
+            <AuthProvider>
+                <BookmarkProvider>
+                    <PostProvider>
+                        <GestureHandlerRootView style={{ flex: 1 }}>
+                            <View
+                                style={{
+                                    flex: 1,
+                                    backgroundColor: Colors.background,
+                                }}
+                            >
                             <Stack>
                                 <Stack.Screen
                                     name="onboarding/index"
@@ -88,19 +94,13 @@ export default function RootLayout() {
                                     name="(tabs)"
                                     options={{ headerShown: false }}
                                 />
-                                <Stack.Screen
-                                    name="plan/[id]/index"
-                                    options={{
-                                        title: "",
-                                        headerBackVisible: true,
-                                    }}
-                                />
                             </Stack>
                             <StatusBar style="auto" />
-                        </View>
-                    </GestureHandlerRootView>
-                </PostProvider>
-            </BookmarkProvider>
+                            </View>
+                        </GestureHandlerRootView>
+                    </PostProvider>
+                </BookmarkProvider>
+            </AuthProvider>
         </ThemeProvider>
     );
 }
