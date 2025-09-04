@@ -1,21 +1,43 @@
 // PostCourseSelect.tsx
 
-import React from 'react';
-import { View, StyleSheet } from 'react-native';
+import React, { useState, useEffect } from 'react';
+import { View, StyleSheet, ActivityIndicator, Alert } from 'react-native';
 import { SafeAreaView, useSafeAreaInsets } from 'react-native-safe-area-context';
 import { Ionicons } from '@expo/vector-icons';
 import { router } from 'expo-router';
 
 import Header from '@/components/common/Header';
 import { CourseList } from '@/components/plan/CourseList';
-import { SAMPLE_COURSES } from '@/constants/Data';
 import { Colors } from '@/constants/Colors';
+import { TravelCourses } from '@/src/client/sdk.gen';
+import type { TravelCourse } from '@/src/client/types.gen';
 
 export default function PostCourseSelect() {
     const insets = useSafeAreaInsets();
     const TAB_BAR_HEIGHT = 88; // iOS 탭바 absolute 높이
+    const [courses, setCourses] = useState<TravelCourse[]>([]);
+    const [loading, setLoading] = useState(true);
 
-    const handleSelect = (course: any) => {
+    useEffect(() => {
+        fetchMyCourses();
+    }, []);
+
+    const fetchMyCourses = async () => {
+        try {
+            setLoading(true);
+            const response = await TravelCourses.travelCoursesMyList();
+            if (response.data) {
+                setCourses(response.data);
+            }
+        } catch (error) {
+            console.error('Failed to fetch courses:', error);
+            Alert.alert('오류', '코스 목록을 불러오는데 실패했습니다.');
+        } finally {
+            setLoading(false);
+        }
+    };
+
+    const handleSelect = (course: TravelCourse) => {
         router.push({
             pathname: '/community/post',
             params: { courseId: course.id },
@@ -42,12 +64,25 @@ export default function PostCourseSelect() {
                     { paddingBottom: TAB_BAR_HEIGHT + insets.bottom + 12 }, // 탭바 가림 방지
                 ]}
             >
-                {' '}
-                <CourseList
-                    courses={[...SAMPLE_COURSES]}
-                    onCoursePress={(id) => handleSelect({ id })}
-                    onAddCourse={() => router.push('/plan')}
-                />
+                {loading ? (
+                    <View style={styles.loadingContainer}>
+                        <ActivityIndicator size="large" color={Colors.primary} />
+                    </View>
+                ) : (
+                    <CourseList
+                        courses={courses.map(course => ({
+                            id: course.id || '',
+                            subtitle: course.destination || '',
+                            title: course.title,
+                            hasImages: false,
+                        }))}
+                        onCoursePress={(id) => {
+                            const selectedCourse = courses.find(course => course.id === id);
+                            if (selectedCourse) handleSelect(selectedCourse);
+                        }}
+                        onAddCourse={() => router.push('/plan')}
+                    />
+                )}
             </View>
         </SafeAreaView>
     );
@@ -70,6 +105,11 @@ const styles = StyleSheet.create({
     },
     container: {
         flex: 1,
+    },
+    loadingContainer: {
+        flex: 1,
+        justifyContent: 'center',
+        alignItems: 'center',
     },
     addbtn: {
         marginBottom: 12,
