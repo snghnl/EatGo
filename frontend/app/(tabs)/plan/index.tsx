@@ -88,7 +88,7 @@ export default function PlanListScreen() {
         return { title, subtitle };
     };
 
-    const handleCompleteModal = (data: {
+    const handleCompleteModal = async (data: {
         startDate: string;
         endDate: string;
         selectedDestinations: string[];
@@ -96,7 +96,15 @@ export default function PlanListScreen() {
     }) => {
         console.log("여행 계획 완료", data);
 
-        const newCourseId = Date.now().toString();
+        // Convert date format from "YY.MM.DD" to "YYYY-MM-DD"
+        const convertToISODate = (dateStr: string) => {
+            const [year, month, day] = dateStr.split(".");
+            const fullYear = year.length === 2 ? `20${year}` : year;
+            return `${fullYear}-${month.padStart(2, "0")}-${day.padStart(
+                2,
+                "0"
+            )}`;
+        };
 
         const { title, subtitle } = generateTitleAndSubtitle(
             data.selectedDestinations,
@@ -104,31 +112,61 @@ export default function PlanListScreen() {
             data.endDate
         );
 
-        const courseInfo: TravelCourse = {
-            id: newCourseId,
+        const courseInfo = {
             title,
             description: subtitle,
             routes: [],
-            start_date: data.startDate,
-            end_date: data.endDate,
+            start_date: convertToISODate(data.startDate),
+            end_date: convertToISODate(data.endDate),
             destination: data.selectedDestinations.join(","),
         };
-        setNewCourse(courseInfo);
-        setCourses((prev) => [courseInfo, ...prev]); // ✅ 실제 목록에 반영
 
-        setModalVisible(false);
+        try {
+            const response = await TravelCourses.travelCoursesCreate({
+                body: courseInfo,
+            });
 
-        router.push({
-            pathname: "/plan/[id]" as any,
-            params: {
-                id: newCourseId,
-                startDate: data.startDate,
-                endDate: data.endDate,
-                destinations: data.selectedDestinations.join(","),
-                foods: data.selectedFoods.join(","),
-                isNew: "true",
-            },
-        });
+            const createdCourse = response.data;
+
+            if (!createdCourse) {
+                throw new Error("Failed to create course");
+            }
+
+            setNewCourse(createdCourse);
+            setCourses((prev) => [createdCourse, ...prev]);
+
+            setModalVisible(false);
+
+            router.push({
+                pathname: `/plan/${createdCourse.id}` as any,
+                params: {
+                    startDate: data.startDate,
+                    endDate: data.endDate,
+                    destinations: data.selectedDestinations.join(","),
+                    foods: data.selectedFoods.join(","),
+                    isNew: "true",
+                },
+            });
+        } catch (error) {
+            console.error("Failed to create course:", error);
+            // Fallback: use timestamp ID for local state
+            const fallbackCourse = { ...courseInfo, id: Date.now().toString() };
+            setNewCourse(fallbackCourse);
+            setCourses((prev) => [fallbackCourse, ...prev]);
+
+            setModalVisible(false);
+
+            router.push({
+                pathname: `/plan/${fallbackCourse.id}` as any,
+                params: {
+                    startDate: data.startDate,
+                    endDate: data.endDate,
+                    destinations: data.selectedDestinations.join(","),
+                    foods: data.selectedFoods.join(","),
+                    isNew: "true",
+                },
+            });
+        }
     };
 
     return (
