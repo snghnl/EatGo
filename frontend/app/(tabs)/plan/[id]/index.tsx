@@ -16,6 +16,7 @@ import ActionButtons from "@/components/common/ActionButtons";
 import { Colors } from "@/constants/Colors";
 import { Ionicons } from "@expo/vector-icons";
 import { TravelCourse } from "@/src/client/types.gen";
+import { TravelCourses } from "@/src/client/sdk.gen";
 
 export default function PlanDetailScreen() {
     const { id, startDate, endDate, destinations, foods, isNew } =
@@ -83,6 +84,22 @@ export default function PlanDetailScreen() {
 
         // TODO: 실제로는 course 상세 API로부터 가져오길 권장
         // SOURCE: ??? (예: GET https://api.example.com/courses/:courseId)
+        try {
+            TravelCourses.travelCoursesRead({
+                path: {
+                    id: id,
+                },
+            })
+                .then((res) => {
+                    setCourseData(res.data || null);
+                })
+                .catch((err) => {
+                    console.error("Failed to fetch course data:", err);
+                });
+        } catch (error) {
+            console.error("Failed to fetch course data:", error);
+        }
+
         const { title, subtitle } = generateTitleAndSubtitle();
 
         const newCourseData: TravelCourse = {
@@ -117,8 +134,6 @@ export default function PlanDetailScreen() {
         router.push({
             pathname: `/plan/${id}/recommendation` as any,
             params: {
-                id: id,
-                courseId: id,
                 day: day.toString(),
                 startDate: startDate,
                 endDate: endDate,
@@ -133,8 +148,6 @@ export default function PlanDetailScreen() {
         router.push({
             pathname: `/plan/${id}/recommendation` as any,
             params: {
-                id: id,
-                courseId: id,
                 startDate: startDate,
                 endDate: endDate,
                 destinations: destinations,
@@ -148,7 +161,6 @@ export default function PlanDetailScreen() {
         router.push({
             pathname: `/plan/${id}/recommendation` as any,
             params: {
-                courseId: id,
                 startDate: startDate,
                 endDate: endDate,
                 destinations: destinations,
