@@ -1,9 +1,8 @@
 import React from 'react';
 import { useBookmark } from '@/store/BookmarkContext';
-import { router } from 'expo-router';
+import { router, useLocalSearchParams } from 'expo-router';
 import { Ionicons } from '@expo/vector-icons';
-import { View, FlatList, StyleSheet } from 'react-native';
-import { useLocalSearchParams } from 'expo-router';
+import { View, FlatList, StyleSheet, SafeAreaView, ScrollView } from 'react-native';
 import { PlaceCard } from '@/components/main/PlaceCard';
 import placesData from '@/mock-data/places.json';
 import { Colors } from '@/constants/Colors';
@@ -26,7 +25,6 @@ const titleMap: Record<string, { title: string; subtitle: string }> = {
 
 export default function PlaceListScreen() {
     const { category } = useLocalSearchParams<{ category: string }>();
-
     const { bookmarkedPlaceIds, toggleBookmark } = useBookmark();
 
     const documents = placesData.documents;
@@ -35,72 +33,73 @@ export default function PlaceListScreen() {
         subtitle: '',
     };
 
-    // 카테고리 필터링 로직 (예시: local이면 한식, recommend면 인기순)
     const filtered = documents.filter((place) => {
         if (category === 'local') return place.category_name.includes('한식');
-        if (category === 'landmark') return place.category_name.includes('명소'); // 명소 없음 → 나중에 관광데이터로 대체 가능
-        if (category === 'recommend') return true; // 추천 전체 보기
+        if (category === 'landmark') return place.category_name.includes('명소');
+        if (category === 'recommend') return true;
         return false;
     });
 
     return (
-        <View style={styles.container}>
-            <View style={{ position: 'absolute', top: 50, left: 10, zIndex: 10 }}>
-                <Ionicons
-                    name="chevron-back"
-                    size={20}
-                    color={Colors.textPrimary}
-                    onPress={() => router.push('/(tabs)/map')}
-                />
-            </View>
-            <View style={styles.header}>
-                {
-                    <Header
-                        title={current.title}
-                        subtitle={current.subtitle}
-                        titleColor={Colors.textPrimary}
-                        subtitleColor={Colors.textSecondary}
-                        align="left"
+        <SafeAreaView style={styles.containers}>
+            <ScrollView style={styles.scrollView} showsVerticalScrollIndicator={false}>
+                <View style={styles.container}>
+                    <View style={{ position: 'absolute', top: 20, left: 15, zIndex: 10 }}>
+                        <Ionicons
+                            name="chevron-back"
+                            size={20}
+                            color={Colors.textPrimary}
+                            onPress={() => router.push('/(tabs)/map')}
+                        />
+                    </View>
+                    <View style={styles.header}>
+                        <Header
+                            title={current.title}
+                            subtitle={current.subtitle}
+                            titleColor={Colors.textPrimary}
+                            subtitleColor={Colors.textSecondary}
+                            align="left"
+                        />
+                    </View>
+                    <FlatList
+                        data={filtered}
+                        keyExtractor={(place) => place.id}
+                        contentContainerStyle={styles.listContent}
+                        renderItem={({ item }) => (
+                            <PlaceCard
+                                id={item.id}
+                                name={item.place_name}
+                                category={item.category_name}
+                                address={item.road_address_name}
+                                distance={item.distance || ''}
+                                description={item.category_name.split(' > ').pop() || ''}
+                                imageUrl={'https://source.unsplash.com/random/300x300?food'}
+                                isBookmarked={bookmarkedPlaceIds.includes(item.id)}
+                                onBookmark={() => toggleBookmark(item.id)}
+                                onPress={() => router.push(`/map/place/${item.id}/detail`)}
+                            />
+                        )}
                     />
-                }
-            </View>
-            <FlatList
-                data={filtered}
-                keyExtractor={(place) => place.id}
-                contentContainerStyle={styles.listContent}
-                renderItem={({ item }) => (
-                    <PlaceCard
-                        id={item.id}
-                        name={item.place_name}
-                        category={item.category_name}
-                        address={item.road_address_name}
-                        distance={item.distance || ''}
-                        description={item.category_name.split(' > ').pop() || ''}
-                        imageUrl={'https://source.unsplash.com/random/300x300?food'}
-                        isBookmarked={bookmarkedPlaceIds.includes(item.id)}
-                        onBookmark={() => toggleBookmark(item.id)}
-                        onPress={() => router.push(`/map/place/${item.id}/detail`)}
-                    />
-                )}
-            />
-        </View>
+                </View>
+            </ScrollView>
+        </SafeAreaView>
     );
 }
+
 const styles = StyleSheet.create({
-    container: {
+    containers: {
         flex: 1,
         backgroundColor: Colors.background,
-        paddingTop: 20,
+    },
+    scrollView: {
+        flex: 1,
     },
     header: {
         width: '100%',
         backgroundColor: Colors.background,
-        paddingHorizontal: 0,
-        paddingTop: 20,
     },
-
     listContent: {
         paddingHorizontal: 16,
-        paddingBottom: 16,
+        padding: 16,
     },
 });
