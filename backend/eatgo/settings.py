@@ -59,6 +59,7 @@ INSTALLED_APPS = [
     "places",
     "routes",
     "travel_courses",
+    "community",
     "drf_yasg",
     "tourism",
     "third_party_maps",
