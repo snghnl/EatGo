@@ -1,17 +1,14 @@
-import React, { useState, useCallback } from "react";
-import { Animated } from "react-native";
-import FloatingButton from "@/components/main/FloatingButton";
-import PlaceCardSwiper from "@/components/main/PlaceCardSwiper";
+import React, { useState, useCallback } from 'react';
+import { Animated } from 'react-native';
+import FloatingButton from '@/components/main/FloatingButton';
+import PlaceCardSwiper from '@/components/main/PlaceCardSwiper';
 
 interface MapPlaceCardSwiperProps {
     onSelectItem?: (item: any) => void;
     buttonStyle?: any;
 }
 
-export default function MapPlaceCardSwiper({
-    onSelectItem,
-    buttonStyle = { bottom: 80 },
-}: MapPlaceCardSwiperProps) {
+export default function MapPlaceCardSwiper({ onSelectItem, buttonStyle = { bottom: 80 } }: MapPlaceCardSwiperProps) {
     const [showPlaceCardSwiper, setShowPlaceCardSwiper] = useState(false);
     const [buttonAnimation] = useState(new Animated.Value(1));
     const [swiperAnimation] = useState(new Animated.Value(0));
@@ -39,7 +36,7 @@ export default function MapPlaceCardSwiper({
     );
 
     const handleFloatingButtonPress = useCallback(() => {
-        console.log("FloatingButton pressed");
+        console.log('FloatingButton pressed');
         setShowPlaceCardSwiper(true);
 
         // 버튼 사라지는 애니메이션
@@ -95,10 +92,7 @@ export default function MapPlaceCardSwiper({
         <>
             {!showPlaceCardSwiper && (
                 <Animated.View style={buttonAnimatedStyle}>
-                    <FloatingButton
-                        onPress={handleFloatingButtonPress}
-                        style={buttonStyle}
-                    />
+                    <FloatingButton onPress={handleFloatingButtonPress} style={buttonStyle} />
                 </Animated.View>
             )}
 

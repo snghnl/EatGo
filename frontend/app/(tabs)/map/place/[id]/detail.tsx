@@ -94,7 +94,7 @@ export default function PlaceDetailScreen() {
                         name="chevron-back"
                         size={20}
                         color={Colors.textPrimary}
-                        onPress={() => router.push('/(tabs)/map')} //backbutton 수정 필요
+                        onPress={() => router.push('/(tabs)/map')}
                     />
                 </View>{' '}
                 <PlaceHeader

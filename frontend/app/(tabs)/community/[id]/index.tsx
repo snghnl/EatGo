@@ -18,6 +18,7 @@ import { CommunityDetailUser } from "@/components/community/CommunityDetailUser"
 import { CommunityDetailContent } from "@/components/community/CommunityDetailContent";
 
 import { usePost, usePostComments } from "@/src/hooks/useCommunity";
+import ReportModal from "@/components/community/ReportModal";
 
 export default function CommunityPost() {
     const { id: rawId } = useLocalSearchParams<{ id?: string | string[] }>();
@@ -28,6 +29,7 @@ export default function CommunityPost() {
             ? rawId[0]
             : undefined;
 
+    const [reportOpen, setReportOpen] = useState(false);
     const [selectedPlaceId, setSelectedPlaceId] = useState<string | null>(null);
     const [selectedDayPlanId, setSelectedDayPlanId] = useState<string | null>(
         null
@@ -154,38 +156,25 @@ export default function CommunityPost() {
 
                     <View style={styles.userRow}>
                         <CommunityDetailUser
-                            nickname={post.user?.username || "Unknown User"}
-                            profileImageUrl={post.user?.profile_image_url || ""}
+                            nickname={user.username || user.id}
+                            profileImageUrl={user.profile_image || ""}
                             subInfo={`작성: ${dateText}`} // ✅ 날짜만
                         />
                     </View>
 
                     <View style={styles.metaRow}>
                         <ThemedText style={styles.metaText}>
-                            <ThemedText>
-                                좋아요: {post.likes_count || 0}개
-                            </ThemedText>
+                            <ThemedText>여행 기간</ThemedText>
                             <ThemedText color="primary">
-                                💬 댓글: {post.comments_count || 0}개
+                                📍 지역: {courseKey || "-"}
                             </ThemedText>
-                            {post.travel_course && (
-                                <ThemedText color="primary">
-                                    📍 지역:{" "}
-                                    {post.travel_course.destination || "-"}
-                                </ThemedText>
-                            )}
                         </ThemedText>
                     </View>
 
                     <View style={styles.contentRow}>
-                        <CommunityDetailContent
-                            content={post.content || ""}
-                            dateRange={dateText}
-                            location={post.travel_course?.destination || "미정"}
-                        />
+                        <CommunityDetailContent content={post.content ?? ""} />
                     </View>
                 </View>
-
                 <View style={styles.dayplan}>
                     <DayPlanListContainer
                         courseId={courseKey}
@@ -199,12 +188,30 @@ export default function CommunityPost() {
                     />
                 </View>
             </SafeAreaView>
+            <ReportModal
+                visible={reportOpen}
+                onClose={() => setReportOpen(false)}
+                authorName={user.username || user.id}
+                onSubmit={(payload) => {
+                    console.log("신고 제출", payload);
+                }}
+            />
         </ScrollView>
     );
 }
 
 const styles = StyleSheet.create({
-    container: { padding: 15, backgroundColor: Colors.white },
+    container: { padding: 10, backgroundColor: Colors.white },
+    topbar: {
+        position: "absolute",
+        top: 20,
+        left: 15,
+        right: 30,
+        zIndex: 10,
+        flexDirection: "row",
+        justifyContent: "space-between",
+        alignItems: "center",
+    },
     headerRow: {
         marginTop: 50,
         marginBottom: 30,
@@ -218,7 +225,7 @@ const styles = StyleSheet.create({
         alignItems: "center",
         borderBottomColor: Colors.backgroundGray,
         borderBottomWidth: 1,
-        paddingBottom: 15,
+        paddingBottom: 10,
     },
     metaRow: { marginTop: 20 },
     metaText: { color: Colors.textSecondary },

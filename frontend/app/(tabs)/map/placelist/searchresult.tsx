@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useBookmark } from '@/store/BookmarkContext';
-import { View, FlatList, StyleSheet } from 'react-native';
+import { View, FlatList, StyleSheet, SafeAreaView } from 'react-native';
 import { useLocalSearchParams, useRouter } from 'expo-router';
 import { PlaceCard } from '@/components/main/PlaceCard';
 import placesData from '@/mock-data/places.json';
@@ -47,32 +47,30 @@ export default function SearchResultScreen() {
 
     const { bookmarkedPlaceIds, toggleBookmark } = useBookmark();
     return (
-        <View style={styles.container}>
-            <View style={{ position: 'absolute', top: 50, left: 15, zIndex: 10 }}>
-                <Ionicons
-                    name="chevron-back"
-                    size={20}
-                    color={Colors.textPrimary}
-                    onPress={() => router.push('/(tabs)/map')}
-                />
-            </View>
-
-            <FlatList
-                data={searchResults}
-                keyExtractor={(place) => place.id}
-                ListHeaderComponent={
-                    <View style={styles.header}>
-                        <Header
-                            title={`"${query}" 검색 결과`}
-                            subtitle={`${searchResults.length}개의 장소`}
-                            titleColor={Colors.textPrimary}
-                            subtitleColor={Colors.textSecondary}
-                            align="left"
-                        />
-                    </View>
-                }
-                renderItem={({ item }) => (
-                    <ScrollView style={styles.listContent}>
+        <SafeAreaView style={styles.containers}>
+            <ScrollView style={styles.scrollView} showsVerticalScrollIndicator={false}>
+                <View style={{ position: 'absolute', top: 20, left: 15, zIndex: 10 }}>
+                    <Ionicons
+                        name="chevron-back"
+                        size={20}
+                        color={Colors.textPrimary}
+                        onPress={() => router.push('/(tabs)/map')} //backbutton 수정 필요
+                    />
+                </View>
+                <View style={styles.header}>
+                    <Header
+                        title={`"${query}" 검색 결과`}
+                        subtitle={`${searchResults.length}개의 장소`}
+                        titleColor={Colors.textPrimary}
+                        subtitleColor={Colors.textSecondary}
+                        align="left"
+                    />
+                </View>
+                <FlatList
+                    data={searchResults}
+                    keyExtractor={(place) => place.id}
+                    contentContainerStyle={styles.listContent}
+                    renderItem={({ item }) => (
                         <PlaceCard
                             id={item.id}
                             name={item.place_name}
@@ -85,29 +83,27 @@ export default function SearchResultScreen() {
                             onBookmark={() => toggleBookmark(item.id)}
                             onPress={() => router.push(`(tabs)/map/place/${item.id}/detail`)}
                         />
-                    </ScrollView>
-                )}
-            />
-        </View>
+                    )}
+                />
+            </ScrollView>
+        </SafeAreaView>
     );
 }
 
 const styles = StyleSheet.create({
-    container: {
+    containers: {
         flex: 1,
         backgroundColor: Colors.background,
-        paddingTop: 20,
     },
-
+    scrollView: {
+        flex: 1,
+    },
     header: {
         width: '100%',
         backgroundColor: Colors.background,
-        paddingHorizontal: 0,
-        paddingTop: 20,
     },
-
     listContent: {
         paddingHorizontal: 16,
-        paddingBottom: 16,
+        padding: 16,
     },
 });

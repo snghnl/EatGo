@@ -1,131 +1,124 @@
-import React from "react";
-import { View, StyleSheet, Platform } from "react-native";
-import { WebView } from "react-native-webview";
+import React from 'react';
+import { View, StyleSheet, Platform, Image } from 'react-native'; // 👈 Image 추가
+import { WebView } from 'react-native-webview';
 
 const KAKAO_JS_API_KEY = process.env.EXPO_PUBLIC_KAKAO_JS_API_KEY;
-
-// Kakao Maps SDK 타입 정의
-declare global {
-    interface Window {
-        kakao: {
-            maps: {
-                load: (callback: () => void) => void;
-                LatLng: new (lat: number, lng: number) => any;
-                Map: new (container: HTMLElement, options: any) => any;
-                Marker: new (options: any) => any;
-            };
-        };
-    }
-}
 
 type KakaoMapProps = {
     latitude: number;
     longitude: number;
+    pinColor?: string;
 };
-
-type KakaoWebMapProps = {
-    latitude: number;
-    longitude: number;
-};
-
-// 웹 전용 컴포넌트
-function KakaoWebMap({ latitude, longitude }: KakaoWebMapProps) {
-    React.useEffect(() => {
-        const script = document.createElement("script");
-        script.src = `https://dapi.kakao.com/v2/maps/sdk.js?appkey=${KAKAO_JS_API_KEY}&autoload=false`;
-        script.onload = () => {
-            window.kakao.maps.load(() => {
-                const container = document.getElementById("kakao-map");
-                if (container) {
-                    const options = {
-                        center: new window.kakao.maps.LatLng(
-                            latitude,
-                            longitude
-                        ),
-                        level: 3,
-                    };
-                    const map = new window.kakao.maps.Map(container, options);
-
-                    const marker = new window.kakao.maps.Marker({
-                        position: new window.kakao.maps.LatLng(
-                            latitude,
-                            longitude
-                        ),
-                    });
-                    marker.setMap(map);
-                }
-            });
-        };
-        document.head.appendChild(script);
-
-        return () => {
-            // cleanup
-            const existingScript = document.querySelector(
-                'script[src*="kakao"]'
-            );
-            if (existingScript) {
-                existingScript.remove();
-            }
-        };
-    }, [latitude, longitude]);
-
-    return <div id="kakao-map" style={{ width: "100%", height: "100%" }} />;
-}
 
 export default function KakaoMap({ latitude, longitude }: KakaoMapProps) {
-    // 플랫폼별 처리
-    if (Platform.OS === "web") {
-        // 웹에서는 직접 렌더링
-        return <KakaoWebMap latitude={latitude} longitude={longitude} />;
+    if (Platform.OS === 'web') {
+        return <div id="kakao-map" style={{ width: '100%', height: '100%' }} />;
     }
+    const pinUri = Image.resolveAssetSource(require('@/assets/images/pin4.png'))?.uri;
 
-    // 모바일에서는 HTML 파일을 WebView로 렌더링
     const htmlContent = `
-        <!DOCTYPE html>
-        <html>
-        <head>
-            <meta name="viewport" content="width=device-width, initial-scale=1.0">
-            <style>
-                body { margin: 0; padding: 0; }
-                #map { width: 100%; height: 100vh; }
-            </style>
-        </head>
-        <body>
-            <div id="map"></div>
-            <script type="text/javascript" src="https://dapi.kakao.com/v2/maps/sdk.js?appkey=${KAKAO_JS_API_KEY}"></script>
-            <script>
-                var container = document.getElementById('map');
-                var options = {
-                    center: new kakao.maps.LatLng(${latitude}, ${longitude}),
-                    level: 3
-                };
-                var map = new kakao.maps.Map(container, options);
-            </script>
-        </body>
-        </html>
-    `;
+  <!DOCTYPE html>
+  <html>
+    <head>
+      <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+      <style>
+        html, body { margin: 0; padding: 0; height: 100%; }
+        #map { width: 100%; height: 100%; }
+      </style>
+    </head>
+    <body>
+      <div id="map">Loading Kakao Map...</div>
+      <script>
+        (function(){
+          function debug(msg) {
+            if (window.ReactNativeWebView) {
+              window.ReactNativeWebView.postMessage(String(msg));
+            }
+          }
+
+          var appkey = "${KAKAO_JS_API_KEY}";
+          var PIN_URI = "${pinUri}";
+
+
+          if (!appkey) {
+            document.getElementById("map").innerHTML = "<p style='color:red'>No Kakao API key</p>";
+            debug("No API key found");
+            return;
+          }
+
+          var s = document.createElement("script");
+          s.src = "https://dapi.kakao.com/v2/maps/sdk.js?appkey=" + appkey + "&autoload=false";
+          s.onload = function() {
+            debug("Kakao SDK loaded");
+            kakao.maps.load(function() {
+
+              var container = document.getElementById("map");
+              var options = {
+                center: new kakao.maps.LatLng(${latitude}, ${longitude}),
+                level: 3
+              };
+              var map = new kakao.maps.Map(container, options);
+
+              var imageSize = new kakao.maps.Size(30, 40);
+              var imageOption = { offset: new kakao.maps.Point(20, 40) }; // 아래 중앙이 좌표를 가리키도록
+              var markerImage = new kakao.maps.MarkerImage(PIN_URI, imageSize, imageOption);
+
+              // (옵션) 초기 중심 마커 - 기본마커 유지 원하면 주석
+              var centerMarker = new kakao.maps.Marker({
+                position: new kakao.maps.LatLng(${latitude}, ${longitude}),
+                image: markerImage, 
+              });
+              centerMarker.setMap(map);
+
+              var pinMarker = null;
+
+              kakao.maps.event.addListener(map, 'click', function(mouseEvent) {
+                var latlng = mouseEvent.latLng;
+
+                if (!pinMarker) {
+                  pinMarker = new kakao.maps.Marker({
+                    position: latlng,
+                    map: map,
+                    image: markerImage
+                  });
+                } else {
+                  pinMarker.setPosition(latlng);
+                  if (!pinMarker.getMap()) pinMarker.setMap(map);
+                }
+
+                debug("Pin placed at: " + latlng.getLat().toFixed(6) + ", " + latlng.getLng().toFixed(6));
+              });
+            });
+          };
+          s.onerror = function() {
+          };
+          document.head.appendChild(s);
+        })();
+      </script>
+    </body>
+  </html>
+  `;
 
     return (
         <View style={styles.container}>
             <WebView
+                originWhitelist={['*']}
                 source={{ html: htmlContent }}
                 style={styles.webview}
-                javaScriptEnabled={true}
-                domStorageEnabled={true}
-                onMessage={(event) =>
-                    console.log("KAKAO:", event.nativeEvent.data)
-                }
+                javaScriptEnabled
+                domStorageEnabled
+                mixedContentMode="always"
+                onMessage={(event) => {
+                    console.log('[KakaoMap WebView]:', event.nativeEvent.data);
+                }}
+                onError={(e) => console.log('[KakaoMap WebView] error:', e.nativeEvent)}
+                onHttpError={(e) => console.log('[KakaoMap WebView] HTTP error:', e.nativeEvent)}
             />
         </View>
     );
 }
 
 const styles = StyleSheet.create({
-    container: {
-        width: "100%",
-        height: "100%",
-    },
-    webview: {
-        flex: 1,
-    },
+    container: { flex: 1, width: '100%' },
+    webview: { flex: 1 },
 });
