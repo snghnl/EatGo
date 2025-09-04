@@ -38,6 +38,16 @@ export default function CommunityPost() {
     const { comments: _comments } = usePostComments(id);
     const { bookmarkedCourseIds, toggleCourseBookmark } = useBookmark();
 
+    // Ensure hooks run in a consistent order across renders by placing memoization before any early returns
+    const dateText = useMemo(() => {
+        const dateString = post?.created_at || new Date().toISOString();
+        const d = new Date(dateString);
+        const y = d.getFullYear();
+        const m = String(d.getMonth() + 1).padStart(2, "0");
+        const day = String(d.getDate()).padStart(2, "0");
+        return `${y}. ${m}. ${day}`;
+    }, [post?.created_at]);
+
     // Loading state
     if (isLoading) {
         return (
@@ -93,16 +103,6 @@ export default function CommunityPost() {
             </View>
         );
     }
-
-    // ✅ 날짜만 표시 (YYYY. MM. DD)
-    const dateText = useMemo(() => {
-        const dateString = post.created_at || new Date().toISOString();
-        const d = new Date(dateString);
-        const y = d.getFullYear();
-        const m = String(d.getMonth() + 1).padStart(2, "0");
-        const day = String(d.getDate()).padStart(2, "0");
-        return `${y}. ${m}. ${day}`;
-    }, [post.created_at]);
 
     const courseKey = String(post.travel_course?.id ?? "");
     const isBookmarked = bookmarkedCourseIds.includes(courseKey);
