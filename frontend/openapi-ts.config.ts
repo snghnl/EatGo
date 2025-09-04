@@ -5,11 +5,10 @@ export default defineConfig({
     output: "src/client",
     plugins: [
         "@hey-api/client-next",
-        "zod",
         {
             name: "@hey-api/sdk",
             // NOTE: this doesn't allow tree-shaking
-            validator: true,
+            validator: false,
             asClass: true,
             operationId: true,
             methodNameBuilder: (operation) => {

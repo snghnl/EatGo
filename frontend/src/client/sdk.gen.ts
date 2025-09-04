@@ -2,7 +2,6 @@
 
 import type { Options as ClientOptions, TDataShape, Client } from './client';
 import type { AccountsMeReadData, AccountsMeReadResponses, AccountsSignupCreateData, AccountsSignupCreateResponses, AuthTokenCreateData, AuthTokenCreateResponses, AuthTokenRefreshCreateData, AuthTokenRefreshCreateResponses, AuthTokenVerifyCreateData, AuthTokenVerifyCreateResponses, CategoriesListData, CategoriesListResponses, CategoriesCreateData, CategoriesCreateResponses, CategoriesDeleteData, CategoriesDeleteResponses, CategoriesReadData, CategoriesReadResponses, CategoriesPartialUpdateData, CategoriesPartialUpdateResponses, CategoriesUpdateData, CategoriesUpdateResponses, DistrictsListData, DistrictsListResponses, DistrictsReadData, DistrictsReadResponses, PlacesListData, PlacesListResponses, PlacesCreateData, PlacesCreateResponses, PlacesRecommendListData, PlacesRecommendListResponses, PlacesDeleteData, PlacesDeleteResponses, PlacesReadData, PlacesReadResponses, PlacesPartialUpdateData, PlacesPartialUpdateResponses, PlacesUpdateData, PlacesUpdateResponses, ProvincesListData, ProvincesListResponses, ProvincesReadData, ProvincesReadResponses, RoutesListData, RoutesListResponses, RoutesCreateData, RoutesCreateResponses, RoutesMyListData, RoutesMyListResponses, RoutesRecommendListData, RoutesRecommendListResponses, RoutesRecommendListErrors, RoutesDeleteData, RoutesDeleteResponses, RoutesReadData, RoutesReadResponses, RoutesPartialUpdateData, RoutesPartialUpdateResponses, RoutesUpdateData, RoutesUpdateResponses, TourismApiRegionalData, TourismApiRegionalResponses, TourismPoisListData, TourismPoisListResponses, TourismPoisReadData, TourismPoisReadResponses, TourismRecommendationRecommendData, TourismRecommendationRecommendResponses, TourismRecommendationRelatedData, TourismRecommendationRelatedResponses, TourismRelatedListData, TourismRelatedListResponses, TourismRelatedReadData, TourismRelatedReadResponses, TravelCoursesListData, TravelCoursesListResponses, TravelCoursesCreateData, TravelCoursesCreateResponses, TravelCoursesMyListData, TravelCoursesMyListResponses, TravelCoursesDeleteData, TravelCoursesDeleteResponses, TravelCoursesReadData, TravelCoursesReadResponses, TravelCoursesPartialUpdateData, TravelCoursesPartialUpdateResponses, TravelCoursesUpdateData, TravelCoursesUpdateResponses } from './types.gen';
-import { zAccountsMeReadData, zAccountsMeReadResponse, zAccountsSignupCreateData, zAccountsSignupCreateResponse, zAuthTokenCreateData, zAuthTokenCreateResponse, zAuthTokenRefreshCreateData, zAuthTokenRefreshCreateResponse, zAuthTokenVerifyCreateData, zAuthTokenVerifyCreateResponse, zCategoriesListData, zCategoriesListResponse, zCategoriesCreateData, zCategoriesCreateResponse, zCategoriesDeleteData, zCategoriesReadData, zCategoriesReadResponse, zCategoriesPartialUpdateData, zCategoriesPartialUpdateResponse, zCategoriesUpdateData, zCategoriesUpdateResponse, zDistrictsListData, zDistrictsListResponse, zDistrictsReadData, zDistrictsReadResponse, zPlacesListData, zPlacesListResponse, zPlacesCreateData, zPlacesCreateResponse, zPlacesRecommendListData, zPlacesRecommendListResponse, zPlacesDeleteData, zPlacesReadData, zPlacesReadResponse, zPlacesPartialUpdateData, zPlacesPartialUpdateResponse, zPlacesUpdateData, zPlacesUpdateResponse, zProvincesListData, zProvincesListResponse, zProvincesReadData, zProvincesReadResponse, zRoutesListData, zRoutesListResponse, zRoutesCreateData, zRoutesCreateResponse, zRoutesMyListData, zRoutesMyListResponse, zRoutesRecommendListData, zRoutesRecommendListResponse, zRoutesDeleteData, zRoutesReadData, zRoutesReadResponse, zRoutesPartialUpdateData, zRoutesPartialUpdateResponse, zRoutesUpdateData, zRoutesUpdateResponse, zTourismApiRegionalData, zTourismApiRegionalResponse, zTourismPoisListData, zTourismPoisListResponse, zTourismPoisReadData, zTourismPoisReadResponse, zTourismRecommendationRecommendData, zTourismRecommendationRecommendResponse, zTourismRecommendationRelatedData, zTourismRecommendationRelatedResponse, zTourismRelatedListData, zTourismRelatedListResponse, zTourismRelatedReadData, zTourismRelatedReadResponse, zTravelCoursesListData, zTravelCoursesListResponse, zTravelCoursesCreateData, zTravelCoursesCreateResponse, zTravelCoursesMyListData, zTravelCoursesMyListResponse, zTravelCoursesDeleteData, zTravelCoursesReadData, zTravelCoursesReadResponse, zTravelCoursesPartialUpdateData, zTravelCoursesPartialUpdateResponse, zTravelCoursesUpdateData, zTravelCoursesUpdateResponse } from './zod.gen';
 import { client as _heyApiClient } from './client.gen';
 
 export type Options<TData extends TDataShape = TDataShape, ThrowOnError extends boolean = boolean> = ClientOptions<TData, ThrowOnError> & {
@@ -22,12 +21,6 @@ export type Options<TData extends TDataShape = TDataShape, ThrowOnError extends 
 export class Accounts {
     public static accountsMeRead<ThrowOnError extends boolean = false>(options?: Options<AccountsMeReadData, ThrowOnError>) {
         return (options?.client ?? _heyApiClient).get<AccountsMeReadResponses, unknown, ThrowOnError>({
-            requestValidator: async (data) => {
-                return await zAccountsMeReadData.parseAsync(data);
-            },
-            responseValidator: async (data) => {
-                return await zAccountsMeReadResponse.parseAsync(data);
-            },
             security: [
                 {
                     name: 'Authorization',
@@ -41,12 +34,6 @@ export class Accounts {
 
     public static accountsSignupCreate<ThrowOnError extends boolean = false>(options: Options<AccountsSignupCreateData, ThrowOnError>) {
         return (options.client ?? _heyApiClient).post<AccountsSignupCreateResponses, unknown, ThrowOnError>({
-            requestValidator: async (data) => {
-                return await zAccountsSignupCreateData.parseAsync(data);
-            },
-            responseValidator: async (data) => {
-                return await zAccountsSignupCreateResponse.parseAsync(data);
-            },
             security: [
                 {
                     name: 'Authorization',
@@ -70,12 +57,6 @@ export class Auth {
      */
     public static authTokenCreate<ThrowOnError extends boolean = false>(options: Options<AuthTokenCreateData, ThrowOnError>) {
         return (options.client ?? _heyApiClient).post<AuthTokenCreateResponses, unknown, ThrowOnError>({
-            requestValidator: async (data) => {
-                return await zAuthTokenCreateData.parseAsync(data);
-            },
-            responseValidator: async (data) => {
-                return await zAuthTokenCreateResponse.parseAsync(data);
-            },
             security: [
                 {
                     name: 'Authorization',
@@ -97,12 +78,6 @@ export class Auth {
      */
     public static authTokenRefreshCreate<ThrowOnError extends boolean = false>(options: Options<AuthTokenRefreshCreateData, ThrowOnError>) {
         return (options.client ?? _heyApiClient).post<AuthTokenRefreshCreateResponses, unknown, ThrowOnError>({
-            requestValidator: async (data) => {
-                return await zAuthTokenRefreshCreateData.parseAsync(data);
-            },
-            responseValidator: async (data) => {
-                return await zAuthTokenRefreshCreateResponse.parseAsync(data);
-            },
             security: [
                 {
                     name: 'Authorization',
@@ -124,12 +99,6 @@ export class Auth {
      */
     public static authTokenVerifyCreate<ThrowOnError extends boolean = false>(options: Options<AuthTokenVerifyCreateData, ThrowOnError>) {
         return (options.client ?? _heyApiClient).post<AuthTokenVerifyCreateResponses, unknown, ThrowOnError>({
-            requestValidator: async (data) => {
-                return await zAuthTokenVerifyCreateData.parseAsync(data);
-            },
-            responseValidator: async (data) => {
-                return await zAuthTokenVerifyCreateResponse.parseAsync(data);
-            },
             security: [
                 {
                     name: 'Authorization',
@@ -149,12 +118,6 @@ export class Auth {
 export class Categories {
     public static categoriesList<ThrowOnError extends boolean = false>(options?: Options<CategoriesListData, ThrowOnError>) {
         return (options?.client ?? _heyApiClient).get<CategoriesListResponses, unknown, ThrowOnError>({
-            requestValidator: async (data) => {
-                return await zCategoriesListData.parseAsync(data);
-            },
-            responseValidator: async (data) => {
-                return await zCategoriesListResponse.parseAsync(data);
-            },
             security: [
                 {
                     name: 'Authorization',
@@ -168,12 +131,6 @@ export class Categories {
 
     public static categoriesCreate<ThrowOnError extends boolean = false>(options: Options<CategoriesCreateData, ThrowOnError>) {
         return (options.client ?? _heyApiClient).post<CategoriesCreateResponses, unknown, ThrowOnError>({
-            requestValidator: async (data) => {
-                return await zCategoriesCreateData.parseAsync(data);
-            },
-            responseValidator: async (data) => {
-                return await zCategoriesCreateResponse.parseAsync(data);
-            },
             security: [
                 {
                     name: 'Authorization',
@@ -191,9 +148,6 @@ export class Categories {
 
     public static categoriesDelete<ThrowOnError extends boolean = false>(options: Options<CategoriesDeleteData, ThrowOnError>) {
         return (options.client ?? _heyApiClient).delete<CategoriesDeleteResponses, unknown, ThrowOnError>({
-            requestValidator: async (data) => {
-                return await zCategoriesDeleteData.parseAsync(data);
-            },
             security: [
                 {
                     name: 'Authorization',
@@ -207,12 +161,6 @@ export class Categories {
 
     public static categoriesRead<ThrowOnError extends boolean = false>(options: Options<CategoriesReadData, ThrowOnError>) {
         return (options.client ?? _heyApiClient).get<CategoriesReadResponses, unknown, ThrowOnError>({
-            requestValidator: async (data) => {
-                return await zCategoriesReadData.parseAsync(data);
-            },
-            responseValidator: async (data) => {
-                return await zCategoriesReadResponse.parseAsync(data);
-            },
             security: [
                 {
                     name: 'Authorization',
@@ -226,12 +174,6 @@ export class Categories {
 
     public static categoriesPartialUpdate<ThrowOnError extends boolean = false>(options: Options<CategoriesPartialUpdateData, ThrowOnError>) {
         return (options.client ?? _heyApiClient).patch<CategoriesPartialUpdateResponses, unknown, ThrowOnError>({
-            requestValidator: async (data) => {
-                return await zCategoriesPartialUpdateData.parseAsync(data);
-            },
-            responseValidator: async (data) => {
-                return await zCategoriesPartialUpdateResponse.parseAsync(data);
-            },
             security: [
                 {
                     name: 'Authorization',
@@ -249,12 +191,6 @@ export class Categories {
 
     public static categoriesUpdate<ThrowOnError extends boolean = false>(options: Options<CategoriesUpdateData, ThrowOnError>) {
         return (options.client ?? _heyApiClient).put<CategoriesUpdateResponses, unknown, ThrowOnError>({
-            requestValidator: async (data) => {
-                return await zCategoriesUpdateData.parseAsync(data);
-            },
-            responseValidator: async (data) => {
-                return await zCategoriesUpdateResponse.parseAsync(data);
-            },
             security: [
                 {
                     name: 'Authorization',
@@ -277,12 +213,6 @@ export class Districts {
      */
     public static districtsList<ThrowOnError extends boolean = false>(options?: Options<DistrictsListData, ThrowOnError>) {
         return (options?.client ?? _heyApiClient).get<DistrictsListResponses, unknown, ThrowOnError>({
-            requestValidator: async (data) => {
-                return await zDistrictsListData.parseAsync(data);
-            },
-            responseValidator: async (data) => {
-                return await zDistrictsListResponse.parseAsync(data);
-            },
             security: [
                 {
                     name: 'Authorization',
@@ -299,12 +229,6 @@ export class Districts {
      */
     public static districtsRead<ThrowOnError extends boolean = false>(options: Options<DistrictsReadData, ThrowOnError>) {
         return (options.client ?? _heyApiClient).get<DistrictsReadResponses, unknown, ThrowOnError>({
-            requestValidator: async (data) => {
-                return await zDistrictsReadData.parseAsync(data);
-            },
-            responseValidator: async (data) => {
-                return await zDistrictsReadResponse.parseAsync(data);
-            },
             security: [
                 {
                     name: 'Authorization',
@@ -320,12 +244,6 @@ export class Districts {
 export class Places {
     public static placesList<ThrowOnError extends boolean = false>(options?: Options<PlacesListData, ThrowOnError>) {
         return (options?.client ?? _heyApiClient).get<PlacesListResponses, unknown, ThrowOnError>({
-            requestValidator: async (data) => {
-                return await zPlacesListData.parseAsync(data);
-            },
-            responseValidator: async (data) => {
-                return await zPlacesListResponse.parseAsync(data);
-            },
             security: [
                 {
                     name: 'Authorization',
@@ -339,12 +257,6 @@ export class Places {
 
     public static placesCreate<ThrowOnError extends boolean = false>(options: Options<PlacesCreateData, ThrowOnError>) {
         return (options.client ?? _heyApiClient).post<PlacesCreateResponses, unknown, ThrowOnError>({
-            requestValidator: async (data) => {
-                return await zPlacesCreateData.parseAsync(data);
-            },
-            responseValidator: async (data) => {
-                return await zPlacesCreateResponse.parseAsync(data);
-            },
             security: [
                 {
                     name: 'Authorization',
@@ -362,12 +274,6 @@ export class Places {
 
     public static placesRecommendList<ThrowOnError extends boolean = false>(options: Options<PlacesRecommendListData, ThrowOnError>) {
         return (options.client ?? _heyApiClient).get<PlacesRecommendListResponses, unknown, ThrowOnError>({
-            requestValidator: async (data) => {
-                return await zPlacesRecommendListData.parseAsync(data);
-            },
-            responseValidator: async (data) => {
-                return await zPlacesRecommendListResponse.parseAsync(data);
-            },
             security: [
                 {
                     name: 'Authorization',
@@ -381,9 +287,6 @@ export class Places {
 
     public static placesDelete<ThrowOnError extends boolean = false>(options: Options<PlacesDeleteData, ThrowOnError>) {
         return (options.client ?? _heyApiClient).delete<PlacesDeleteResponses, unknown, ThrowOnError>({
-            requestValidator: async (data) => {
-                return await zPlacesDeleteData.parseAsync(data);
-            },
             security: [
                 {
                     name: 'Authorization',
@@ -397,12 +300,6 @@ export class Places {
 
     public static placesRead<ThrowOnError extends boolean = false>(options: Options<PlacesReadData, ThrowOnError>) {
         return (options.client ?? _heyApiClient).get<PlacesReadResponses, unknown, ThrowOnError>({
-            requestValidator: async (data) => {
-                return await zPlacesReadData.parseAsync(data);
-            },
-            responseValidator: async (data) => {
-                return await zPlacesReadResponse.parseAsync(data);
-            },
             security: [
                 {
                     name: 'Authorization',
@@ -416,12 +313,6 @@ export class Places {
 
     public static placesPartialUpdate<ThrowOnError extends boolean = false>(options: Options<PlacesPartialUpdateData, ThrowOnError>) {
         return (options.client ?? _heyApiClient).patch<PlacesPartialUpdateResponses, unknown, ThrowOnError>({
-            requestValidator: async (data) => {
-                return await zPlacesPartialUpdateData.parseAsync(data);
-            },
-            responseValidator: async (data) => {
-                return await zPlacesPartialUpdateResponse.parseAsync(data);
-            },
             security: [
                 {
                     name: 'Authorization',
@@ -439,12 +330,6 @@ export class Places {
 
     public static placesUpdate<ThrowOnError extends boolean = false>(options: Options<PlacesUpdateData, ThrowOnError>) {
         return (options.client ?? _heyApiClient).put<PlacesUpdateResponses, unknown, ThrowOnError>({
-            requestValidator: async (data) => {
-                return await zPlacesUpdateData.parseAsync(data);
-            },
-            responseValidator: async (data) => {
-                return await zPlacesUpdateResponse.parseAsync(data);
-            },
             security: [
                 {
                     name: 'Authorization',
@@ -467,12 +352,6 @@ export class Provinces {
      */
     public static provincesList<ThrowOnError extends boolean = false>(options?: Options<ProvincesListData, ThrowOnError>) {
         return (options?.client ?? _heyApiClient).get<ProvincesListResponses, unknown, ThrowOnError>({
-            requestValidator: async (data) => {
-                return await zProvincesListData.parseAsync(data);
-            },
-            responseValidator: async (data) => {
-                return await zProvincesListResponse.parseAsync(data);
-            },
             security: [
                 {
                     name: 'Authorization',
@@ -489,12 +368,6 @@ export class Provinces {
      */
     public static provincesRead<ThrowOnError extends boolean = false>(options: Options<ProvincesReadData, ThrowOnError>) {
         return (options.client ?? _heyApiClient).get<ProvincesReadResponses, unknown, ThrowOnError>({
-            requestValidator: async (data) => {
-                return await zProvincesReadData.parseAsync(data);
-            },
-            responseValidator: async (data) => {
-                return await zProvincesReadResponse.parseAsync(data);
-            },
             security: [
                 {
                     name: 'Authorization',
@@ -510,12 +383,6 @@ export class Provinces {
 export class Routes {
     public static routesList<ThrowOnError extends boolean = false>(options?: Options<RoutesListData, ThrowOnError>) {
         return (options?.client ?? _heyApiClient).get<RoutesListResponses, unknown, ThrowOnError>({
-            requestValidator: async (data) => {
-                return await zRoutesListData.parseAsync(data);
-            },
-            responseValidator: async (data) => {
-                return await zRoutesListResponse.parseAsync(data);
-            },
             security: [
                 {
                     name: 'Authorization',
@@ -529,12 +396,6 @@ export class Routes {
 
     public static routesCreate<ThrowOnError extends boolean = false>(options: Options<RoutesCreateData, ThrowOnError>) {
         return (options.client ?? _heyApiClient).post<RoutesCreateResponses, unknown, ThrowOnError>({
-            requestValidator: async (data) => {
-                return await zRoutesCreateData.parseAsync(data);
-            },
-            responseValidator: async (data) => {
-                return await zRoutesCreateResponse.parseAsync(data);
-            },
             security: [
                 {
                     name: 'Authorization',
@@ -552,12 +413,6 @@ export class Routes {
 
     public static routesMyList<ThrowOnError extends boolean = false>(options?: Options<RoutesMyListData, ThrowOnError>) {
         return (options?.client ?? _heyApiClient).get<RoutesMyListResponses, unknown, ThrowOnError>({
-            requestValidator: async (data) => {
-                return await zRoutesMyListData.parseAsync(data);
-            },
-            responseValidator: async (data) => {
-                return await zRoutesMyListResponse.parseAsync(data);
-            },
             security: [
                 {
                     name: 'Authorization',
@@ -571,12 +426,6 @@ export class Routes {
 
     public static routesRecommendList<ThrowOnError extends boolean = false>(options: Options<RoutesRecommendListData, ThrowOnError>) {
         return (options.client ?? _heyApiClient).get<RoutesRecommendListResponses, RoutesRecommendListErrors, ThrowOnError>({
-            requestValidator: async (data) => {
-                return await zRoutesRecommendListData.parseAsync(data);
-            },
-            responseValidator: async (data) => {
-                return await zRoutesRecommendListResponse.parseAsync(data);
-            },
             security: [
                 {
                     name: 'Authorization',
@@ -590,9 +439,6 @@ export class Routes {
 
     public static routesDelete<ThrowOnError extends boolean = false>(options: Options<RoutesDeleteData, ThrowOnError>) {
         return (options.client ?? _heyApiClient).delete<RoutesDeleteResponses, unknown, ThrowOnError>({
-            requestValidator: async (data) => {
-                return await zRoutesDeleteData.parseAsync(data);
-            },
             security: [
                 {
                     name: 'Authorization',
@@ -606,12 +452,6 @@ export class Routes {
 
     public static routesRead<ThrowOnError extends boolean = false>(options: Options<RoutesReadData, ThrowOnError>) {
         return (options.client ?? _heyApiClient).get<RoutesReadResponses, unknown, ThrowOnError>({
-            requestValidator: async (data) => {
-                return await zRoutesReadData.parseAsync(data);
-            },
-            responseValidator: async (data) => {
-                return await zRoutesReadResponse.parseAsync(data);
-            },
             security: [
                 {
                     name: 'Authorization',
@@ -625,12 +465,6 @@ export class Routes {
 
     public static routesPartialUpdate<ThrowOnError extends boolean = false>(options: Options<RoutesPartialUpdateData, ThrowOnError>) {
         return (options.client ?? _heyApiClient).patch<RoutesPartialUpdateResponses, unknown, ThrowOnError>({
-            requestValidator: async (data) => {
-                return await zRoutesPartialUpdateData.parseAsync(data);
-            },
-            responseValidator: async (data) => {
-                return await zRoutesPartialUpdateResponse.parseAsync(data);
-            },
             security: [
                 {
                     name: 'Authorization',
@@ -648,12 +482,6 @@ export class Routes {
 
     public static routesUpdate<ThrowOnError extends boolean = false>(options: Options<RoutesUpdateData, ThrowOnError>) {
         return (options.client ?? _heyApiClient).put<RoutesUpdateResponses, unknown, ThrowOnError>({
-            requestValidator: async (data) => {
-                return await zRoutesUpdateData.parseAsync(data);
-            },
-            responseValidator: async (data) => {
-                return await zRoutesUpdateResponse.parseAsync(data);
-            },
             security: [
                 {
                     name: 'Authorization',
@@ -684,12 +512,6 @@ export class Tourism {
      */
     public static tourismApiRegional<ThrowOnError extends boolean = false>(options: Options<TourismApiRegionalData, ThrowOnError>) {
         return (options.client ?? _heyApiClient).post<TourismApiRegionalResponses, unknown, ThrowOnError>({
-            requestValidator: async (data) => {
-                return await zTourismApiRegionalData.parseAsync(data);
-            },
-            responseValidator: async (data) => {
-                return await zTourismApiRegionalResponse.parseAsync(data);
-            },
             security: [
                 {
                     name: 'Authorization',
@@ -710,12 +532,6 @@ export class Tourism {
      */
     public static tourismPoisList<ThrowOnError extends boolean = false>(options?: Options<TourismPoisListData, ThrowOnError>) {
         return (options?.client ?? _heyApiClient).get<TourismPoisListResponses, unknown, ThrowOnError>({
-            requestValidator: async (data) => {
-                return await zTourismPoisListData.parseAsync(data);
-            },
-            responseValidator: async (data) => {
-                return await zTourismPoisListResponse.parseAsync(data);
-            },
             security: [
                 {
                     name: 'Authorization',
@@ -732,12 +548,6 @@ export class Tourism {
      */
     public static tourismPoisRead<ThrowOnError extends boolean = false>(options: Options<TourismPoisReadData, ThrowOnError>) {
         return (options.client ?? _heyApiClient).get<TourismPoisReadResponses, unknown, ThrowOnError>({
-            requestValidator: async (data) => {
-                return await zTourismPoisReadData.parseAsync(data);
-            },
-            responseValidator: async (data) => {
-                return await zTourismPoisReadResponse.parseAsync(data);
-            },
             security: [
                 {
                     name: 'Authorization',
@@ -761,12 +571,6 @@ export class Tourism {
      */
     public static tourismRecommendationRecommend<ThrowOnError extends boolean = false>(options: Options<TourismRecommendationRecommendData, ThrowOnError>) {
         return (options.client ?? _heyApiClient).post<TourismRecommendationRecommendResponses, unknown, ThrowOnError>({
-            requestValidator: async (data) => {
-                return await zTourismRecommendationRecommendData.parseAsync(data);
-            },
-            responseValidator: async (data) => {
-                return await zTourismRecommendationRecommendResponse.parseAsync(data);
-            },
             security: [
                 {
                     name: 'Authorization',
@@ -793,12 +597,6 @@ export class Tourism {
      */
     public static tourismRecommendationRelated<ThrowOnError extends boolean = false>(options: Options<TourismRecommendationRelatedData, ThrowOnError>) {
         return (options.client ?? _heyApiClient).post<TourismRecommendationRelatedResponses, unknown, ThrowOnError>({
-            requestValidator: async (data) => {
-                return await zTourismRecommendationRelatedData.parseAsync(data);
-            },
-            responseValidator: async (data) => {
-                return await zTourismRecommendationRelatedResponse.parseAsync(data);
-            },
             security: [
                 {
                     name: 'Authorization',
@@ -819,12 +617,6 @@ export class Tourism {
      */
     public static tourismRelatedList<ThrowOnError extends boolean = false>(options?: Options<TourismRelatedListData, ThrowOnError>) {
         return (options?.client ?? _heyApiClient).get<TourismRelatedListResponses, unknown, ThrowOnError>({
-            requestValidator: async (data) => {
-                return await zTourismRelatedListData.parseAsync(data);
-            },
-            responseValidator: async (data) => {
-                return await zTourismRelatedListResponse.parseAsync(data);
-            },
             security: [
                 {
                     name: 'Authorization',
@@ -841,12 +633,6 @@ export class Tourism {
      */
     public static tourismRelatedRead<ThrowOnError extends boolean = false>(options: Options<TourismRelatedReadData, ThrowOnError>) {
         return (options.client ?? _heyApiClient).get<TourismRelatedReadResponses, unknown, ThrowOnError>({
-            requestValidator: async (data) => {
-                return await zTourismRelatedReadData.parseAsync(data);
-            },
-            responseValidator: async (data) => {
-                return await zTourismRelatedReadResponse.parseAsync(data);
-            },
             security: [
                 {
                     name: 'Authorization',
@@ -862,12 +648,6 @@ export class Tourism {
 export class TravelCourses {
     public static travelCoursesList<ThrowOnError extends boolean = false>(options?: Options<TravelCoursesListData, ThrowOnError>) {
         return (options?.client ?? _heyApiClient).get<TravelCoursesListResponses, unknown, ThrowOnError>({
-            requestValidator: async (data) => {
-                return await zTravelCoursesListData.parseAsync(data);
-            },
-            responseValidator: async (data) => {
-                return await zTravelCoursesListResponse.parseAsync(data);
-            },
             security: [
                 {
                     name: 'Authorization',
@@ -881,12 +661,6 @@ export class TravelCourses {
 
     public static travelCoursesCreate<ThrowOnError extends boolean = false>(options: Options<TravelCoursesCreateData, ThrowOnError>) {
         return (options.client ?? _heyApiClient).post<TravelCoursesCreateResponses, unknown, ThrowOnError>({
-            requestValidator: async (data) => {
-                return await zTravelCoursesCreateData.parseAsync(data);
-            },
-            responseValidator: async (data) => {
-                return await zTravelCoursesCreateResponse.parseAsync(data);
-            },
             security: [
                 {
                     name: 'Authorization',
@@ -904,12 +678,6 @@ export class TravelCourses {
 
     public static travelCoursesMyList<ThrowOnError extends boolean = false>(options?: Options<TravelCoursesMyListData, ThrowOnError>) {
         return (options?.client ?? _heyApiClient).get<TravelCoursesMyListResponses, unknown, ThrowOnError>({
-            requestValidator: async (data) => {
-                return await zTravelCoursesMyListData.parseAsync(data);
-            },
-            responseValidator: async (data) => {
-                return await zTravelCoursesMyListResponse.parseAsync(data);
-            },
             security: [
                 {
                     name: 'Authorization',
@@ -923,9 +691,6 @@ export class TravelCourses {
 
     public static travelCoursesDelete<ThrowOnError extends boolean = false>(options: Options<TravelCoursesDeleteData, ThrowOnError>) {
         return (options.client ?? _heyApiClient).delete<TravelCoursesDeleteResponses, unknown, ThrowOnError>({
-            requestValidator: async (data) => {
-                return await zTravelCoursesDeleteData.parseAsync(data);
-            },
             security: [
                 {
                     name: 'Authorization',
@@ -939,12 +704,6 @@ export class TravelCourses {
 
     public static travelCoursesRead<ThrowOnError extends boolean = false>(options: Options<TravelCoursesReadData, ThrowOnError>) {
         return (options.client ?? _heyApiClient).get<TravelCoursesReadResponses, unknown, ThrowOnError>({
-            requestValidator: async (data) => {
-                return await zTravelCoursesReadData.parseAsync(data);
-            },
-            responseValidator: async (data) => {
-                return await zTravelCoursesReadResponse.parseAsync(data);
-            },
             security: [
                 {
                     name: 'Authorization',
@@ -958,12 +717,6 @@ export class TravelCourses {
 
     public static travelCoursesPartialUpdate<ThrowOnError extends boolean = false>(options: Options<TravelCoursesPartialUpdateData, ThrowOnError>) {
         return (options.client ?? _heyApiClient).patch<TravelCoursesPartialUpdateResponses, unknown, ThrowOnError>({
-            requestValidator: async (data) => {
-                return await zTravelCoursesPartialUpdateData.parseAsync(data);
-            },
-            responseValidator: async (data) => {
-                return await zTravelCoursesPartialUpdateResponse.parseAsync(data);
-            },
             security: [
                 {
                     name: 'Authorization',
@@ -981,12 +734,6 @@ export class TravelCourses {
 
     public static travelCoursesUpdate<ThrowOnError extends boolean = false>(options: Options<TravelCoursesUpdateData, ThrowOnError>) {
         return (options.client ?? _heyApiClient).put<TravelCoursesUpdateResponses, unknown, ThrowOnError>({
-            requestValidator: async (data) => {
-                return await zTravelCoursesUpdateData.parseAsync(data);
-            },
-            responseValidator: async (data) => {
-                return await zTravelCoursesUpdateResponse.parseAsync(data);
-            },
             security: [
                 {
                     name: 'Authorization',
