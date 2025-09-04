@@ -28,8 +28,12 @@ class PostListView(APIView):
         content = serializers.CharField()
         images = serializers.ListField(child=serializers.DictField(), required=False)
 
+        class Meta:
+            ref_name = "PostListInput"
+
     class OutputSerializer(PostListSerializer):
-        pass
+        class Meta(PostListSerializer.Meta):
+            ref_name = "PostListOutput"
 
     @swagger_auto_schema(
         operation_description="Get list of community posts",
@@ -81,8 +85,12 @@ class PostDetailView(APIView):
         content = serializers.CharField(required=False)
         images = serializers.ListField(child=serializers.DictField(), required=False)
 
+        class Meta:
+            ref_name = "PostDetailInput"
+
     class OutputSerializer(PostDetailSerializer):
-        pass
+        class Meta(PostDetailSerializer.Meta):
+            ref_name = "PostDetailOutput"
 
     @swagger_auto_schema(
         operation_description="Get post details", responses={200: OutputSerializer}
@@ -138,6 +146,9 @@ class PostLikeView(APIView):
     class OutputSerializer(serializers.Serializer):
         liked = serializers.BooleanField()
 
+        class Meta:
+            ref_name = "PostLikeOutput"
+
     @swagger_auto_schema(
         operation_description="Toggle like status for a post",
         responses={200: OutputSerializer},
@@ -159,8 +170,12 @@ class PostCommentsView(APIView):
     class InputSerializer(serializers.Serializer):
         content = serializers.CharField()
 
+        class Meta:
+            ref_name = "PostCommentsInput"
+
     class OutputSerializer(CommentSerializer):
-        pass
+        class Meta(CommentSerializer.Meta):
+            ref_name = "PostCommentsOutput"
 
     @swagger_auto_schema(
         operation_description="Get comments for a post",
@@ -205,8 +220,12 @@ class CommentDetailView(APIView):
     class InputSerializer(serializers.Serializer):
         content = serializers.CharField()
 
+        class Meta:
+            ref_name = "CommentDetailInput"
+
     class OutputSerializer(CommentSerializer):
-        pass
+        class Meta(CommentSerializer.Meta):
+            ref_name = "CommentDetailOutput"
 
     @swagger_auto_schema(
         operation_description="Update a comment",
