@@ -1,4 +1,5 @@
 from rest_framework.viewsets import ReadOnlyModelViewSet
+from rest_framework.permissions import AllowAny
 from drf_yasg.utils import swagger_auto_schema
 
 from .models import District, Province
@@ -6,6 +7,7 @@ from .serializers import DistrictSerializer, DistrictListSerializer, ProvinceSer
 
 
 class DistrictViewSet(ReadOnlyModelViewSet):
+    permission_classes = [AllowAny]
     queryset = District.objects.select_related("province").filter(is_active=True)
 
     def get_serializer_class(self):
@@ -29,6 +31,7 @@ class DistrictViewSet(ReadOnlyModelViewSet):
 
 
 class ProvinceViewSet(ReadOnlyModelViewSet):
+    permission_classes = [AllowAny]
     queryset = Province.objects.filter(is_active=True)
     serializer_class = ProvinceSerializer
 
