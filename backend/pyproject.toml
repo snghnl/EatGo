@@ -12,6 +12,7 @@ dependencies = [
     "python-dotenv",
     "requests",
     "psycopg2-binary>=2.9.9",
+    "django-cors-headers>=4.7.0",
 ]
 
 [dependency-groups]
