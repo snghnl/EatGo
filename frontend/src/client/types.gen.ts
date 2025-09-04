@@ -118,6 +118,256 @@ export type Category = {
     readonly updated_at?: string;
 };
 
+export type CommentDetailInput = {
+    /**
+     * Content
+     */
+    content: string;
+};
+
+export type UserBasic = {
+    /**
+     * ID
+     */
+    readonly id?: number;
+    /**
+     * Name
+     */
+    username: string;
+    /**
+     * Profile Image URL
+     */
+    profile_image_url?: string | null;
+};
+
+export type CommentDetailOutput = {
+    /**
+     * Id
+     */
+    readonly id?: string;
+    user?: UserBasic;
+    /**
+     * Comment Content
+     */
+    content: string;
+    /**
+     * Created at
+     */
+    readonly created_at?: string;
+    /**
+     * Updated at
+     */
+    readonly updated_at?: string;
+};
+
+export type TravelCourseBasic = {
+    /**
+     * Id
+     */
+    readonly id?: string;
+    /**
+     * Title
+     */
+    title: string;
+    /**
+     * Description
+     */
+    description?: string;
+    /**
+     * Destination
+     */
+    destination?: string | null;
+    /**
+     * Start date
+     */
+    start_date?: string | null;
+    /**
+     * End date
+     */
+    end_date?: string | null;
+};
+
+export type PostImage = {
+    /**
+     * Id
+     */
+    readonly id?: string;
+    /**
+     * Image URL
+     * Image storage path or CDN URL
+     */
+    url: string;
+    /**
+     * Image Sequence
+     * Order of images in the post
+     */
+    sequence?: number;
+    /**
+     * Alternative Text
+     * Alternative text for accessibility
+     */
+    alt_text?: string;
+};
+
+export type PostListOutput = {
+    /**
+     * Id
+     */
+    readonly id?: string;
+    user?: UserBasic;
+    travel_course?: TravelCourseBasic;
+    /**
+     * Post Title
+     */
+    title: string;
+    /**
+     * Post Content
+     */
+    content: string;
+    /**
+     * Likes Count
+     */
+    readonly likes_count?: number;
+    /**
+     * Comments Count
+     */
+    readonly comments_count?: number;
+    readonly images?: Array<PostImage>;
+    /**
+     * Created at
+     */
+    readonly created_at?: string;
+    /**
+     * Updated at
+     */
+    readonly updated_at?: string;
+};
+
+export type PostListInput = {
+    /**
+     * Travel course id
+     */
+    travel_course_id?: string;
+    /**
+     * Title
+     */
+    title: string;
+    /**
+     * Content
+     */
+    content: string;
+    images?: Array<{
+        [key: string]: string | null;
+    }>;
+};
+
+export type Comment = {
+    /**
+     * Id
+     */
+    readonly id?: string;
+    user?: UserBasic;
+    /**
+     * Comment Content
+     */
+    content: string;
+    /**
+     * Created at
+     */
+    readonly created_at?: string;
+    /**
+     * Updated at
+     */
+    readonly updated_at?: string;
+};
+
+export type PostDetailOutput = {
+    /**
+     * Id
+     */
+    readonly id?: string;
+    user?: UserBasic;
+    travel_course?: TravelCourseBasic;
+    /**
+     * Post Title
+     */
+    title: string;
+    /**
+     * Post Content
+     */
+    content: string;
+    /**
+     * Likes Count
+     */
+    readonly likes_count?: number;
+    /**
+     * Comments Count
+     */
+    readonly comments_count?: number;
+    readonly images?: Array<PostImage>;
+    readonly comments?: Array<Comment>;
+    /**
+     * Is liked
+     */
+    readonly is_liked?: string;
+    /**
+     * Created at
+     */
+    readonly created_at?: string;
+    /**
+     * Updated at
+     */
+    readonly updated_at?: string;
+};
+
+export type PostDetailInput = {
+    /**
+     * Title
+     */
+    title?: string;
+    /**
+     * Content
+     */
+    content?: string;
+    images?: Array<{
+        [key: string]: string | null;
+    }>;
+};
+
+export type PostCommentsOutput = {
+    /**
+     * Id
+     */
+    readonly id?: string;
+    user?: UserBasic;
+    /**
+     * Comment Content
+     */
+    content: string;
+    /**
+     * Created at
+     */
+    readonly created_at?: string;
+    /**
+     * Updated at
+     */
+    readonly updated_at?: string;
+};
+
+export type PostCommentsInput = {
+    /**
+     * Content
+     */
+    content: string;
+};
+
+export type PostLikeOutput = {
+    /**
+     * Liked
+     */
+    liked: boolean;
+};
+
 export type DistrictList = {
     /**
      * Id
@@ -743,6 +993,154 @@ export type CategoriesUpdateResponses = {
 };
 
 export type CategoriesUpdateResponse = CategoriesUpdateResponses[keyof CategoriesUpdateResponses];
+
+export type CommunityCommentsDeleteData = {
+    body?: never;
+    path: {
+        comment_id: string;
+    };
+    query?: never;
+    url: '/community/comments/{comment_id}/';
+};
+
+export type CommunityCommentsDeleteResponses = {
+    /**
+     * Comment deleted successfully
+     */
+    204: unknown;
+};
+
+export type CommunityCommentsPartialUpdateData = {
+    body: CommentDetailInput;
+    path: {
+        comment_id: string;
+    };
+    query?: never;
+    url: '/community/comments/{comment_id}/';
+};
+
+export type CommunityCommentsPartialUpdateResponses = {
+    200: CommentDetailOutput;
+};
+
+export type CommunityCommentsPartialUpdateResponse = CommunityCommentsPartialUpdateResponses[keyof CommunityCommentsPartialUpdateResponses];
+
+export type CommunityPostsListData = {
+    body?: never;
+    path?: never;
+    query?: never;
+    url: '/community/posts/';
+};
+
+export type CommunityPostsListResponses = {
+    200: Array<PostListOutput>;
+};
+
+export type CommunityPostsListResponse = CommunityPostsListResponses[keyof CommunityPostsListResponses];
+
+export type CommunityPostsCreateData = {
+    body: PostListInput;
+    path?: never;
+    query?: never;
+    url: '/community/posts/';
+};
+
+export type CommunityPostsCreateResponses = {
+    201: PostListOutput;
+};
+
+export type CommunityPostsCreateResponse = CommunityPostsCreateResponses[keyof CommunityPostsCreateResponses];
+
+export type CommunityPostsDeleteData = {
+    body?: never;
+    path: {
+        post_id: string;
+    };
+    query?: never;
+    url: '/community/posts/{post_id}/';
+};
+
+export type CommunityPostsDeleteResponses = {
+    /**
+     * Post deleted successfully
+     */
+    204: unknown;
+};
+
+export type CommunityPostsReadData = {
+    body?: never;
+    path: {
+        post_id: string;
+    };
+    query?: never;
+    url: '/community/posts/{post_id}/';
+};
+
+export type CommunityPostsReadResponses = {
+    200: PostDetailOutput;
+};
+
+export type CommunityPostsReadResponse = CommunityPostsReadResponses[keyof CommunityPostsReadResponses];
+
+export type CommunityPostsPartialUpdateData = {
+    body: PostDetailInput;
+    path: {
+        post_id: string;
+    };
+    query?: never;
+    url: '/community/posts/{post_id}/';
+};
+
+export type CommunityPostsPartialUpdateResponses = {
+    200: PostDetailOutput;
+};
+
+export type CommunityPostsPartialUpdateResponse = CommunityPostsPartialUpdateResponses[keyof CommunityPostsPartialUpdateResponses];
+
+export type CommunityPostsCommentsListData = {
+    body?: never;
+    path: {
+        post_id: string;
+    };
+    query?: never;
+    url: '/community/posts/{post_id}/comments/';
+};
+
+export type CommunityPostsCommentsListResponses = {
+    200: Array<PostCommentsOutput>;
+};
+
+export type CommunityPostsCommentsListResponse = CommunityPostsCommentsListResponses[keyof CommunityPostsCommentsListResponses];
+
+export type CommunityPostsCommentsCreateData = {
+    body: PostCommentsInput;
+    path: {
+        post_id: string;
+    };
+    query?: never;
+    url: '/community/posts/{post_id}/comments/';
+};
+
+export type CommunityPostsCommentsCreateResponses = {
+    201: PostCommentsOutput;
+};
+
+export type CommunityPostsCommentsCreateResponse = CommunityPostsCommentsCreateResponses[keyof CommunityPostsCommentsCreateResponses];
+
+export type CommunityPostsLikeCreateData = {
+    body?: never;
+    path: {
+        post_id: string;
+    };
+    query?: never;
+    url: '/community/posts/{post_id}/like/';
+};
+
+export type CommunityPostsLikeCreateResponses = {
+    200: PostLikeOutput;
+};
+
+export type CommunityPostsLikeCreateResponse = CommunityPostsLikeCreateResponses[keyof CommunityPostsLikeCreateResponses];
 
 export type DistrictsListData = {
     body?: never;
