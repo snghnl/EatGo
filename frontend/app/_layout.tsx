@@ -29,11 +29,7 @@ export const viewport = {
 client.setConfig({
     // set default base url for requests
     // TODO: change to production url
-    baseUrl: "http://localhost:8000",
-    // set default headers for requests
-    headers: {
-        Authorization: "Bearer <token_from_service_client>",
-    },
+    baseUrl: "http://localhost:8000/api/v1",
 });
 
 export default function RootLayout() {
@@ -73,7 +69,19 @@ export default function RootLayout() {
                         >
                             <Stack>
                                 <Stack.Screen
-                                    name="onboarding"
+                                    name="onboarding/index"
+                                    options={{ headerShown: false }}
+                                />
+                                <Stack.Screen
+                                    name="onboarding/login"
+                                    options={{ headerShown: false }}
+                                />
+                                <Stack.Screen
+                                    name="onboarding/signup"
+                                    options={{ headerShown: false }}
+                                />
+                                <Stack.Screen
+                                    name="onboarding/food-preference"
                                     options={{ headerShown: false }}
                                 />
                                 <Stack.Screen
@@ -81,7 +89,7 @@ export default function RootLayout() {
                                     options={{ headerShown: false }}
                                 />
                                 <Stack.Screen
-                                    name="placelist/[category]/index"
+                                    name="plan/[id]/index"
                                     options={{
                                         title: "",
                                         headerBackVisible: true,
