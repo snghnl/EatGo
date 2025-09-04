@@ -1,6 +1,6 @@
-import React, { createContext, useContext, useState, useEffect } from 'react';
-import { useRouter, useSegments } from 'expo-router';
-import { AuthUtils } from '@/src/utils/auth';
+import React, { createContext, useContext, useState, useEffect } from "react";
+import { useRouter, useSegments } from "expo-router";
+import { AuthUtils } from "@/src/utils/auth";
 
 interface AuthContextType {
     isAuthenticated: boolean;
@@ -14,7 +14,7 @@ const AuthContext = createContext<AuthContextType | null>(null);
 export const useAuth = () => {
     const context = useContext(AuthContext);
     if (!context) {
-        throw new Error('useAuth must be used within an AuthProvider');
+        throw new Error("useAuth must be used within an AuthProvider");
     }
     return context;
 };
@@ -38,14 +38,14 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
     useEffect(() => {
         if (isLoading) return;
 
-        const inAuthGroup = segments[0] === 'onboarding';
+        const inAuthGroup = segments[0] === "onboarding";
 
         if (!isAuthenticated && !inAuthGroup) {
             // Redirect to onboarding if not authenticated
-            router.replace('/onboarding');
+            router.replace("/onboarding");
         } else if (isAuthenticated && inAuthGroup) {
             // Redirect to main app if authenticated
-            router.replace('/(tabs)');
+            router.replace("/(tabs)/map");
         }
     }, [isAuthenticated, isLoading, segments]);
 
@@ -54,7 +54,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
             const authenticated = await AuthUtils.isAuthenticated();
             setIsAuthenticated(authenticated);
         } catch (error) {
-            console.error('Error checking auth status:', error);
+            console.error("Error checking auth status:", error);
             setIsAuthenticated(false);
         } finally {
             setIsLoading(false);
@@ -66,7 +66,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
             await AuthUtils.setTokens(tokens);
             setIsAuthenticated(true);
         } catch (error) {
-            console.error('Login error:', error);
+            console.error("Login error:", error);
             throw error;
         }
     };
@@ -75,9 +75,9 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
         try {
             await AuthUtils.clearTokens();
             setIsAuthenticated(false);
-            router.replace('/onboarding');
+            router.replace("/onboarding");
         } catch (error) {
-            console.error('Logout error:', error);
+            console.error("Logout error:", error);
         }
     };
 
@@ -87,7 +87,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
                 isAuthenticated,
                 isLoading,
                 login,
-                logout
+                logout,
             }}
         >
             {children}
