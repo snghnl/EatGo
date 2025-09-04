@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { useBookmark } from '@/store/BookmarkContext';
-import { View, ScrollView, StyleSheet } from 'react-native';
+import { View, ScrollView, StyleSheet, TouchableOpacity, Alert } from 'react-native';
 import MyPageHeader from '@/components/mypage/MyPageHeader';
 import usersData from '@/mock-data/users.json';
 import { MyPageTabs } from '@/components/mypage/MyPageTabs';
@@ -13,15 +13,29 @@ import { ThemedText } from '@/components/ThemedText';
 import { Colors } from '@/constants/Colors';
 import { usePostStore } from '@/store/posts';
 import { router } from 'expo-router';
+import { useAuth } from '@/src/contexts/AuthContext';
+import { Ionicons } from '@expo/vector-icons';
 
 const MyPageTab = () => {
     const [activeTab, setActiveTab] = useState<'places' | 'courses' | 'saved'>('places');
     const [sortOption, setSortOption] = useState('최신순');
     const { bookmarkedPlaceIds, toggleBookmark, bookmarkedCourseIds, toggleCourseBookmark } = useBookmark();
+    const { logout } = useAuth();
     const user = usersData[0];
     const sortedPlaces = placesData.documents.slice(0, 3);
     const allPlaces = placesData.documents;
     const { posts, getPostsByCourse } = usePostStore();
+
+    const handleLogout = () => {
+        Alert.alert(
+            "로그아웃",
+            "정말 로그아웃 하시겠습니까?",
+            [
+                { text: "취소", style: "cancel" },
+                { text: "로그아웃", onPress: () => logout(), style: "destructive" }
+            ]
+        );
+    };
 
     return (
         <View style={styles.container}>
@@ -33,6 +47,18 @@ const MyPageTab = () => {
                         neighborCount={user.followers_count}
                         profileImageUrl={user.profile_image}
                     />
+
+                    {/* Logout Button */}
+                    <View style={styles.logoutContainer}>
+                        <TouchableOpacity
+                            style={styles.logoutButton}
+                            onPress={handleLogout}
+                        >
+                            <Ionicons name="log-out-outline" size={20} color={Colors.textSecondary} />
+                            <ThemedText style={styles.logoutText}>로그아웃</ThemedText>
+                        </TouchableOpacity>
+                    </View>
+
                     <MyPageTabs style={styles.tabs} onTabChange={(tab) => setActiveTab(tab)} />
                 </View>
 
@@ -139,6 +165,26 @@ const styles = StyleSheet.create({
         width: '100%',
         backgroundColor: Colors.listbackground,
         minHeight: 250,
+    },
+    logoutContainer: {
+        alignItems: 'center',
+        paddingVertical: 16,
+        paddingHorizontal: 24,
+    },
+    logoutButton: {
+        flexDirection: 'row',
+        alignItems: 'center',
+        paddingVertical: 8,
+        paddingHorizontal: 16,
+        borderRadius: 8,
+        backgroundColor: Colors.white,
+        borderWidth: 1,
+        borderColor: Colors.lightGray,
+    },
+    logoutText: {
+        marginLeft: 8,
+        fontSize: 14,
+        color: Colors.textSecondary,
     },
     tabs: {
         marginBottom: 0,

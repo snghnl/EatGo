@@ -15,6 +15,7 @@ import { useRouter } from "expo-router";
 import { Colors } from "@/constants/Colors";
 import { Ionicons } from "@expo/vector-icons";
 import { Auth } from "@/src/client/sdk.gen";
+import { useAuth } from "@/src/contexts/AuthContext";
 
 interface LoginForm {
     email: string;
@@ -23,6 +24,7 @@ interface LoginForm {
 
 export default function LoginScreen() {
     const router = useRouter();
+    const { login } = useAuth();
     const [form, setForm] = useState<LoginForm>({
         email: "",
         password: "",
@@ -52,18 +54,27 @@ export default function LoginScreen() {
             return;
         }
 
-        await Auth.authTokenCreate({
-            body: {
-                username: form.email,
-                password: form.password,
-            },
-        })
-            .then((_) => {
-                router.push("/onboarding/food-preference");
-            })
-            .catch((error: unknown) => {
-                Alert.alert("알림", "로그인에 실패했습니다");
+        try {
+            const response = await Auth.authTokenCreate({
+                body: {
+                    username: form.email,
+                    password: form.password,
+                },
             });
+
+            if (response.data) {
+                // Login using AuthContext (automatically redirects to main app)
+                const tokens = response.data as any; // Type assertion due to outdated OpenAPI types
+                await login({
+                    access: tokens.access,
+                    refresh: tokens.refresh
+                });
+                // Navigation will be handled by AuthContext
+            }
+        } catch (error: unknown) {
+            console.error('Login error:', error);
+            Alert.alert("알림", "로그인에 실패했습니다");
+        }
     };
 
     // 로그인 가능 여부

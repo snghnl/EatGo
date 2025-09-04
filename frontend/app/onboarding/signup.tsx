@@ -16,6 +16,7 @@ import { Colors } from "@/constants/Colors";
 import { Ionicons } from "@expo/vector-icons";
 import { Accounts } from "@/src/client/sdk.gen";
 import { AccountsSignupCreateData, User } from "@/src/client/types.gen";
+import { useAuth } from "@/src/contexts/AuthContext";
 
 interface SignupForm extends User {
     agreeToTerms: boolean;
@@ -27,6 +28,7 @@ interface SignupForm extends User {
 
 export default function SignupScreen() {
     const router = useRouter();
+    const { login } = useAuth();
     const [form, setForm] = useState<SignupForm>({
         email: "",
         password: "",
@@ -123,25 +125,55 @@ export default function SignupScreen() {
     };
 
     // 가입 처리
-    const handleSignup = () => {
+    const handleSignup = async () => {
         if (!form.agreeToTerms) {
             Alert.alert("알림", "서비스 이용약관에 동의해주세요");
             return;
         }
 
         if (allRequirementsMet()) {
-            Accounts.accountsSignupCreate({
-                body: form as User,
-            }).then((response) => {
-                console.log(response);
-            });
-            console.log("가입 정보:", form);
-            Alert.alert("가입 완료", "잇고에 오신 것을 환영합니다!", [
-                {
-                    text: "확인",
-                    onPress: () => router.push("/onboarding/food-preference"),
-                },
-            ]);
+            try {
+                const signupData = {
+                    username: form.username,
+                    email: form.email,
+                    password: form.password,
+                    password_confirm: form.password_confirm,
+                    login_method: form.login_method,
+                };
+
+                console.log('Signup data being sent:', signupData);
+
+                const response = await Accounts.accountsSignupCreate({
+                    body: signupData,
+                });
+
+                if (response.data) {
+                    const signupResponse = response.data as any; // Type assertion due to schema mismatch
+
+                    // Login using AuthContext after successful signup
+                    if (signupResponse.tokens) {
+                        await login({
+                            access: signupResponse.tokens.access,
+                            refresh: signupResponse.tokens.refresh
+                        });
+
+                        Alert.alert("가입 완료", "잇고에 오신 것을 환영합니다!");
+                        // Navigation will be handled by AuthContext
+                    }
+                }
+            } catch (error: unknown) {
+                console.error('Signup error:', error);
+                console.error('Error details:', JSON.stringify(error, null, 2));
+
+                // Try to get more specific error information
+                if (error && typeof error === 'object' && 'response' in error) {
+                    const response = (error as any).response;
+                    console.error('Response status:', response?.status);
+                    console.error('Response data:', response?.data);
+                }
+
+                Alert.alert("가입 실패", "회원가입 중 오류가 발생했습니다. 다시 시도해주세요.");
+            }
         } else {
             Alert.alert("입력 오류", "모든 항목을 올바르게 입력해주세요");
         }
@@ -166,6 +198,7 @@ export default function SignupScreen() {
         const requirements = getPasswordRequirements();
         const isEmailValid = form.email && validateEmail(form.email);
         return (
+            form.username &&
             isEmailValid &&
             requirements.hasEnglish &&
             requirements.hasNumber &&
@@ -204,6 +237,21 @@ export default function SignupScreen() {
 
                     {/* 폼 */}
                     <View style={styles.form}>
+                        {/* 사용자명 입력 */}
+                        <View style={styles.inputContainer}>
+                            <TextInput
+                                style={styles.input}
+                                placeholder="사용자명 입력"
+                                placeholderTextColor="#9CA3AF"
+                                value={form.username}
+                                onChangeText={(value) =>
+                                    updateForm("username", value)
+                                }
+                                autoCapitalize="none"
+                                autoCorrect={false}
+                            />
+                        </View>
+
                         {/* 이메일 입력 */}
                         <View style={styles.inputContainer}>
                             <TextInput
