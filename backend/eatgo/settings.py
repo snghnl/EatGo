@@ -20,7 +20,7 @@ from dotenv import load_dotenv
 BASE_DIR = Path(__file__).resolve().parent.parent
 
 # .env 파일 로드
-load_dotenv(BASE_DIR.parent / ".env.local")
+load_dotenv(BASE_DIR.parent / ".env")
 
 
 API_VERSION = "api/v1"
@@ -100,14 +100,17 @@ WSGI_APPLICATION = "eatgo.wsgi.application"
 # Database
 # https://docs.djangoproject.com/en/5.2/ref/settings/#databases
 
+# Database
+# https://docs.djangoproject.com/en/5.2/ref/settings/#databases
+
 DATABASES = {
     "default": {
-        "ENGINE": os.environ.get("DB_ENGINE", "django.db.backends.postgresql"),
-        "NAME": os.environ.get("DB_NAME", "eatgo_db"),
-        "USER": os.environ.get("DB_USER", "snghnl"),
-        "PASSWORD": os.environ.get("DB_PASSWORD", ""),
-        "HOST": os.environ.get("DB_HOST", "localhost"),
-        "PORT": os.environ.get("DB_PORT", "5432"),
+        "ENGINE": os.environ.get("ENGINE", "django.db.backends.postgresql"),
+        "NAME": os.environ.get("NAME", "eatgo_db"),
+        "USER": os.environ.get("USER", "snghnl"),
+        "PASSWORD": os.environ.get("PASSWORD", ""),
+        "HOST": os.environ.get("HOST", "localhost"),
+        "PORT": os.environ.get("PORT", "5432"),
     }
 }
 

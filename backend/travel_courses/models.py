@@ -3,6 +3,7 @@ from django.db import models
 from django.conf import settings
 from core.models import BaseModel
 from routes.models import Route
+from django.utils import timezone
 
 
 class TravelCourse(BaseModel):
@@ -22,6 +23,7 @@ class TravelCourse(BaseModel):
     start_date = models.DateField(null=True, blank=True)
     end_date = models.DateField(null=True, blank=True)
     destination = models.CharField(max_length=255, null=True, blank=True)
+
 
     def __str__(self) -> str:
         return self.title

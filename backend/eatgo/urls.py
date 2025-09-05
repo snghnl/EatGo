@@ -72,6 +72,7 @@ urlpatterns = [
     ),
     # api
     path(settings.API_VERSION + "/accounts/", include("accounts.urls")),
+    path(settings.API_VERSION + "/auth/", include("accounts.urls")),
     path(settings.API_VERSION + "/", include("core.urls")),
     path(settings.API_VERSION + "/routes/", include("routes.urls")),
     path(settings.API_VERSION + "/travel_courses/", include("travel_courses.urls")),
