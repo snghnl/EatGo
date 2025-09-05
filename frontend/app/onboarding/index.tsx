@@ -13,6 +13,7 @@ import { Colors } from "@/constants/Colors";
 import { Ionicons } from "@expo/vector-icons";
 import { KakaoLoginWebView } from "@/components/auth/KakaoLoginWebView";
 import { GoogleLoginWebView } from "@/components/auth/GoogleLoginWebView";
+import { GoogleIcon } from "@/components/auth/GoogleIcon";
 import { useAuthStore, kakaoLogin, googleLogin } from "@/store/authStore";
 
 export default function OnboardingStartScreen() {
@@ -181,8 +182,8 @@ export default function OnboardingStartScreen() {
                     onPress={handleGoogleLogin}
                     activeOpacity={0.8}
                 >
-                    <Ionicons name="logo-google" size={20} color="#4285F4" />
-                    <Text style={styles.googleButtonText}>구글로 시작</Text>
+                    <GoogleIcon size={18} />
+                    <Text style={styles.googleButtonText}>Google로 계속</Text>
                 </TouchableOpacity>
 
                 {/* 하단 링크 */}
@@ -249,22 +250,27 @@ const styles = StyleSheet.create({
         alignItems: "center",
         justifyContent: "center",
         paddingVertical: 12,
-        paddingHorizontal: 16,
-        borderRadius: 10,
+        paddingHorizontal: 24,
+        borderRadius: 6,
         marginBottom: 12,
         shadowColor: "#000",
         shadowOffset: { width: 0, height: 2 },
         shadowOpacity: 0.1,
         shadowRadius: 4,
         elevation: 3,
+        minHeight: 48,
     },
     kakaoButton: {
         backgroundColor: "#FEE500",
     },
     googleButton: {
-        backgroundColor: "#fff",
+        backgroundColor: "#ffffff",
         borderWidth: 1,
         borderColor: "#dadce0",
+        shadowColor: "#000",
+        shadowOffset: { width: 0, height: 1 },
+        shadowOpacity: 0.05,
+        shadowRadius: 3,
     },
     socialIcon: {
         width: 20,
@@ -277,9 +283,10 @@ const styles = StyleSheet.create({
         color: "#3C1E1E",
     },
     googleButtonText: {
-        fontSize: 15,
-        fontWeight: "600",
+        fontSize: 14,
+        fontWeight: "500",
         color: "#3c4043",
+        marginLeft: 12,
     },
     bottomLinks: {
         flexDirection: "row",
