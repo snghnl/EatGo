@@ -118,6 +118,350 @@ export type Category = {
     readonly updated_at?: string;
 };
 
+export type CommentDetailInput = {
+    /**
+     * Content
+     */
+    content: string;
+};
+
+export type UserBasic = {
+    /**
+     * ID
+     */
+    readonly id?: number;
+    /**
+     * Name
+     */
+    username: string;
+    /**
+     * Profile Image URL
+     */
+    profile_image_url?: string | null;
+};
+
+export type CommentDetailOutput = {
+    /**
+     * Id
+     */
+    readonly id?: string;
+    user?: UserBasic;
+    /**
+     * Comment Content
+     */
+    content: string;
+    /**
+     * Created at
+     */
+    readonly created_at?: string;
+    /**
+     * Updated at
+     */
+    readonly updated_at?: string;
+};
+
+export type TravelCourseBasic = {
+    /**
+     * Id
+     */
+    readonly id?: string;
+    /**
+     * Title
+     */
+    title: string;
+    /**
+     * Description
+     */
+    description?: string;
+    /**
+     * Destination
+     */
+    destination?: string | null;
+    /**
+     * Start date
+     */
+    start_date?: string | null;
+    /**
+     * End date
+     */
+    end_date?: string | null;
+};
+
+export type PostImage = {
+    /**
+     * Id
+     */
+    readonly id?: string;
+    /**
+     * Image URL
+     * Image storage path or CDN URL
+     */
+    url: string;
+    /**
+     * Image Sequence
+     * Order of images in the post
+     */
+    sequence?: number;
+    /**
+     * Alternative Text
+     * Alternative text for accessibility
+     */
+    alt_text?: string;
+};
+
+export type PostListOutput = {
+    /**
+     * Id
+     */
+    readonly id?: string;
+    user?: UserBasic;
+    travel_course?: TravelCourseBasic;
+    /**
+     * Post Title
+     */
+    title: string;
+    /**
+     * Post Content
+     */
+    content: string;
+    /**
+     * Likes Count
+     */
+    readonly likes_count?: number;
+    /**
+     * Comments Count
+     */
+    readonly comments_count?: number;
+    readonly images?: Array<PostImage>;
+    /**
+     * Created at
+     */
+    readonly created_at?: string;
+    /**
+     * Updated at
+     */
+    readonly updated_at?: string;
+};
+
+export type PostListInput = {
+    /**
+     * Travel course id
+     */
+    travel_course_id?: string;
+    /**
+     * Title
+     */
+    title: string;
+    /**
+     * Content
+     */
+    content: string;
+    images?: Array<{
+        [key: string]: string | null;
+    }>;
+};
+
+export type Comment = {
+    /**
+     * Id
+     */
+    readonly id?: string;
+    user?: UserBasic;
+    /**
+     * Comment Content
+     */
+    content: string;
+    /**
+     * Created at
+     */
+    readonly created_at?: string;
+    /**
+     * Updated at
+     */
+    readonly updated_at?: string;
+};
+
+export type PostDetailOutput = {
+    /**
+     * Id
+     */
+    readonly id?: string;
+    user?: UserBasic;
+    travel_course?: TravelCourseBasic;
+    /**
+     * Post Title
+     */
+    title: string;
+    /**
+     * Post Content
+     */
+    content: string;
+    /**
+     * Likes Count
+     */
+    readonly likes_count?: number;
+    /**
+     * Comments Count
+     */
+    readonly comments_count?: number;
+    readonly images?: Array<PostImage>;
+    readonly comments?: Array<Comment>;
+    /**
+     * Is liked
+     */
+    readonly is_liked?: string;
+    /**
+     * Created at
+     */
+    readonly created_at?: string;
+    /**
+     * Updated at
+     */
+    readonly updated_at?: string;
+};
+
+export type PostDetailInput = {
+    /**
+     * Title
+     */
+    title?: string;
+    /**
+     * Content
+     */
+    content?: string;
+    images?: Array<{
+        [key: string]: string | null;
+    }>;
+};
+
+export type PostCommentsOutput = {
+    /**
+     * Id
+     */
+    readonly id?: string;
+    user?: UserBasic;
+    /**
+     * Comment Content
+     */
+    content: string;
+    /**
+     * Created at
+     */
+    readonly created_at?: string;
+    /**
+     * Updated at
+     */
+    readonly updated_at?: string;
+};
+
+export type PostCommentsInput = {
+    /**
+     * Content
+     */
+    content: string;
+};
+
+export type PostLikeOutput = {
+    /**
+     * Liked
+     */
+    liked: boolean;
+};
+
+export type DistrictList = {
+    /**
+     * Id
+     */
+    readonly id?: string;
+    /**
+     * Name
+     */
+    name: string;
+    /**
+     * Name en
+     */
+    name_en?: string;
+    /**
+     * Longitude
+     */
+    longitude: string;
+    /**
+     * Latitude
+     */
+    latitude: string;
+    /**
+     * Province name
+     */
+    readonly province_name?: string;
+    /**
+     * Is active
+     */
+    is_active?: boolean;
+};
+
+export type Province = {
+    /**
+     * Id
+     */
+    readonly id?: string;
+    /**
+     * Created at
+     */
+    readonly created_at?: string;
+    /**
+     * Updated at
+     */
+    readonly updated_at?: string;
+    /**
+     * Name
+     */
+    name: string;
+    /**
+     * Name en
+     */
+    name_en?: string;
+    /**
+     * Is active
+     */
+    is_active?: boolean;
+};
+
+export type District = {
+    /**
+     * Id
+     */
+    readonly id?: string;
+    province?: Province;
+    /**
+     * Created at
+     */
+    readonly created_at?: string;
+    /**
+     * Updated at
+     */
+    readonly updated_at?: string;
+    /**
+     * Name
+     */
+    name: string;
+    /**
+     * Name en
+     */
+    name_en?: string;
+    /**
+     * Longitude
+     */
+    longitude: string;
+    /**
+     * Latitude
+     */
+    latitude: string;
+    /**
+     * Is active
+     */
+    is_active?: boolean;
+};
+
 export type Place = {
     /**
      * Id
@@ -177,39 +521,47 @@ export type Place = {
     created_by?: number | null;
 };
 
-export type MenuItem = {
-    /**
-     * Id
-     */
-    readonly id?: string;
-    /**
-     * Created at
-     */
-    readonly created_at?: string;
-    /**
-     * Updated at
-     */
-    readonly updated_at?: string;
+export type PlaceRecommend = {
     /**
      * Name
      */
     name: string;
     /**
-     * Price
+     * Lat
      */
-    price: number;
+    lat: number;
     /**
-     * Description
+     * Lng
      */
-    description?: string;
+    lng: number;
     /**
-     * Is active
+     * Phone number
      */
-    is_active?: boolean;
+    phone_number: string | null;
     /**
-     * Place
+     * Place type
      */
-    place: string;
+    place_type: string;
+    /**
+     * Address
+     */
+    address: string | null;
+    /**
+     * Road address
+     */
+    road_address: string | null;
+    /**
+     * External id
+     */
+    external_id: string;
+    /**
+     * External url
+     */
+    external_url: string | null;
+};
+
+export type PlaceRecommendOutput = {
+    places: Array<PlaceRecommend>;
 };
 
 export type Route = {
@@ -238,6 +590,21 @@ export type Route = {
      */
     created_by?: number | null;
     readonly places?: Array<string>;
+};
+
+export type RouteRecommendationOutput = {
+    /**
+     * List of route options with places, distances, and metadata
+     */
+    routes: Array<{
+        [key: string]: string | null;
+    }>;
+    /**
+     * User location
+     */
+    user_location: {
+        [key: string]: number;
+    };
 };
 
 export type RegionalTourismRequest = {
@@ -452,6 +819,18 @@ export type TravelCourse = {
      */
     description?: string;
     routes: Array<TravelCourseRoute>;
+    /**
+     * Start date
+     */
+    start_date?: string | null;
+    /**
+     * End date
+     */
+    end_date?: string | null;
+    /**
+     * Destination
+     */
+    destination?: string | null;
 };
 
 export type AccountsMeReadData = {
@@ -615,60 +994,184 @@ export type CategoriesUpdateResponses = {
 
 export type CategoriesUpdateResponse = CategoriesUpdateResponses[keyof CategoriesUpdateResponses];
 
-export type KakaomapDistanceListData = {
+export type CommunityCommentsDeleteData = {
+    body?: never;
+    path: {
+        comment_id: string;
+    };
+    query?: never;
+    url: '/community/comments/{comment_id}/';
+};
+
+export type CommunityCommentsDeleteResponses = {
+    /**
+     * Comment deleted successfully
+     */
+    204: unknown;
+};
+
+export type CommunityCommentsPartialUpdateData = {
+    body: CommentDetailInput;
+    path: {
+        comment_id: string;
+    };
+    query?: never;
+    url: '/community/comments/{comment_id}/';
+};
+
+export type CommunityCommentsPartialUpdateResponses = {
+    200: CommentDetailOutput;
+};
+
+export type CommunityCommentsPartialUpdateResponse = CommunityCommentsPartialUpdateResponses[keyof CommunityCommentsPartialUpdateResponses];
+
+export type CommunityPostsListData = {
     body?: never;
     path?: never;
     query?: never;
-    url: '/kakaomap/distance/';
+    url: '/community/posts/';
 };
 
-export type KakaomapDistanceListResponses = {
-    200: unknown;
+export type CommunityPostsListResponses = {
+    200: Array<PostListOutput>;
 };
 
-export type KakaomapMapListData = {
+export type CommunityPostsListResponse = CommunityPostsListResponses[keyof CommunityPostsListResponses];
+
+export type CommunityPostsCreateData = {
+    body: PostListInput;
+    path?: never;
+    query?: never;
+    url: '/community/posts/';
+};
+
+export type CommunityPostsCreateResponses = {
+    201: PostListOutput;
+};
+
+export type CommunityPostsCreateResponse = CommunityPostsCreateResponses[keyof CommunityPostsCreateResponses];
+
+export type CommunityPostsDeleteData = {
+    body?: never;
+    path: {
+        post_id: string;
+    };
+    query?: never;
+    url: '/community/posts/{post_id}/';
+};
+
+export type CommunityPostsDeleteResponses = {
+    /**
+     * Post deleted successfully
+     */
+    204: unknown;
+};
+
+export type CommunityPostsReadData = {
+    body?: never;
+    path: {
+        post_id: string;
+    };
+    query?: never;
+    url: '/community/posts/{post_id}/';
+};
+
+export type CommunityPostsReadResponses = {
+    200: PostDetailOutput;
+};
+
+export type CommunityPostsReadResponse = CommunityPostsReadResponses[keyof CommunityPostsReadResponses];
+
+export type CommunityPostsPartialUpdateData = {
+    body: PostDetailInput;
+    path: {
+        post_id: string;
+    };
+    query?: never;
+    url: '/community/posts/{post_id}/';
+};
+
+export type CommunityPostsPartialUpdateResponses = {
+    200: PostDetailOutput;
+};
+
+export type CommunityPostsPartialUpdateResponse = CommunityPostsPartialUpdateResponses[keyof CommunityPostsPartialUpdateResponses];
+
+export type CommunityPostsCommentsListData = {
+    body?: never;
+    path: {
+        post_id: string;
+    };
+    query?: never;
+    url: '/community/posts/{post_id}/comments/';
+};
+
+export type CommunityPostsCommentsListResponses = {
+    200: Array<PostCommentsOutput>;
+};
+
+export type CommunityPostsCommentsListResponse = CommunityPostsCommentsListResponses[keyof CommunityPostsCommentsListResponses];
+
+export type CommunityPostsCommentsCreateData = {
+    body: PostCommentsInput;
+    path: {
+        post_id: string;
+    };
+    query?: never;
+    url: '/community/posts/{post_id}/comments/';
+};
+
+export type CommunityPostsCommentsCreateResponses = {
+    201: PostCommentsOutput;
+};
+
+export type CommunityPostsCommentsCreateResponse = CommunityPostsCommentsCreateResponses[keyof CommunityPostsCommentsCreateResponses];
+
+export type CommunityPostsLikeCreateData = {
+    body?: never;
+    path: {
+        post_id: string;
+    };
+    query?: never;
+    url: '/community/posts/{post_id}/like/';
+};
+
+export type CommunityPostsLikeCreateResponses = {
+    200: PostLikeOutput;
+};
+
+export type CommunityPostsLikeCreateResponse = CommunityPostsLikeCreateResponses[keyof CommunityPostsLikeCreateResponses];
+
+export type DistrictsListData = {
     body?: never;
     path?: never;
     query?: never;
-    url: '/kakaomap/map/';
+    url: '/districts/';
 };
 
-export type KakaomapMapListResponses = {
-    200: unknown;
+export type DistrictsListResponses = {
+    200: Array<DistrictList>;
 };
 
-export type KakaomapOptimizeRouteCreateData = {
+export type DistrictsListResponse = DistrictsListResponses[keyof DistrictsListResponses];
+
+export type DistrictsReadData = {
     body?: never;
-    path?: never;
+    path: {
+        /**
+         * A UUID string identifying this District.
+         */
+        id: string;
+    };
     query?: never;
-    url: '/kakaomap/optimize-route/';
+    url: '/districts/{id}/';
 };
 
-export type KakaomapOptimizeRouteCreateResponses = {
-    201: unknown;
+export type DistrictsReadResponses = {
+    200: District;
 };
 
-export type KakaomapRouteListData = {
-    body?: never;
-    path?: never;
-    query?: never;
-    url: '/kakaomap/route/';
-};
-
-export type KakaomapRouteListResponses = {
-    200: unknown;
-};
-
-export type KakaomapSearchListData = {
-    body?: never;
-    path?: never;
-    query?: never;
-    url: '/kakaomap/search/';
-};
-
-export type KakaomapSearchListResponses = {
-    200: unknown;
-};
+export type DistrictsReadResponse = DistrictsReadResponses[keyof DistrictsReadResponses];
 
 export type PlacesListData = {
     body?: never;
@@ -683,9 +1186,60 @@ export type PlacesListResponses = {
 
 export type PlacesListResponse = PlacesListResponses[keyof PlacesListResponses];
 
+export type PlacesCreateData = {
+    body: Place;
+    path?: never;
+    query?: never;
+    url: '/places/';
+};
+
+export type PlacesCreateResponses = {
+    201: Place;
+};
+
+export type PlacesCreateResponse = PlacesCreateResponses[keyof PlacesCreateResponses];
+
+export type PlacesRecommendListData = {
+    body?: never;
+    path?: never;
+    query: {
+        lat: number;
+        lng: number;
+        max_distance_km?: number | null;
+        limit?: number | null;
+        category_filter?: Array<string> | null;
+    };
+    url: '/places/recommend/';
+};
+
+export type PlacesRecommendListResponses = {
+    200: PlaceRecommendOutput;
+};
+
+export type PlacesRecommendListResponse = PlacesRecommendListResponses[keyof PlacesRecommendListResponses];
+
+export type PlacesDeleteData = {
+    body?: never;
+    path: {
+        /**
+         * A UUID string identifying this place.
+         */
+        id: string;
+    };
+    query?: never;
+    url: '/places/{id}/';
+};
+
+export type PlacesDeleteResponses = {
+    204: unknown;
+};
+
 export type PlacesReadData = {
     body?: never;
     path: {
+        /**
+         * A UUID string identifying this place.
+         */
         id: string;
     };
     query?: never;
@@ -698,20 +1252,72 @@ export type PlacesReadResponses = {
 
 export type PlacesReadResponse = PlacesReadResponses[keyof PlacesReadResponses];
 
-export type PlacesMenuItemsListData = {
-    body?: never;
+export type PlacesPartialUpdateData = {
+    body: Place;
     path: {
+        /**
+         * A UUID string identifying this place.
+         */
         id: string;
     };
     query?: never;
-    url: '/places/{id}/menu-items/';
+    url: '/places/{id}/';
 };
 
-export type PlacesMenuItemsListResponses = {
-    200: Array<MenuItem>;
+export type PlacesPartialUpdateResponses = {
+    200: Place;
 };
 
-export type PlacesMenuItemsListResponse = PlacesMenuItemsListResponses[keyof PlacesMenuItemsListResponses];
+export type PlacesPartialUpdateResponse = PlacesPartialUpdateResponses[keyof PlacesPartialUpdateResponses];
+
+export type PlacesUpdateData = {
+    body: Place;
+    path: {
+        /**
+         * A UUID string identifying this place.
+         */
+        id: string;
+    };
+    query?: never;
+    url: '/places/{id}/';
+};
+
+export type PlacesUpdateResponses = {
+    200: Place;
+};
+
+export type PlacesUpdateResponse = PlacesUpdateResponses[keyof PlacesUpdateResponses];
+
+export type ProvincesListData = {
+    body?: never;
+    path?: never;
+    query?: never;
+    url: '/provinces/';
+};
+
+export type ProvincesListResponses = {
+    200: Array<Province>;
+};
+
+export type ProvincesListResponse = ProvincesListResponses[keyof ProvincesListResponses];
+
+export type ProvincesReadData = {
+    body?: never;
+    path: {
+        /**
+         * A UUID string identifying this Province.
+         */
+        id: string;
+    };
+    query?: never;
+    url: '/provinces/{id}/';
+};
+
+export type ProvincesReadResponses = {
+    200: Province;
+};
+
+export type ProvincesReadResponse = ProvincesReadResponses[keyof ProvincesReadResponses];
 
 export type RoutesListData = {
     body?: never;
@@ -739,51 +1345,48 @@ export type RoutesCreateResponses = {
 
 export type RoutesCreateResponse = RoutesCreateResponses[keyof RoutesCreateResponses];
 
-export type RoutesCategoriesListData = {
+export type RoutesMyListData = {
     body?: never;
     path?: never;
     query?: never;
-    url: '/routes/categories/';
+    url: '/routes/my/';
 };
 
-export type RoutesCategoriesListResponses = {
-    200: unknown;
+export type RoutesMyListResponses = {
+    200: Array<Route>;
 };
 
-export type RoutesPreferencesListData = {
+export type RoutesMyListResponse = RoutesMyListResponses[keyof RoutesMyListResponses];
+
+export type RoutesRecommendListData = {
     body?: never;
     path?: never;
-    query?: never;
-    url: '/routes/preferences/';
-};
-
-export type RoutesPreferencesListResponses = {
-    200: unknown;
-};
-
-export type RoutesPreferencesCreateData = {
-    body?: never;
-    path?: never;
-    query?: never;
-    url: '/routes/preferences/';
-};
-
-export type RoutesPreferencesCreateResponses = {
-    201: unknown;
-};
-
-export type RoutesRecommendData = {
-    body: Route;
-    path?: never;
-    query?: never;
+    query: {
+        lat: number;
+        lng: number;
+        max_distance_km?: number | null;
+        limit?: number | null;
+        category_filter?: Array<string> | null;
+    };
     url: '/routes/recommend/';
 };
 
-export type RoutesRecommendResponses = {
-    201: Route;
+export type RoutesRecommendListErrors = {
+    /**
+     * Bad Request
+     */
+    400: unknown;
+    /**
+     * Internal Server Error
+     */
+    500: unknown;
 };
 
-export type RoutesRecommendResponse = RoutesRecommendResponses[keyof RoutesRecommendResponses];
+export type RoutesRecommendListResponses = {
+    200: RouteRecommendationOutput;
+};
+
+export type RoutesRecommendListResponse = RoutesRecommendListResponses[keyof RoutesRecommendListResponses];
 
 export type RoutesDeleteData = {
     body?: never;
@@ -981,6 +1584,19 @@ export type TravelCoursesCreateResponses = {
 };
 
 export type TravelCoursesCreateResponse = TravelCoursesCreateResponses[keyof TravelCoursesCreateResponses];
+
+export type TravelCoursesMyListData = {
+    body?: never;
+    path?: never;
+    query?: never;
+    url: '/travel_courses/my/';
+};
+
+export type TravelCoursesMyListResponses = {
+    200: Array<TravelCourse>;
+};
+
+export type TravelCoursesMyListResponse = TravelCoursesMyListResponses[keyof TravelCoursesMyListResponses];
 
 export type TravelCoursesDeleteData = {
     body?: never;

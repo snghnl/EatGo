@@ -18,6 +18,8 @@ import { BookmarkProvider } from "@/store/BookmarkContext";
 import { PostProvider } from "@/store/posts";
 import { useAuthStore } from "@/store/authStore";
 import { client } from "@/src/client/client.gen";
+import { AuthUtils } from "@/src/utils/auth";
+import { AuthProvider } from "@/src/contexts/AuthContext";
 
 export const viewport = {
     width: "device-width",
@@ -31,12 +33,11 @@ export const viewport = {
 client.setConfig({
     // set default base url for requests
     // TODO: change to production url
-    baseUrl: "http://localhost:8000",
-    // set default headers for requests
-    headers: {
-        Authorization: "Bearer <token_from_service_client>",
-    },
+    baseUrl: "http://localhost:8000/api/v1",
 });
+
+// Initialize auth on app start
+AuthUtils.initializeAuth();
 
 export default function RootLayout() {
     const colorScheme = useColorScheme();
@@ -70,37 +71,44 @@ export default function RootLayout() {
         <ThemeProvider
             value={colorScheme === "dark" ? DarkTheme : DefaultTheme}
         >
-            <BookmarkProvider>
-                <PostProvider>
-                    <GestureHandlerRootView style={{ flex: 1 }}>
-                        <View
-                            style={{
-                                flex: 1,
-                                backgroundColor: Colors.background,
-                            }}
-                        >
+            <AuthProvider>
+                <BookmarkProvider>
+                    <PostProvider>
+                        <GestureHandlerRootView style={{ flex: 1 }}>
+                            <View
+                                style={{
+                                    flex: 1,
+                                    backgroundColor: Colors.background,
+                                }}
+                            >
                             <Stack>
                                 <Stack.Screen
-                                    name="onboarding"
+                                    name="onboarding/index"
+                                    options={{ headerShown: false }}
+                                />
+                                <Stack.Screen
+                                    name="onboarding/login"
+                                    options={{ headerShown: false }}
+                                />
+                                <Stack.Screen
+                                    name="onboarding/signup"
+                                    options={{ headerShown: false }}
+                                />
+                                <Stack.Screen
+                                    name="onboarding/food-preference"
                                     options={{ headerShown: false }}
                                 />
                                 <Stack.Screen
                                     name="(tabs)"
                                     options={{ headerShown: false }}
                                 />
-                                <Stack.Screen
-                                    name="placelist/[category]/index"
-                                    options={{
-                                        title: "",
-                                        headerBackVisible: true,
-                                    }}
-                                />
                             </Stack>
                             <StatusBar style="auto" />
-                        </View>
-                    </GestureHandlerRootView>
-                </PostProvider>
-            </BookmarkProvider>
+                            </View>
+                        </GestureHandlerRootView>
+                    </PostProvider>
+                </BookmarkProvider>
+            </AuthProvider>
         </ThemeProvider>
     );
 }

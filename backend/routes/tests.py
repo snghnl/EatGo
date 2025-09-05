@@ -7,7 +7,7 @@ from core.models import Category
 from places.models import Place, PlaceCategory
 from accounts.models import UserPreference
 from .models import Route
-from .recommendation_service import RouteRecommendationService
+from .service import RouteRecommendationService
 
 User = get_user_model()
 

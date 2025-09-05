@@ -71,13 +71,14 @@ urlpatterns = [
         name="token_verify",
     ),
     # api
-    path(settings.API_VERSION + "/kakaomap/", include("kakaomap.urls")),
     path(settings.API_VERSION + "/accounts/", include("accounts.urls")),
     path(settings.API_VERSION + "/auth/", include("accounts.urls")),
     path(settings.API_VERSION + "/", include("core.urls")),
     path(settings.API_VERSION + "/routes/", include("routes.urls")),
     path(settings.API_VERSION + "/travel_courses/", include("travel_courses.urls")),
+    path(settings.API_VERSION + "/community/", include("community.urls")),
     path(settings.API_VERSION + "/tourism/", include("tourism.urls")),
     path(settings.API_VERSION + "/places/", include("places.urls")),
+    path(settings.API_VERSION + "/", include("districts.urls")),
     # path('api-auth/', include('rest_framework.urls')),
 ]

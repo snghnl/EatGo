@@ -1,16 +1,12 @@
 import { Tabs } from 'expo-router';
 import React from 'react';
 import { Platform } from 'react-native';
-import AppContainer from '@/components/common/AppContainer';
-import { useColorScheme } from '@/hooks/useColorScheme';
 import { Colors } from '@/constants/Colors';
-import { Fonts } from '@/constants/Fonts';
 import { HapticTab } from '@/components/HapticTab';
 import TabBarBackground from '@/components/ui/TabBarBackground';
 import { Ionicons } from '@expo/vector-icons';
 
 export default function TabLayout() {
-    const colorScheme = useColorScheme();
 
     return (
         <Tabs
@@ -74,7 +70,6 @@ export default function TabLayout() {
             <Tabs.Screen name="map/place/[id]/detail" options={{ href: null }} />
             <Tabs.Screen name="map/placelist/[category]/index" options={{ href: null }} />
             <Tabs.Screen name="map/placelist/searchresult" options={{ href: null }} />
-            <Tabs.Screen name="plan/coureselist" options={{ href: null }} />
             <Tabs.Screen name="plan/[id]/index" options={{ href: null }} />
             <Tabs.Screen name="plan/[id]/recommendation" options={{ href: null }} />
         </Tabs>

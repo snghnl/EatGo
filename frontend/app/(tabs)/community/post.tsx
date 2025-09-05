@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState } from "react";
 import {
     SafeAreaView,
     View,
@@ -9,61 +9,103 @@ import {
     Platform,
     TouchableOpacity,
     ScrollView,
-} from 'react-native';
-import { Ionicons } from '@expo/vector-icons';
-import { ThemedText } from '@/components/ThemedText';
-import { Colors } from '@/constants/Colors';
-import { useNavigation, useLocalSearchParams } from 'expo-router';
-import { SAMPLE_COURSES } from '@/constants/Data';
-import { router } from 'expo-router';
-import PostImagePicker from '@/components/community/PostImagePicker';
-import { Fonts } from '@/constants/Fonts';
-import { usePostStore } from '@/store/posts';
+    Alert,
+    ActivityIndicator,
+} from "react-native";
+import { Ionicons } from "@expo/vector-icons";
+import { Colors } from "@/constants/Colors";
+import { useLocalSearchParams, router } from "expo-router";
+import PostImagePicker from "@/components/community/PostImagePicker";
+import { Fonts } from "@/constants/Fonts";
+import { useCreatePost } from "@/src/hooks/useCommunity";
 
 export default function PostEditor() {
-    const [title, setTitle] = useState('');
-    const [content, setContent] = useState('');
-    const [images, setImages] = useState<string[]>([]); // 이미지 상태 추가
-    const [inputHeight, setInputHeight] = useState(200); // 초기 높이 설정
+    const [title, setTitle] = useState("");
+    const [content, setContent] = useState("");
+    const [images, setImages] = useState<string[]>([]);
+    const [inputHeight, setInputHeight] = useState(200);
 
     const { courseId } = useLocalSearchParams<{ courseId?: string }>();
-    const course = SAMPLE_COURSES.find((c) => c.id === courseId);
-    const { addPost } = usePostStore();
-    const genId = () => `${Date.now()}-${Math.random().toString(36).slice(2, 8)}`;
+    const { createPost, isLoading, error } = useCreatePost();
 
-    const handleSubmit = () => {
-        if (!title.trim() || !content.trim()) return;
-        addPost({
-            id: genId(),
-            title,
-            content,
-            images,
-            courseId: courseId ? String(courseId) : undefined, // ✅ 문자열 통일
-        });
+    const handleSubmit = async () => {
+        if (!title.trim() || !content.trim()) {
+            Alert.alert("입력 오류", "제목과 내용을 모두 입력해주세요.");
+            return;
+        }
 
-        router.push('/(tabs)/mypage'); // 마이페이지로 이동
+        const postData = {
+            title: title.trim(),
+            content: content.trim(),
+            travel_course_id: courseId || undefined,
+            images: images.map((url, index) => ({
+                url,
+                sequence: index,
+                alt_text: `Post image ${index + 1}`,
+            })),
+        };
+
+        const result = await createPost(postData);
+
+        if (result) {
+            Alert.alert("성공", "게시물이 등록되었습니다.", [
+                {
+                    text: "확인",
+                    onPress: () => router.push("/(tabs)/community"),
+                },
+            ]);
+        } else {
+            Alert.alert("오류", error || "게시물 등록에 실패했습니다.");
+        }
     };
 
-    // 실제 데이터 구조에 맞게 subtitle/title을 활용
-    const dateRange = course?.subtitle || '여행 일정';
-    const location = course?.title || '여행 코스';
+    const location = courseId ? `코스 ID: ${courseId}` : "여행 코스";
 
     return (
         <SafeAreaView style={styles.container}>
-            <KeyboardAvoidingView style={{ flex: 1 }} behavior={Platform.OS === 'ios' ? 'padding' : undefined}>
+            <KeyboardAvoidingView
+                style={{ flex: 1 }}
+                behavior={Platform.OS === "ios" ? "padding" : undefined}
+            >
                 <ScrollView contentContainerStyle={styles.scroll}>
                     {/* 상단 헤더 */}
-                    <View style={{ position: 'absolute', top: 15, left: 15, zIndex: 10 }}>
+                    <View
+                        style={{
+                            position: "absolute",
+                            top: 15,
+                            left: 15,
+                            zIndex: 10,
+                        }}
+                    >
                         <Ionicons
                             name="chevron-back"
                             size={20}
                             color={Colors.textSecondary}
-                            onPress={() => router.push('/(tabs)/community/post_select')}
+                            onPress={() =>
+                                router.push("/(tabs)/community/post_select")
+                            }
                         />
                     </View>
                     <View style={styles.header}>
-                        <TouchableOpacity onPress={handleSubmit}>
-                            <Text style={styles.submitText}>등록</Text>
+                        <TouchableOpacity
+                            onPress={handleSubmit}
+                            disabled={isLoading}
+                        >
+                            {isLoading ? (
+                                <ActivityIndicator
+                                    size="small"
+                                    color={Colors.primary}
+                                />
+                            ) : (
+                                <Text
+                                    style={[
+                                        styles.submitText,
+                                        isLoading && { opacity: 0.5 },
+                                    ]}
+                                >
+                                    등록
+                                </Text>
+                            )}
                         </TouchableOpacity>
                     </View>
 
@@ -77,9 +119,12 @@ export default function PostEditor() {
                         />
 
                         <Text style={styles.metaText}>
-                            {dateRange} <Text style={{ color: 'red' }}>📍 {location}</Text>
+                            <Text style={{ color: "red" }}>📍 {location}</Text>
                         </Text>
-                        <PostImagePicker images={images} setImages={setImages} />
+                        <PostImagePicker
+                            images={images}
+                            setImages={setImages}
+                        />
 
                         <TextInput
                             style={styles.textarea}
@@ -89,7 +134,9 @@ export default function PostEditor() {
                             value={content}
                             onChangeText={setContent}
                             onContentSizeChange={(e) => {
-                                setInputHeight(e.nativeEvent.contentSize.height);
+                                setInputHeight(
+                                    e.nativeEvent.contentSize.height
+                                );
                             }}
                         />
                     </View>
@@ -108,11 +155,11 @@ const styles = StyleSheet.create({
         padding: 20,
     },
     header: {
-        alignItems: 'flex-end',
+        alignItems: "flex-end",
         marginBottom: 15,
     },
     title: {
-        fontSize: Fonts['2xl'],
+        fontSize: Fonts["2xl"],
         fontWeight: Fonts.weight.semibold,
         marginBottom: 30,
     },
@@ -144,6 +191,6 @@ const styles = StyleSheet.create({
         backgroundColor: Colors.backgroundGray,
         paddingVertical: 5,
         borderRadius: 8,
-        alignItems: 'center',
+        alignItems: "center",
     },
 });
