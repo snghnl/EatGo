@@ -5,6 +5,27 @@ export interface PlaceItem {
     name: string;
 }
 
+// 지도 관련 타입
+export interface MapMarker {
+    id: string;
+    lat: number;
+    lng: number;
+    title?: string;
+    categoryKey?:
+        | "korean"
+        | "alcohol"
+        | "seafood"
+        | "bread"
+        | "american"
+        | "chinese"
+        | "sushi"
+        | "hamburger"
+        | "pizza"
+        | "meat"
+        | "schoolfood";
+    isBookmarked?: boolean;
+}
+
 export interface Course {
     id: string;
     title: string;
