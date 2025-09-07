@@ -42,9 +42,10 @@ export const DestinationSelector: React.FC<DestinationSelectorProps> = ({
     };
 
     const handleDistrictPress = (districtName: string) => {
-        const newSelected = selectedDistricts.includes(districtName)
-            ? selectedDistricts.filter((d) => d !== districtName)
-            : [...selectedDistricts, districtName];
+        const fullDestinationName = `${selectedProvinceName} ${districtName}`;
+        const newSelected = selectedDistricts.includes(fullDestinationName)
+            ? selectedDistricts.filter((d) => d !== fullDestinationName)
+            : [...selectedDistricts, fullDestinationName];
 
         setSelectedDistricts(newSelected);
         onDestinationChange?.(newSelected);
@@ -139,7 +140,11 @@ export const DestinationSelector: React.FC<DestinationSelectorProps> = ({
                             <DestinationButton
                                 key={`${rowIndex}-${index}`}
                                 destination={item}
-                                isSelected={selectedItems.includes(item)}
+                                isSelected={
+                                    step === "province"
+                                        ? selectedItems.includes(item)
+                                        : selectedDistricts.some(d => d.endsWith(` ${item}`))
+                                }
                                 onPress={
                                     step === "province"
                                         ? handleProvincePress
