@@ -181,7 +181,7 @@ export default function LoginScreen() {
                             style={styles.optionButton}
                             onPress={() => router.push("/onboarding/signup")}
                         >
-                            <Text style={styles.optionText}>이메일로 가입</Text>
+                            <Text style={styles.optionText}>회원가입</Text>
                         </TouchableOpacity>
                     </View>
                 </ScrollView>
