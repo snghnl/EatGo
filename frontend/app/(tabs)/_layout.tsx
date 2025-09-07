@@ -72,6 +72,7 @@ export default function TabLayout() {
             <Tabs.Screen name="map/placelist/searchresult" options={{ href: null }} />
             <Tabs.Screen name="plan/[id]/index" options={{ href: null }} />
             <Tabs.Screen name="plan/[id]/recommendation" options={{ href: null }} />
+            <Tabs.Screen name="mypage/[uid]/detail" options={{ href: null }} />
         </Tabs>
     );
 }

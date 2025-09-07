@@ -4,6 +4,7 @@ import {
     ScrollView,
     StyleSheet,
     SafeAreaView,
+    Pressable,
     ActivityIndicator,
 } from "react-native";
 import { useLocalSearchParams, router } from "expo-router";
@@ -21,6 +22,7 @@ import { usePost, usePostComments } from "@/src/hooks/useCommunity";
 import ReportModal from "@/components/community/ReportModal";
 
 export default function CommunityPost() {
+    const { bookmarkedCourseIds, toggleCourseBookmark } = useBookmark();
     const { id: rawId } = useLocalSearchParams<{ id?: string | string[] }>();
     const id =
         typeof rawId === "string"
@@ -28,7 +30,6 @@ export default function CommunityPost() {
             : Array.isArray(rawId)
             ? rawId[0]
             : undefined;
-
     const [reportOpen, setReportOpen] = useState(false);
     const [selectedPlaceId, setSelectedPlaceId] = useState<string | null>(null);
     const [selectedDayPlanId, setSelectedDayPlanId] = useState<string | null>(
@@ -38,7 +39,6 @@ export default function CommunityPost() {
     // Fetch post from API
     const { post, isLoading, error } = usePost(id);
     const { comments: _comments } = usePostComments(id);
-    const { bookmarkedCourseIds, toggleCourseBookmark } = useBookmark();
 
     // Ensure hooks run in a consistent order across renders by placing memoization before any early returns
     const dateText = useMemo(() => {
@@ -108,6 +108,7 @@ export default function CommunityPost() {
 
     const courseKey = String(post.travel_course?.id ?? "");
     const isBookmarked = bookmarkedCourseIds.includes(courseKey);
+    const user = post.user || { id: "unknown", username: "Unknown User", profile_image: "" };
 
     const handlePlacePress = (dayPlanId: string, placeId: string) => {
         setSelectedDayPlanId(dayPlanId);
@@ -121,60 +122,74 @@ export default function CommunityPost() {
     return (
         <ScrollView>
             <SafeAreaView>
-                {/* ✅ 뒤로가기 버튼 (UI 참고: 상단 고정, 색상 수정) */}
-                <View
-                    style={{
-                        position: "absolute",
-                        top: 30,
-                        left: 15,
-                        zIndex: 10,
-                    }}
-                >
-                    <Ionicons
-                        name="chevron-back"
-                        size={20}
-                        color={Colors.textSecondary}
-                        onPress={() => router.back()}
-                    />
-                </View>
-
                 <View style={styles.container}>
-                    <View style={styles.headerRow}>
-                        <ThemedText
-                            size="2xl"
-                            weight="bold"
-                            style={styles.title}
-                        >
-                            {post.title}
-                        </ThemedText>
-                        <BookmarkButton
-                            isBookmarked={isBookmarked}
-                            onPress={() => toggleCourseBookmark(courseKey)}
-                            size={28}
+                    <View style={styles.topbar}>
+                        <Ionicons
+                            name="chevron-back"
+                            size={22}
+                            color={Colors.textPrimary}
+                            onPress={() => router.push("/(tabs)/map")}
+                        />
+                        <Ionicons
+                            name="alert-circle-outline"
+                            size={20}
+                            color={Colors.textSecondary}
+                            onPress={() => setReportOpen(true)}
                         />
                     </View>
-
-                    <View style={styles.userRow}>
-                        <CommunityDetailUser
-                            nickname={user.username || user.id}
-                            profileImageUrl={user.profile_image || ""}
-                            subInfo={`작성: ${dateText}`} // ✅ 날짜만
-                        />
-                    </View>
-
-                    <View style={styles.metaRow}>
-                        <ThemedText style={styles.metaText}>
-                            <ThemedText>여행 기간</ThemedText>
-                            <ThemedText color="primary">
-                                📍 지역: {courseKey || "-"}
+                    <View style={styles.container}>
+                        <View style={styles.headerRow}>
+                            <ThemedText
+                                size="2xl"
+                                weight="bold"
+                                style={styles.title}
+                            >
+                                {post.title}
                             </ThemedText>
-                        </ThemedText>
+                            <BookmarkButton
+                                isBookmarked={isBookmarked}
+                                onPress={() => toggleCourseBookmark(courseKey)}
+                                size={28}
+                            />
+                        </View>
+
+                        <View style={styles.userRow}>
+                            <Pressable
+                                onPress={() => {
+                                    const userId = String(
+                                        user.id || user.username || "default"
+                                    );
+                                    console.log("Navigating to user:", userId);
+
+                                    router.push({
+                                        pathname: "/(tabs)/mypage/[uid]/detail", // ✅ 올바른 경로
+                                        params: { uid: userId },
+                                    });
+                                }}
+                            >
+                                {" "}
+                                <CommunityDetailUser
+                                    nickname={user.username || user.id}
+                                    profileImageUrl={user.profile_image || ""}
+                                    subInfo={`작성: ${dateText}`}
+                                />
+                            </Pressable>
+                        </View>
+                        <View style={styles.metaRow}>
+                            <ThemedText style={styles.metaText}>
+                                <ThemedText>여행 기간</ThemedText>
+                                <ThemedText color="primary">
+                                    📍 지역: {courseKey || "-"}
+                                </ThemedText>
+                            </ThemedText>
+                        </View>
+                        <View style={styles.contentRow}>
+                            <CommunityDetailContent
+                                content={post.content ?? ""}
+                            />
+                        </View>
                     </View>
 
-                    <View style={styles.contentRow}>
-                        <CommunityDetailContent content={post.content ?? ""} />
-                    </View>
-                </View>
                 <View style={styles.dayplan}>
                     <DayPlanListContainer
                         courseId={courseKey}
@@ -186,6 +201,7 @@ export default function CommunityPost() {
                         selectedPlaceId={selectedPlaceId}
                         activeDayPlanId={selectedDayPlanId}
                     />
+                </View>
                 </View>
             </SafeAreaView>
             <ReportModal

@@ -10,12 +10,17 @@ import {
     Alert,
     KeyboardAvoidingView,
     Platform,
+    Pressable,
 } from "react-native";
 import { useRouter } from "expo-router";
 import { Colors } from "@/constants/Colors";
 import { Ionicons } from "@expo/vector-icons";
 import { Accounts } from "@/src/client/sdk.gen";
 import { AccountsSignupCreateData, User } from "@/src/client/types.gen";
+import AgreementPopup from "@/components/onboarding/AgreementPopup";
+import TermsContent from "@/components/onboarding/TermsContent";
+import PrivacyContent from "@/components/onboarding/PrivacyContent";
+import LocationContent from "@/components//onboarding/LocationContent";
 import { useAuth } from "@/src/contexts/AuthContext";
 
 interface SignupForm extends User {
@@ -43,6 +48,9 @@ export default function SignupScreen() {
     });
     const [showPassword, setShowPassword] = useState(false);
     const [showConfirmPassword, setShowConfirmPassword] = useState(false);
+    const [open, setOpen] = useState<null | "terms" | "privacy" | "location">(
+        null
+    );
 
     // 이메일 유효성 검사
     const validateEmail = (email: string) => {
@@ -80,15 +88,6 @@ export default function SignupScreen() {
     // 개인정보 수집 및 이용 동의 토글
     const togglePrivacyAgreement = () => {
         setForm((prev) => ({ ...prev, agreeToPrivacy: !prev.agreeToPrivacy }));
-        updateAgreementStatus();
-    };
-
-    // 개인정보 3자 제공 동의 토글
-    const toggleThirdPartyAgreement = () => {
-        setForm((prev) => ({
-            ...prev,
-            agreeToThirdParty: !prev.agreeToThirdParty,
-        }));
         updateAgreementStatus();
     };
 
@@ -141,7 +140,7 @@ export default function SignupScreen() {
                     login_method: form.login_method,
                 };
 
-                console.log('Signup data being sent:', signupData);
+                console.log("Signup data being sent:", signupData);
 
                 const response = await Accounts.accountsSignupCreate({
                     body: signupData,
@@ -154,25 +153,39 @@ export default function SignupScreen() {
                     if (signupResponse.tokens) {
                         await login({
                             access: signupResponse.tokens.access,
-                            refresh: signupResponse.tokens.refresh
+                            refresh: signupResponse.tokens.refresh,
                         });
 
-                        Alert.alert("가입 완료", "잇고에 오신 것을 환영합니다!");
-                        // Navigation will be handled by AuthContext
+                        Alert.alert(
+                            "가입 완료",
+                            "잇고에 오신 것을 환영합니다!",
+                            [
+                                {
+                                    text: "확인",
+                                    onPress: () =>
+                                        router.push(
+                                            "/onboarding/food-preference"
+                                        ),
+                                },
+                            ]
+                        );
                     }
                 }
             } catch (error: unknown) {
-                console.error('Signup error:', error);
-                console.error('Error details:', JSON.stringify(error, null, 2));
+                console.error("Signup error:", error);
+                console.error("Error details:", JSON.stringify(error, null, 2));
 
                 // Try to get more specific error information
-                if (error && typeof error === 'object' && 'response' in error) {
+                if (error && typeof error === "object" && "response" in error) {
                     const response = (error as any).response;
-                    console.error('Response status:', response?.status);
-                    console.error('Response data:', response?.data);
+                    console.error("Response status:", response?.status);
+                    console.error("Response data:", response?.data);
                 }
 
-                Alert.alert("가입 실패", "회원가입 중 오류가 발생했습니다. 다시 시도해주세요.");
+                Alert.alert(
+                    "가입 실패",
+                    "회원가입 중 오류가 발생했습니다. 다시 시도해주세요."
+                );
             }
         } else {
             Alert.alert("입력 오류", "모든 항목을 올바르게 입력해주세요");
@@ -432,11 +445,16 @@ export default function SignupScreen() {
                                     <Text style={styles.termsText}>
                                         [필수] 서비스 이용약관 동의
                                     </Text>
-                                    <Ionicons
-                                        name="chevron-forward"
-                                        size={16}
-                                        color="#9CA3AF"
-                                    />
+                                    <Pressable
+                                        hitSlop={8}
+                                        onPress={() => setOpen("terms")}
+                                    >
+                                        <Ionicons
+                                            name="chevron-forward"
+                                            size={16}
+                                            color="#9CA3AF"
+                                        />
+                                    </Pressable>
                                 </TouchableOpacity>
 
                                 <TouchableOpacity
@@ -461,40 +479,16 @@ export default function SignupScreen() {
                                     <Text style={styles.termsText}>
                                         [필수] 개인정보 수집 및 이용 동의
                                     </Text>
-                                    <Ionicons
-                                        name="chevron-forward"
-                                        size={16}
-                                        color="#9CA3AF"
-                                    />
-                                </TouchableOpacity>
-
-                                <TouchableOpacity
-                                    style={styles.termsRow}
-                                    onPress={toggleThirdPartyAgreement}
-                                >
-                                    <View
-                                        style={[
-                                            styles.checkbox,
-                                            form.agreeToThirdParty &&
-                                                styles.checkboxChecked,
-                                        ]}
+                                    <Pressable
+                                        hitSlop={8}
+                                        onPress={() => setOpen("privacy")}
                                     >
-                                        {form.agreeToThirdParty && (
-                                            <Ionicons
-                                                name="checkmark"
-                                                size={16}
-                                                color="white"
-                                            />
-                                        )}
-                                    </View>
-                                    <Text style={styles.termsText}>
-                                        [필수] 개인정보 3자 제공
-                                    </Text>
-                                    <Ionicons
-                                        name="chevron-forward"
-                                        size={16}
-                                        color="#9CA3AF"
-                                    />
+                                        <Ionicons
+                                            name="chevron-forward"
+                                            size={16}
+                                            color="#9CA3AF"
+                                        />
+                                    </Pressable>{" "}
                                 </TouchableOpacity>
 
                                 <TouchableOpacity
@@ -519,12 +513,58 @@ export default function SignupScreen() {
                                     <Text style={styles.termsText}>
                                         [필수] 위치정보 수집 및 이용
                                     </Text>
-                                    <Ionicons
-                                        name="chevron-forward"
-                                        size={16}
-                                        color="#9CA3AF"
-                                    />
+                                    <Pressable
+                                        hitSlop={8}
+                                        onPress={() => setOpen("location")}
+                                    >
+                                        <Ionicons
+                                            name="chevron-forward"
+                                            size={16}
+                                            color="#9CA3AF"
+                                        />
+                                    </Pressable>{" "}
                                 </TouchableOpacity>
+
+                                <AgreementPopup
+                                    visible={open === "terms"}
+                                    title="서비스 이용약관 동의"
+                                    onClose={() => setOpen(null)}
+                                    onAgree={() => {
+                                        if (!form.agreeToTerms)
+                                            toggleTermsAgreement();
+                                        setOpen(null);
+                                    }}
+                                >
+                                    <TermsContent />
+                                </AgreementPopup>
+
+                                {/* 개인정보 수집 및 이용 */}
+                                <AgreementPopup
+                                    visible={open === "privacy"}
+                                    title="개인정보 수집 및 이용 동의"
+                                    onClose={() => setOpen(null)}
+                                    onAgree={() => {
+                                        if (!form.agreeToPrivacy)
+                                            togglePrivacyAgreement();
+                                        setOpen(null);
+                                    }}
+                                >
+                                    <PrivacyContent />
+                                </AgreementPopup>
+
+                                {/* 위치정보 수집 및 이용 */}
+                                <AgreementPopup
+                                    visible={open === "location"}
+                                    title="위치정보 수집 및 이용"
+                                    onClose={() => setOpen(null)}
+                                    onAgree={() => {
+                                        if (!form.agreeToLocation)
+                                            toggleLocationAgreement();
+                                        setOpen(null);
+                                    }}
+                                >
+                                    <LocationContent />
+                                </AgreementPopup>
                             </View>
                         </View>
                     </View>
