@@ -163,7 +163,6 @@ export default function CommunityPost() {
                   });
                 }}
               >
-                {" "}
                 <CommunityDetailUser
                   nickname={user.username || user.id}
                   profileImageUrl={user.profile_image || ""}
