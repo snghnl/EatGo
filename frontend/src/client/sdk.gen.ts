@@ -48,6 +48,15 @@ import type {
   DistrictsListResponses,
   DistrictsReadData,
   DistrictsReadResponses,
+  KakaoCategoriesListData,
+  KakaoCategoriesListResponses,
+  KakaoCategoriesListErrors,
+  KakaoSearchCategoryListData,
+  KakaoSearchCategoryListResponses,
+  KakaoSearchCategoryListErrors,
+  KakaoSearchKeywordListData,
+  KakaoSearchKeywordListResponses,
+  KakaoSearchKeywordListErrors,
   PlacesListData,
   PlacesListResponses,
   PlacesCreateData,
@@ -665,6 +674,74 @@ export class Districts {
         },
       ],
       url: "/districts/{id}/",
+      ...options,
+    });
+  }
+}
+
+export class KakaoMapApi {
+  /**
+   * Get list of available Kakao Map category codes
+   */
+  public static kakaoCategoriesList<ThrowOnError extends boolean = false>(
+    options?: Options<KakaoCategoriesListData, ThrowOnError>,
+  ) {
+    return (options?.client ?? _heyApiClient).get<
+      KakaoCategoriesListResponses,
+      KakaoCategoriesListErrors,
+      ThrowOnError
+    >({
+      security: [
+        {
+          name: "Authorization",
+          type: "apiKey",
+        },
+      ],
+      url: "/kakao/categories/",
+      ...options,
+    });
+  }
+
+  /**
+   * Search POI by category using Kakao Map API
+   */
+  public static kakaoSearchCategoryList<ThrowOnError extends boolean = false>(
+    options: Options<KakaoSearchCategoryListData, ThrowOnError>,
+  ) {
+    return (options.client ?? _heyApiClient).get<
+      KakaoSearchCategoryListResponses,
+      KakaoSearchCategoryListErrors,
+      ThrowOnError
+    >({
+      security: [
+        {
+          name: "Authorization",
+          type: "apiKey",
+        },
+      ],
+      url: "/kakao/search/category/",
+      ...options,
+    });
+  }
+
+  /**
+   * Search POI (Points of Interest) by keyword using Kakao Map API
+   */
+  public static kakaoSearchKeywordList<ThrowOnError extends boolean = false>(
+    options: Options<KakaoSearchKeywordListData, ThrowOnError>,
+  ) {
+    return (options.client ?? _heyApiClient).get<
+      KakaoSearchKeywordListResponses,
+      KakaoSearchKeywordListErrors,
+      ThrowOnError
+    >({
+      security: [
+        {
+          name: "Authorization",
+          type: "apiKey",
+        },
+      ],
+      url: "/kakao/search/keyword/",
       ...options,
     });
   }

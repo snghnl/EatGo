@@ -244,7 +244,7 @@ export type PostListOutput = {
    * Comments Count
    */
   readonly comments_count?: number;
-  readonly images?: PostImage[];
+  readonly images?: Array<PostImage>;
   /**
    * Created at
    */
@@ -268,9 +268,9 @@ export type PostListInput = {
    * Content
    */
   content: string;
-  images?: {
+  images?: Array<{
     [key: string]: string | null;
-  }[];
+  }>;
 };
 
 export type Comment = {
@@ -316,8 +316,8 @@ export type PostDetailOutput = {
    * Comments Count
    */
   readonly comments_count?: number;
-  readonly images?: PostImage[];
-  readonly comments?: Comment[];
+  readonly images?: Array<PostImage>;
+  readonly comments?: Array<Comment>;
   /**
    * Is liked
    */
@@ -341,9 +341,9 @@ export type PostDetailInput = {
    * Content
    */
   content?: string;
-  images?: {
+  images?: Array<{
     [key: string]: string | null;
-  }[];
+  }>;
 };
 
 export type PostCommentsOutput = {
@@ -573,7 +573,7 @@ export type PlaceRecommend = {
 };
 
 export type PlaceRecommendOutput = {
-  places: PlaceRecommend[];
+  places: Array<PlaceRecommend>;
 };
 
 export type Route = {
@@ -601,16 +601,16 @@ export type Route = {
    * Created by
    */
   created_by?: number | null;
-  readonly places?: string[];
+  readonly places?: Array<string>;
 };
 
 export type RouteRecommendationOutput = {
   /**
    * List of route options with places, distances, and metadata
    */
-  routes: {
+  routes: Array<{
     [key: string]: string | null;
-  }[];
+  }>;
   /**
    * User location
    */
@@ -830,7 +830,7 @@ export type TravelCourse = {
    * Description
    */
   description?: string;
-  routes: TravelCourseRoute[];
+  routes: Array<TravelCourseRoute>;
   /**
    * Start date
    */
@@ -923,7 +923,7 @@ export type CategoriesListData = {
 };
 
 export type CategoriesListResponses = {
-  200: Category[];
+  200: Array<Category>;
 };
 
 export type CategoriesListResponse =
@@ -1056,7 +1056,7 @@ export type CommunityPostsListData = {
 };
 
 export type CommunityPostsListResponses = {
-  200: PostListOutput[];
+  200: Array<PostListOutput>;
 };
 
 export type CommunityPostsListResponse =
@@ -1134,7 +1134,7 @@ export type CommunityPostsCommentsListData = {
 };
 
 export type CommunityPostsCommentsListResponses = {
-  200: PostCommentsOutput[];
+  200: Array<PostCommentsOutput>;
 };
 
 export type CommunityPostsCommentsListResponse =
@@ -1180,7 +1180,7 @@ export type DistrictsListData = {
 };
 
 export type DistrictsListResponses = {
-  200: DistrictList[];
+  200: Array<DistrictList>;
 };
 
 export type DistrictsListResponse =
@@ -1205,6 +1205,205 @@ export type DistrictsReadResponses = {
 export type DistrictsReadResponse =
   DistrictsReadResponses[keyof DistrictsReadResponses];
 
+export type KakaoCategoriesListData = {
+  body?: never;
+  path?: never;
+  query?: never;
+  url: "/kakao/categories/";
+};
+
+export type KakaoCategoriesListErrors = {
+  /**
+   * Internal Server Error
+   */
+  500: {
+    error?: string;
+  };
+};
+
+export type KakaoCategoriesListError =
+  KakaoCategoriesListErrors[keyof KakaoCategoriesListErrors];
+
+export type KakaoCategoriesListResponses = {
+  /**
+   * List of available categories
+   */
+  200: {
+    [key: string]: string;
+  };
+};
+
+export type KakaoCategoriesListResponse =
+  KakaoCategoriesListResponses[keyof KakaoCategoriesListResponses];
+
+export type KakaoSearchCategoryListData = {
+  body?: never;
+  path?: never;
+  query: {
+    /**
+     * Category group code (e.g., MT1, CS2, PS3, SC4, AC5, PK6, OL7, SW8, BK9, CT1, AG2, PO3, AT4, AD5, FD6, CE7, HP8, PM9)
+     */
+    category_group_code: string;
+    /**
+     * Longitude coordinate
+     */
+    x: number;
+    /**
+     * Latitude coordinate
+     */
+    y: number;
+    /**
+     * Search radius in meters (default: 20000)
+     */
+    radius?: number;
+    /**
+     * Page number (default: 1)
+     */
+    page?: number;
+    /**
+     * Number of results per page (default: 15)
+     */
+    size?: number;
+    /**
+     * Sort order: 'accuracy' or 'distance'
+     */
+    sort?: "accuracy" | "distance";
+  };
+  url: "/kakao/search/category/";
+};
+
+export type KakaoSearchCategoryListErrors = {
+  /**
+   * Bad Request - Missing required parameters
+   */
+  400: {
+    error?: string;
+  };
+  /**
+   * Internal Server Error
+   */
+  500: {
+    error?: string;
+  };
+};
+
+export type KakaoSearchCategoryListError =
+  KakaoSearchCategoryListErrors[keyof KakaoSearchCategoryListErrors];
+
+export type KakaoSearchCategoryListResponses = {
+  /**
+   * Successful category search results
+   */
+  200: {
+    documents?: Array<{
+      id?: string;
+      place_name?: string;
+      category_name?: string;
+      category_group_code?: string;
+      category_group_name?: string;
+      phone?: string;
+      address_name?: string;
+      road_address_name?: string;
+      x?: string;
+      y?: string;
+      place_url?: string;
+      distance?: string;
+    }>;
+    meta?: {
+      total_count?: number;
+      pageable_count?: number;
+      is_end?: boolean;
+    };
+  };
+};
+
+export type KakaoSearchCategoryListResponse =
+  KakaoSearchCategoryListResponses[keyof KakaoSearchCategoryListResponses];
+
+export type KakaoSearchKeywordListData = {
+  body?: never;
+  path?: never;
+  query: {
+    /**
+     * Search keyword
+     */
+    query: string;
+    /**
+     * Longitude coordinate
+     */
+    x?: number;
+    /**
+     * Latitude coordinate
+     */
+    y?: number;
+    /**
+     * Search radius in meters (default: 15000)
+     */
+    radius?: number;
+    /**
+     * Page number (default: 1)
+     */
+    page?: number;
+    /**
+     * Number of results per page (default: 15)
+     */
+    size?: number;
+    /**
+     * Sort order: 'accuracy' or 'distance'
+     */
+    sort?: "accuracy" | "distance";
+  };
+  url: "/kakao/search/keyword/";
+};
+
+export type KakaoSearchKeywordListErrors = {
+  /**
+   * Bad Request - Missing or invalid parameters
+   */
+  400: {
+    error?: string;
+  };
+  /**
+   * Internal Server Error
+   */
+  500: {
+    error?: string;
+  };
+};
+
+export type KakaoSearchKeywordListError =
+  KakaoSearchKeywordListErrors[keyof KakaoSearchKeywordListErrors];
+
+export type KakaoSearchKeywordListResponses = {
+  /**
+   * Successful search results
+   */
+  200: {
+    documents?: Array<{
+      id?: string;
+      place_name?: string;
+      category_name?: string;
+      category_group_code?: string;
+      category_group_name?: string;
+      phone?: string;
+      address_name?: string;
+      road_address_name?: string;
+      x?: string;
+      y?: string;
+      place_url?: string;
+      distance?: string;
+    }>;
+    meta?: {
+      total_count?: number;
+      pageable_count?: number;
+      is_end?: boolean;
+    };
+  };
+};
+
+export type KakaoSearchKeywordListResponse =
+  KakaoSearchKeywordListResponses[keyof KakaoSearchKeywordListResponses];
+
 export type PlacesListData = {
   body?: never;
   path?: never;
@@ -1213,7 +1412,7 @@ export type PlacesListData = {
 };
 
 export type PlacesListResponses = {
-  200: Place[];
+  200: Array<Place>;
 };
 
 export type PlacesListResponse = PlacesListResponses[keyof PlacesListResponses];
@@ -1240,7 +1439,7 @@ export type PlacesRecommendListData = {
     lng: number;
     max_distance_km?: number | null;
     limit?: number | null;
-    category_filter?: string[] | null;
+    category_filter?: Array<string> | null;
   };
   url: "/places/recommend/";
 };
@@ -1332,7 +1531,7 @@ export type ProvincesListData = {
 };
 
 export type ProvincesListResponses = {
-  200: Province[];
+  200: Array<Province>;
 };
 
 export type ProvincesListResponse =
@@ -1365,7 +1564,7 @@ export type RoutesListData = {
 };
 
 export type RoutesListResponses = {
-  200: Route[];
+  200: Array<Route>;
 };
 
 export type RoutesListResponse = RoutesListResponses[keyof RoutesListResponses];
@@ -1392,7 +1591,7 @@ export type RoutesMyListData = {
 };
 
 export type RoutesMyListResponses = {
-  200: Route[];
+  200: Array<Route>;
 };
 
 export type RoutesMyListResponse =
@@ -1406,7 +1605,7 @@ export type RoutesRecommendListData = {
     lng: number;
     max_distance_km?: number | null;
     limit?: number | null;
-    category_filter?: string[] | null;
+    category_filter?: Array<string> | null;
   };
   url: "/routes/recommend/";
 };
@@ -1523,7 +1722,7 @@ export type TourismPoisListData = {
 };
 
 export type TourismPoisListResponses = {
-  200: TourismPoi[];
+  200: Array<TourismPoi>;
 };
 
 export type TourismPoisListResponse =
@@ -1584,7 +1783,7 @@ export type TourismRelatedListData = {
 };
 
 export type TourismRelatedListResponses = {
-  200: RelatedTourism[];
+  200: Array<RelatedTourism>;
 };
 
 export type TourismRelatedListResponse =
@@ -1617,7 +1816,7 @@ export type TravelCoursesListData = {
 };
 
 export type TravelCoursesListResponses = {
-  200: TravelCourse[];
+  200: Array<TravelCourse>;
 };
 
 export type TravelCoursesListResponse =
@@ -1645,7 +1844,7 @@ export type TravelCoursesMyListData = {
 };
 
 export type TravelCoursesMyListResponses = {
-  200: TravelCourse[];
+  200: Array<TravelCourse>;
 };
 
 export type TravelCoursesMyListResponse =

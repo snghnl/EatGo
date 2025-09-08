@@ -301,7 +301,7 @@ export const mergeConfigs = (a: Config, b: Config): Config => {
 };
 
 export const mergeHeaders = (
-  ...headers: (Required<Config>["headers"] | undefined)[]
+  ...headers: Array<Required<Config>["headers"] | undefined>
 ): Headers => {
   const mergedHeaders = new Headers();
   for (const header of headers) {
