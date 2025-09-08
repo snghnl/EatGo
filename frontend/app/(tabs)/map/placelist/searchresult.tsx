@@ -27,8 +27,19 @@ export default function SearchResultScreen() {
         if (results) {
             // Use passed API results
             try {
-                const parsedResults = JSON.parse(results) as Place[];
-                setSearchResults(parsedResults);
+                const parsedResults = JSON.parse(results);
+                // Convert Kakao API response to Place type
+                const convertedResults: Place[] = parsedResults.map((item: any) => ({
+                    id: item.id,
+                    name: item.place_name,
+                    place_type: item.category_name as Place["place_type"],
+                    address: item.address_name,
+                    road_address: item.road_address_name,
+                    lat: parseFloat(item.y) || 0,
+                    lng: parseFloat(item.x) || 0,
+                    external_id: item.id,
+                }));
+                setSearchResults(convertedResults);
             } catch (error) {
                 console.error("Failed to parse search results:", error);
                 setSearchResults([]);
