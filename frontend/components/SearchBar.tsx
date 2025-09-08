@@ -1,17 +1,13 @@
-import React, { useState, useEffect, useRef } from "react";
+import React, { useState, useRef } from "react";
 import {
-    View,
     TextInput,
     StyleSheet,
     Text,
-    FlatList,
-    Pressable,
     Keyboard,
     TouchableOpacity,
 } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
 import { Colors } from "@/constants/Colors";
-import SearchListItem from "./SearchListItem";
 import { useRouter, useFocusEffect } from "expo-router";
 import { Place } from "@/src/client/types.gen";
 import { KakaoMapApi } from "@/src/client/sdk.gen";
@@ -19,18 +15,14 @@ import { geolocationService } from "@/services/geolocationService";
 
 interface SearchBarProps {
     onSelectItem?: (item: Place) => void;
-    searchData?: Place[];
     mapCenter?: { lat: number; lng: number } | null;
 }
 
 export default function SearchBar({
     onSelectItem,
-    searchData = [],
     mapCenter,
 }: SearchBarProps) {
     const [searchTerm, setSearchTerm] = useState("");
-    const [results, setResults] = useState<Place[]>([]);
-    const [isFocused, setIsFocused] = useState(false);
     const router = useRouter();
     const textInputRef = useRef<TextInput>(null);
 
@@ -38,32 +30,12 @@ export default function SearchBar({
     useFocusEffect(
         React.useCallback(() => {
             setSearchTerm("");
-            setResults([]);
-            setIsFocused(false);
         }, [])
     );
-
-    useEffect(() => {
-        if (searchTerm === "") {
-            setResults([]);
-            return;
-        }
-        const term = searchTerm.toLowerCase();
-        setResults(searchData);
-    }, [searchTerm, searchData]);
-
-    const handleSelectItem = (item: Place) => {
-        console.log("SearchBar handleSelectItem called:", item.name);
-        Keyboard.dismiss();
-        setIsFocused(false);
-        setSearchTerm(item.name);
-        onSelectItem?.(item);
-    };
 
     const handleSearch = async () => {
         if (searchTerm.trim()) {
             Keyboard.dismiss();
-            setIsFocused(false);
 
             // Use map center coordinates if available, fallback to device location
             let searchLocation;
@@ -128,16 +100,11 @@ export default function SearchBar({
         >
             <TextInput
                 ref={textInputRef}
-                placeholder={isFocused ? "" : "지역, 맛집 등을 검색하세요"}
+                placeholder="지역, 맛집 등을 검색하세요"
                 placeholderTextColor="#C7C7C7"
                 style={styles.input}
                 value={searchTerm}
                 onChangeText={setSearchTerm}
-                onFocus={() => setIsFocused(true)}
-                onBlur={() => {
-                    // 터치 이벤트가 처리될 시간을 주기 위해 지연
-                    setTimeout(() => setIsFocused(false), 150);
-                }}
                 onSubmitEditing={handleSubmitEditing}
                 returnKeyType="search"
                 selectionColor="transparent"
@@ -149,32 +116,12 @@ export default function SearchBar({
             >
                 <Ionicons name="search" size={25} color="#C7C7C7" />
             </TouchableOpacity>
-
-            {isFocused && (
-                <View style={styles.overlay}>
-                    <FlatList
-                        data={results}
-                        keyExtractor={(item) => item.id || ""}
-                        renderItem={({ item }) => (
-                            <SearchListItem
-                                item={item}
-                                onSelectItem={handleSelectItem}
-                            />
-                        )}
-                        keyboardShouldPersistTaps="handled"
-                        nestedScrollEnabled={true}
-                        style={styles.flatListStyle}
-                        showsVerticalScrollIndicator={true}
-                    />
-                </View>
-            )}
         </TouchableOpacity>
     );
 }
 
 const styles = StyleSheet.create({
     container: {
-        position: "relative",
         width: "100%",
         height: 51,
         flexDirection: "row",
@@ -200,23 +147,5 @@ const styles = StyleSheet.create({
     },
     searchButton: {
         padding: 5,
-    },
-    overlay: {
-        position: "absolute",
-        top: 95,
-        left: 0,
-        right: 0,
-        backgroundColor: "#fff",
-        borderRadius: 8,
-        shadowColor: "#000",
-        shadowOpacity: 0.1,
-        shadowOffset: { width: 0, height: 2 },
-        shadowRadius: 4,
-        elevation: 5,
-        maxHeight: 180,
-        zIndex: 1000,
-    },
-    flatListStyle: {
-        flex: 1,
     },
 });
