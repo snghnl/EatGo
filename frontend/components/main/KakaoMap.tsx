@@ -1,22 +1,24 @@
-import React from 'react';
-import { View, StyleSheet, Platform, Image } from 'react-native'; // 👈 Image 추가
-import { WebView } from 'react-native-webview';
+import React from "react";
+import { View, StyleSheet, Platform, Image } from "react-native"; // 👈 Image 추가
+import { WebView } from "react-native-webview";
 
 const KAKAO_JS_API_KEY = process.env.EXPO_PUBLIC_KAKAO_JS_API_KEY;
 
 type KakaoMapProps = {
-    latitude: number;
-    longitude: number;
-    pinColor?: string;
+  latitude: number;
+  longitude: number;
+  pinColor?: string;
 };
 
 export default function KakaoMap({ latitude, longitude }: KakaoMapProps) {
-    if (Platform.OS === 'web') {
-        return <div id="kakao-map" style={{ width: '100%', height: '100%' }} />;
-    }
-    const pinUri = Image.resolveAssetSource(require('@/assets/images/pin4.png'))?.uri;
+  if (Platform.OS === "web") {
+    return <div id="kakao-map" style={{ width: "100%", height: "100%" }} />;
+  }
+  const pinUri = Image.resolveAssetSource(
+    require("@/assets/images/pin4.png"),
+  )?.uri;
 
-    const htmlContent = `
+  const htmlContent = `
   <!DOCTYPE html>
   <html>
     <head>
@@ -66,7 +68,7 @@ export default function KakaoMap({ latitude, longitude }: KakaoMapProps) {
               // (옵션) 초기 중심 마커 - 기본마커 유지 원하면 주석
               var centerMarker = new kakao.maps.Marker({
                 position: new kakao.maps.LatLng(${latitude}, ${longitude}),
-                image: markerImage, 
+                image: markerImage,
               });
               centerMarker.setMap(map);
 
@@ -99,26 +101,28 @@ export default function KakaoMap({ latitude, longitude }: KakaoMapProps) {
   </html>
   `;
 
-    return (
-        <View style={styles.container}>
-            <WebView
-                originWhitelist={['*']}
-                source={{ html: htmlContent }}
-                style={styles.webview}
-                javaScriptEnabled
-                domStorageEnabled
-                mixedContentMode="always"
-                onMessage={(event) => {
-                    console.log('[KakaoMap WebView]:', event.nativeEvent.data);
-                }}
-                onError={(e) => console.log('[KakaoMap WebView] error:', e.nativeEvent)}
-                onHttpError={(e) => console.log('[KakaoMap WebView] HTTP error:', e.nativeEvent)}
-            />
-        </View>
-    );
+  return (
+    <View style={styles.container}>
+      <WebView
+        originWhitelist={["*"]}
+        source={{ html: htmlContent }}
+        style={styles.webview}
+        javaScriptEnabled
+        domStorageEnabled
+        mixedContentMode="always"
+        onMessage={(event) => {
+          console.log("[KakaoMap WebView]:", event.nativeEvent.data);
+        }}
+        onError={(e) => console.log("[KakaoMap WebView] error:", e.nativeEvent)}
+        onHttpError={(e) =>
+          console.log("[KakaoMap WebView] HTTP error:", e.nativeEvent)
+        }
+      />
+    </View>
+  );
 }
 
 const styles = StyleSheet.create({
-    container: { flex: 1, width: '100%' },
-    webview: { flex: 1 },
+  container: { flex: 1, width: "100%" },
+  webview: { flex: 1 },
 });

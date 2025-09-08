@@ -1,36 +1,36 @@
 // 기본 데이터 타입
 export interface PlaceItem {
-    id: string;
-    category: string;
-    name: string;
+  id: string;
+  category: string;
+  name: string;
 }
 
 export interface Course {
-    id: string;
-    title: string;
-    subtitle: string;
-    hasImages: boolean;
+  id: string;
+  title: string;
+  subtitle: string;
+  hasImages: boolean;
 }
 
 export interface DayPlan {
-    id: string;
-    day: number;
-    title: string;
-    places: PlaceItem[];
+  id: string;
+  day: number;
+  title: string;
+  places: PlaceItem[];
 }
 
 export interface RecommendationItem {
-    id: string;
-    title: string;
-    places: PlaceItem[];
+  id: string;
+  title: string;
+  places: PlaceItem[];
 }
 
 // 모달 및 폼 관련 타입
 export interface CreateCourseData {
-    startDate: string;
-    endDate: string;
-    selectedDestinations: string[];
-    selectedFoods: string[];
+  startDate: string;
+  endDate: string;
+  selectedDestinations: string[];
+  selectedFoods: string[];
 }
 
 // 이벤트 핸들러 타입
