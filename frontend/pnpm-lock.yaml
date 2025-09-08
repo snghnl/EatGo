@@ -124,7 +124,7 @@ importers:
         version: 13.13.5(react-native@0.79.5(@babel/core@7.28.0)(@types/react@19.0.14)(react@19.0.0))(react@19.0.0)
       storybook:
         specifier: ^9.0.18
-        version: 9.0.18(@testing-library/dom@10.4.0)
+        version: 9.0.18(@testing-library/dom@10.4.0)(prettier@3.6.2)
       zod:
         specifier: ^4.1.3
         version: 4.1.5
@@ -146,13 +146,13 @@ importers:
         version: 4.5.7
       '@storybook/addon-ondevice-actions':
         specifier: ^9.0.18
-        version: 9.0.18(react-native@0.79.5(@babel/core@7.28.0)(@types/react@19.0.14)(react@19.0.0))(react@19.0.0)(storybook@9.0.18(@testing-library/dom@10.4.0))
+        version: 9.0.18(react-native@0.79.5(@babel/core@7.28.0)(@types/react@19.0.14)(react@19.0.0))(react@19.0.0)(storybook@9.0.18(@testing-library/dom@10.4.0)(prettier@3.6.2))
       '@storybook/addon-ondevice-controls':
         specifier: ^9.0.18
-        version: 9.0.18(7979e3e9ad91285870ca8e65b0f0e2e9)
+        version: 9.0.18(85c3652892c0a83217cefe595d196721)
       '@storybook/react-native':
         specifier: ^9.0.18
-        version: 9.0.18(946617fbfaa26a601d4aa28c792ac20e)
+        version: 9.0.18(1d3bb9aad01944ffb0a0061424a3d053)
       '@types/react':
         specifier: ~19.0.10
         version: 19.0.14
@@ -165,6 +165,9 @@ importers:
       eslint-config-expo:
         specifier: ~9.2.0
         version: 9.2.0(eslint@9.31.0(jiti@2.5.1))(typescript@5.8.3)
+      prettier:
+        specifier: 3.6.2
+        version: 3.6.2
       react-native-svg:
         specifier: ^15.12.0
         version: 15.12.0(react-native@0.79.5(@babel/core@7.28.0)(@types/react@19.0.14)(react@19.0.0))(react@19.0.0)
@@ -3957,6 +3960,11 @@ packages:
     resolution: {integrity: sha512-vkcDPrRZo1QZLbn5RLGPpg/WmIQ65qoWWhcGKf/b5eplkkarX0m9z8ppCat4mlOqUsWpyNuYgO3VRyrYHSzX5g==}
     engines: {node: '>= 0.8.0'}
 
+  prettier@3.6.2:
+    resolution: {integrity: sha512-I7AIg5boAr5R0FFtJ6rCfD+LFsWHp81dolrFD8S79U9tb8Az2nGrJncnMSnys+bpQJfRUzqs9hnA81OAA3hCuQ==}
+    engines: {node: '>=14'}
+    hasBin: true
+
   pretty-bytes@5.6.0:
     resolution: {integrity: sha512-FFw039TmrBqFK8ma/7OL3sDz/VytdtJr044/QUJtH0wK9lb9jLq9tJyIxUwtQJHwar2BqtiA4iCWSwo9JLkzFg==}
     engines: {node: '>=6'}
@@ -6437,26 +6445,26 @@ snapshots:
     dependencies:
       '@sinonjs/commons': 3.0.1
 
-  '@storybook/addon-ondevice-actions@9.0.18(react-native@0.79.5(@babel/core@7.28.0)(@types/react@19.0.14)(react@19.0.0))(react@19.0.0)(storybook@9.0.18(@testing-library/dom@10.4.0))':
+  '@storybook/addon-ondevice-actions@9.0.18(react-native@0.79.5(@babel/core@7.28.0)(@types/react@19.0.14)(react@19.0.0))(react@19.0.0)(storybook@9.0.18(@testing-library/dom@10.4.0)(prettier@3.6.2))':
     dependencies:
       '@storybook/global': 5.0.0
       fast-deep-equal: 2.0.1
       react: 19.0.0
       react-native: 0.79.5(@babel/core@7.28.0)(@types/react@19.0.14)(react@19.0.0)
-      storybook: 9.0.18(@testing-library/dom@10.4.0)
+      storybook: 9.0.18(@testing-library/dom@10.4.0)(prettier@3.6.2)
 
-  '@storybook/addon-ondevice-controls@9.0.18(7979e3e9ad91285870ca8e65b0f0e2e9)':
+  '@storybook/addon-ondevice-controls@9.0.18(85c3652892c0a83217cefe595d196721)':
     dependencies:
       '@react-native-community/datetimepicker': 8.4.2(expo@53.0.20(@babel/core@7.28.0)(@expo/metro-runtime@5.0.4(react-native@0.79.5(@babel/core@7.28.0)(@types/react@19.0.14)(react@19.0.0)))(react-native-webview@13.13.5(react-native@0.79.5(@babel/core@7.28.0)(@types/react@19.0.14)(react@19.0.0))(react@19.0.0))(react-native@0.79.5(@babel/core@7.28.0)(@types/react@19.0.14)(react@19.0.0))(react@19.0.0))(react-native@0.79.5(@babel/core@7.28.0)(@types/react@19.0.14)(react@19.0.0))(react@19.0.0)
       '@react-native-community/slider': 4.5.7
       '@storybook/react-native-theming': 9.0.18(react-native@0.79.5(@babel/core@7.28.0)(@types/react@19.0.14)(react@19.0.0))(react@19.0.0)
-      '@storybook/react-native-ui-common': 9.0.18(react-dom@19.0.0(react@19.0.0))(react-native@0.79.5(@babel/core@7.28.0)(@types/react@19.0.14)(react@19.0.0))(react@19.0.0)(storybook@9.0.18(@testing-library/dom@10.4.0))(typescript@5.8.3)
+      '@storybook/react-native-ui-common': 9.0.18(react-dom@19.0.0(react@19.0.0))(react-native@0.79.5(@babel/core@7.28.0)(@types/react@19.0.14)(react@19.0.0))(react@19.0.0)(storybook@9.0.18(@testing-library/dom@10.4.0)(prettier@3.6.2))(typescript@5.8.3)
       deep-equal: 1.1.2
       prop-types: 15.8.1
       react: 19.0.0
       react-native: 0.79.5(@babel/core@7.28.0)(@types/react@19.0.14)(react@19.0.0)
       react-native-modal-datetime-picker: 18.0.0(@react-native-community/datetimepicker@8.4.2(expo@53.0.20(@babel/core@7.28.0)(@expo/metro-runtime@5.0.4(react-native@0.79.5(@babel/core@7.28.0)(@types/react@19.0.14)(react@19.0.0)))(react-native-webview@13.13.5(react-native@0.79.5(@babel/core@7.28.0)(@types/react@19.0.14)(react@19.0.0))(react@19.0.0))(react-native@0.79.5(@babel/core@7.28.0)(@types/react@19.0.14)(react@19.0.0))(react@19.0.0))(react-native@0.79.5(@babel/core@7.28.0)(@types/react@19.0.14)(react@19.0.0))(react@19.0.0))(react-native@0.79.5(@babel/core@7.28.0)(@types/react@19.0.14)(react@19.0.0))
-      storybook: 9.0.18(@testing-library/dom@10.4.0)
+      storybook: 9.0.18(@testing-library/dom@10.4.0)(prettier@3.6.2)
       tinycolor2: 1.6.0
     optionalDependencies:
       '@gorhom/bottom-sheet': 5.1.6(@types/react@19.0.14)(react-native-gesture-handler@2.24.0(react-native@0.79.5(@babel/core@7.28.0)(@types/react@19.0.14)(react@19.0.0))(react@19.0.0))(react-native-reanimated@3.17.5(@babel/core@7.28.0)(react-native@0.79.5(@babel/core@7.28.0)(@types/react@19.0.14)(react@19.0.0))(react@19.0.0))(react-native@0.79.5(@babel/core@7.28.0)(@types/react@19.0.14)(react@19.0.0))(react@19.0.0)
@@ -6466,11 +6474,11 @@ snapshots:
 
   '@storybook/global@5.0.0': {}
 
-  '@storybook/react-dom-shim@9.0.18(react-dom@19.0.0(react@19.0.0))(react@19.0.0)(storybook@9.0.18(@testing-library/dom@10.4.0))':
+  '@storybook/react-dom-shim@9.0.18(react-dom@19.0.0(react@19.0.0))(react@19.0.0)(storybook@9.0.18(@testing-library/dom@10.4.0)(prettier@3.6.2))':
     dependencies:
       react: 19.0.0
       react-dom: 19.0.0(react@19.0.0)
-      storybook: 9.0.18(@testing-library/dom@10.4.0)
+      storybook: 9.0.18(@testing-library/dom@10.4.0)(prettier@3.6.2)
 
   '@storybook/react-native-theming@9.0.18(react-native@0.79.5(@babel/core@7.28.0)(@types/react@19.0.14)(react@19.0.0))(react@19.0.0)':
     dependencies:
@@ -6478,9 +6486,9 @@ snapshots:
       react: 19.0.0
       react-native: 0.79.5(@babel/core@7.28.0)(@types/react@19.0.14)(react@19.0.0)
 
-  '@storybook/react-native-ui-common@9.0.18(react-dom@19.0.0(react@19.0.0))(react-native@0.79.5(@babel/core@7.28.0)(@types/react@19.0.14)(react@19.0.0))(react@19.0.0)(storybook@9.0.18(@testing-library/dom@10.4.0))(typescript@5.8.3)':
+  '@storybook/react-native-ui-common@9.0.18(react-dom@19.0.0(react@19.0.0))(react-native@0.79.5(@babel/core@7.28.0)(@types/react@19.0.14)(react@19.0.0))(react@19.0.0)(storybook@9.0.18(@testing-library/dom@10.4.0)(prettier@3.6.2))(typescript@5.8.3)':
     dependencies:
-      '@storybook/react': 9.0.18(react-dom@19.0.0(react@19.0.0))(react@19.0.0)(storybook@9.0.18(@testing-library/dom@10.4.0))(typescript@5.8.3)
+      '@storybook/react': 9.0.18(react-dom@19.0.0(react@19.0.0))(react@19.0.0)(storybook@9.0.18(@testing-library/dom@10.4.0)(prettier@3.6.2))(typescript@5.8.3)
       '@storybook/react-native-theming': 9.0.18(react-native@0.79.5(@babel/core@7.28.0)(@types/react@19.0.14)(react@19.0.0))(react@19.0.0)
       es-toolkit: 1.39.7
       fuse.js: 7.1.0
@@ -6489,18 +6497,18 @@ snapshots:
       react: 19.0.0
       react-native: 0.79.5(@babel/core@7.28.0)(@types/react@19.0.14)(react@19.0.0)
       store2: 2.14.4
-      storybook: 9.0.18(@testing-library/dom@10.4.0)
+      storybook: 9.0.18(@testing-library/dom@10.4.0)(prettier@3.6.2)
       ts-dedent: 2.2.0
     transitivePeerDependencies:
       - react-dom
       - typescript
 
-  '@storybook/react-native-ui@9.0.18(946617fbfaa26a601d4aa28c792ac20e)':
+  '@storybook/react-native-ui@9.0.18(1d3bb9aad01944ffb0a0061424a3d053)':
     dependencies:
       '@gorhom/bottom-sheet': 5.1.6(@types/react@19.0.14)(react-native-gesture-handler@2.24.0(react-native@0.79.5(@babel/core@7.28.0)(@types/react@19.0.14)(react@19.0.0))(react@19.0.0))(react-native-reanimated@3.17.5(@babel/core@7.28.0)(react-native@0.79.5(@babel/core@7.28.0)(@types/react@19.0.14)(react@19.0.0))(react@19.0.0))(react-native@0.79.5(@babel/core@7.28.0)(@types/react@19.0.14)(react@19.0.0))(react@19.0.0)
-      '@storybook/react': 9.0.18(react-dom@19.0.0(react@19.0.0))(react@19.0.0)(storybook@9.0.18(@testing-library/dom@10.4.0))(typescript@5.8.3)
+      '@storybook/react': 9.0.18(react-dom@19.0.0(react@19.0.0))(react@19.0.0)(storybook@9.0.18(@testing-library/dom@10.4.0)(prettier@3.6.2))(typescript@5.8.3)
       '@storybook/react-native-theming': 9.0.18(react-native@0.79.5(@babel/core@7.28.0)(@types/react@19.0.14)(react@19.0.0))(react@19.0.0)
-      '@storybook/react-native-ui-common': 9.0.18(react-dom@19.0.0(react@19.0.0))(react-native@0.79.5(@babel/core@7.28.0)(@types/react@19.0.14)(react@19.0.0))(react@19.0.0)(storybook@9.0.18(@testing-library/dom@10.4.0))(typescript@5.8.3)
+      '@storybook/react-native-ui-common': 9.0.18(react-dom@19.0.0(react@19.0.0))(react-native@0.79.5(@babel/core@7.28.0)(@types/react@19.0.14)(react@19.0.0))(react@19.0.0)(storybook@9.0.18(@testing-library/dom@10.4.0)(prettier@3.6.2))(typescript@5.8.3)
       es-toolkit: 1.39.7
       fuse.js: 7.1.0
       memoizerific: 1.11.3
@@ -6512,18 +6520,18 @@ snapshots:
       react-native-safe-area-context: 5.4.0(react-native@0.79.5(@babel/core@7.28.0)(@types/react@19.0.14)(react@19.0.0))(react@19.0.0)
       react-native-svg: 15.12.0(react-native@0.79.5(@babel/core@7.28.0)(@types/react@19.0.14)(react@19.0.0))(react@19.0.0)
       store2: 2.14.4
-      storybook: 9.0.18(@testing-library/dom@10.4.0)
+      storybook: 9.0.18(@testing-library/dom@10.4.0)(prettier@3.6.2)
     transitivePeerDependencies:
       - react-dom
       - typescript
 
-  '@storybook/react-native@9.0.18(946617fbfaa26a601d4aa28c792ac20e)':
+  '@storybook/react-native@9.0.18(1d3bb9aad01944ffb0a0061424a3d053)':
     dependencies:
       '@storybook/global': 5.0.0
-      '@storybook/react': 9.0.18(react-dom@19.0.0(react@19.0.0))(react@19.0.0)(storybook@9.0.18(@testing-library/dom@10.4.0))(typescript@5.8.3)
+      '@storybook/react': 9.0.18(react-dom@19.0.0(react@19.0.0))(react@19.0.0)(storybook@9.0.18(@testing-library/dom@10.4.0)(prettier@3.6.2))(typescript@5.8.3)
       '@storybook/react-native-theming': 9.0.18(react-native@0.79.5(@babel/core@7.28.0)(@types/react@19.0.14)(react@19.0.0))(react@19.0.0)
-      '@storybook/react-native-ui': 9.0.18(946617fbfaa26a601d4aa28c792ac20e)
-      '@storybook/react-native-ui-common': 9.0.18(react-dom@19.0.0(react@19.0.0))(react-native@0.79.5(@babel/core@7.28.0)(@types/react@19.0.14)(react@19.0.0))(react@19.0.0)(storybook@9.0.18(@testing-library/dom@10.4.0))(typescript@5.8.3)
+      '@storybook/react-native-ui': 9.0.18(1d3bb9aad01944ffb0a0061424a3d053)
+      '@storybook/react-native-ui-common': 9.0.18(react-dom@19.0.0(react@19.0.0))(react-native@0.79.5(@babel/core@7.28.0)(@types/react@19.0.14)(react@19.0.0))(react@19.0.0)(storybook@9.0.18(@testing-library/dom@10.4.0)(prettier@3.6.2))(typescript@5.8.3)
       commander: 8.3.0
       dedent: 1.6.0
       deepmerge: 4.3.1
@@ -6531,7 +6539,7 @@ snapshots:
       react-native: 0.79.5(@babel/core@7.28.0)(@types/react@19.0.14)(react@19.0.0)
       react-native-url-polyfill: 2.0.0(react-native@0.79.5(@babel/core@7.28.0)(@types/react@19.0.14)(react@19.0.0))
       setimmediate: 1.0.5
-      storybook: 9.0.18(@testing-library/dom@10.4.0)
+      storybook: 9.0.18(@testing-library/dom@10.4.0)(prettier@3.6.2)
       type-fest: 2.19.0
       util: 0.12.5
       ws: 8.18.3
@@ -6548,13 +6556,13 @@ snapshots:
       - typescript
       - utf-8-validate
 
-  '@storybook/react@9.0.18(react-dom@19.0.0(react@19.0.0))(react@19.0.0)(storybook@9.0.18(@testing-library/dom@10.4.0))(typescript@5.8.3)':
+  '@storybook/react@9.0.18(react-dom@19.0.0(react@19.0.0))(react@19.0.0)(storybook@9.0.18(@testing-library/dom@10.4.0)(prettier@3.6.2))(typescript@5.8.3)':
     dependencies:
       '@storybook/global': 5.0.0
-      '@storybook/react-dom-shim': 9.0.18(react-dom@19.0.0(react@19.0.0))(react@19.0.0)(storybook@9.0.18(@testing-library/dom@10.4.0))
+      '@storybook/react-dom-shim': 9.0.18(react-dom@19.0.0(react@19.0.0))(react@19.0.0)(storybook@9.0.18(@testing-library/dom@10.4.0)(prettier@3.6.2))
       react: 19.0.0
       react-dom: 19.0.0(react@19.0.0)
-      storybook: 9.0.18(@testing-library/dom@10.4.0)
+      storybook: 9.0.18(@testing-library/dom@10.4.0)(prettier@3.6.2)
     optionalDependencies:
       typescript: 5.8.3
 
@@ -9547,6 +9555,8 @@ snapshots:
 
   prelude-ls@1.2.1: {}
 
+  prettier@3.6.2: {}
+
   pretty-bytes@5.6.0: {}
 
   pretty-format@27.5.1:
@@ -10181,7 +10191,7 @@ snapshots:
 
   store2@2.14.4: {}
 
-  storybook@9.0.18(@testing-library/dom@10.4.0):
+  storybook@9.0.18(@testing-library/dom@10.4.0)(prettier@3.6.2):
     dependencies:
       '@storybook/global': 5.0.0
       '@testing-library/jest-dom': 6.6.3
@@ -10194,6 +10204,8 @@ snapshots:
       recast: 0.23.11
       semver: 7.7.2
       ws: 8.18.3
+    optionalDependencies:
+      prettier: 3.6.2
     transitivePeerDependencies:
       - '@testing-library/dom'
       - bufferutil
