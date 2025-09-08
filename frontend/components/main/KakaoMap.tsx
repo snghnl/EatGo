@@ -8,9 +8,10 @@ type KakaoMapProps = {
   latitude: number;
   longitude: number;
   pinColor?: string;
+  onCenterChange?: (center: { lat: number; lng: number }) => void;
 };
 
-export default function KakaoMap({ latitude, longitude }: KakaoMapProps) {
+export default function KakaoMap({ latitude, longitude, onCenterChange }: KakaoMapProps) {
   if (Platform.OS === "web") {
     return <div id="kakao-map" style={{ width: "100%", height: "100%" }} />;
   }
@@ -74,6 +75,27 @@ export default function KakaoMap({ latitude, longitude }: KakaoMapProps) {
 
               var pinMarker = null;
 
+              // Function to get and send current map center
+              function sendMapCenter() {
+                var center = map.getCenter();
+                var centerData = {
+                  type: 'center_change',
+                  lat: center.getLat(),
+                  lng: center.getLng()
+                };
+                if (window.ReactNativeWebView) {
+                  window.ReactNativeWebView.postMessage(JSON.stringify(centerData));
+                }
+              }
+
+              // Send initial center
+              sendMapCenter();
+
+              // Listen for map center changes (drag, zoom, etc.)
+              kakao.maps.event.addListener(map, 'center_changed', function() {
+                sendMapCenter();
+              });
+
               kakao.maps.event.addListener(map, 'click', function(mouseEvent) {
                 var latlng = mouseEvent.latLng;
 
@@ -112,6 +134,14 @@ export default function KakaoMap({ latitude, longitude }: KakaoMapProps) {
         mixedContentMode="always"
         onMessage={(event) => {
           console.log("[KakaoMap WebView]:", event.nativeEvent.data);
+          try {
+            const data = JSON.parse(event.nativeEvent.data);
+            if (data.type === 'center_change' && onCenterChange) {
+              onCenterChange({ lat: data.lat, lng: data.lng });
+            }
+          } catch (e) {
+            // Handle non-JSON messages (debug messages)
+          }
         }}
         onError={(e) => console.log("[KakaoMap WebView] error:", e.nativeEvent)}
         onHttpError={(e) =>
