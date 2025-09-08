@@ -17,6 +17,7 @@ import { PostProvider } from "@/store/posts";
 import { client } from "@/src/client/client.gen";
 import { AuthUtils } from "@/src/utils/auth";
 import { AuthProvider } from "@/src/contexts/AuthContext";
+import { ErrorBoundary } from "@/components/ErrorBoundary";
 
 export const viewport = {
   width: "device-width",
@@ -59,45 +60,47 @@ export default function RootLayout() {
   }
 
   return (
-    <ThemeProvider value={colorScheme === "dark" ? DarkTheme : DefaultTheme}>
-      <AuthProvider>
-        <BookmarkProvider>
-          <PostProvider>
-            <GestureHandlerRootView style={{ flex: 1 }}>
-              <View
-                style={{
-                  flex: 1,
-                  backgroundColor: Colors.background,
-                }}
-              >
-                <Stack>
-                  <Stack.Screen
-                    name="onboarding/index"
-                    options={{ headerShown: false }}
-                  />
-                  <Stack.Screen
-                    name="onboarding/login"
-                    options={{ headerShown: false }}
-                  />
-                  <Stack.Screen
-                    name="onboarding/signup"
-                    options={{ headerShown: false }}
-                  />
-                  <Stack.Screen
-                    name="onboarding/food-preference"
-                    options={{ headerShown: false }}
-                  />
-                  <Stack.Screen
-                    name="(tabs)"
-                    options={{ headerShown: false }}
-                  />
-                </Stack>
-                <StatusBar style="auto" />
-              </View>
-            </GestureHandlerRootView>
-          </PostProvider>
-        </BookmarkProvider>
-      </AuthProvider>
-    </ThemeProvider>
+    <ErrorBoundary>
+      <ThemeProvider value={colorScheme === "dark" ? DarkTheme : DefaultTheme}>
+        <AuthProvider>
+          <BookmarkProvider>
+            <PostProvider>
+              <GestureHandlerRootView style={{ flex: 1 }}>
+                <View
+                  style={{
+                    flex: 1,
+                    backgroundColor: Colors.background,
+                  }}
+                >
+                  <Stack>
+                    <Stack.Screen
+                      name="onboarding/index"
+                      options={{ headerShown: false }}
+                    />
+                    <Stack.Screen
+                      name="onboarding/login"
+                      options={{ headerShown: false }}
+                    />
+                    <Stack.Screen
+                      name="onboarding/signup"
+                      options={{ headerShown: false }}
+                    />
+                    <Stack.Screen
+                      name="onboarding/food-preference"
+                      options={{ headerShown: false }}
+                    />
+                    <Stack.Screen
+                      name="(tabs)"
+                      options={{ headerShown: false }}
+                    />
+                  </Stack>
+                  <StatusBar style="auto" />
+                </View>
+              </GestureHandlerRootView>
+            </PostProvider>
+          </BookmarkProvider>
+        </AuthProvider>
+      </ThemeProvider>
+    </ErrorBoundary>
   );
 }
