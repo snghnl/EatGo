@@ -26,6 +26,7 @@ interface AuthProviderProps {
 export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
+  const [isInitialized, setIsInitialized] = useState(false);
   const router = useRouter();
   const segments = useSegments();
 
@@ -36,7 +37,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
 
   // Handle navigation based on auth status
   useEffect(() => {
-    if (isLoading) return;
+    if (isLoading || !isInitialized) return;
 
     const inAuthGroup = segments[0] === "onboarding";
 
@@ -47,7 +48,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
       // Redirect to main app if authenticated
       router.replace("/(tabs)/map");
     }
-  }, [isAuthenticated, isLoading, segments]);
+  }, [isAuthenticated, isLoading, isInitialized, segments]);
 
   const checkAuthStatus = async () => {
     try {
@@ -58,6 +59,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
       setIsAuthenticated(false);
     } finally {
       setIsLoading(false);
+      setIsInitialized(true);
     }
   };
 
@@ -80,6 +82,11 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
       console.error("Logout error:", error);
     }
   };
+
+  // Don't render children until auth is initialized
+  if (!isInitialized) {
+    return null;
+  }
 
   return (
     <AuthContext.Provider
