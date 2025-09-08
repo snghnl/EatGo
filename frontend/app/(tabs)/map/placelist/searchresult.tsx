@@ -1,13 +1,12 @@
 import React, { useState, useEffect } from 'react';
 import { useBookmark } from '@/store/BookmarkContext';
 import { View, FlatList, StyleSheet, SafeAreaView } from 'react-native';
-import { useLocalSearchParams, useRouter } from 'expo-router';
+import { useLocalSearchParams, useRouter , router } from 'expo-router';
 import { PlaceCard } from '@/components/main/PlaceCard';
 import placesData from '@/mock-data/places.json';
 import { Colors } from '@/constants/Colors';
 import Header from '@/components/common/Header';
 import { Ionicons } from '@expo/vector-icons';
-import { router } from 'expo-router';
 import { ScrollView } from 'react-native-gesture-handler';
 
 interface PlaceItem {

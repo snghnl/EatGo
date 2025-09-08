@@ -232,7 +232,7 @@ export type PostListOutput = {
      * Comments Count
      */
     readonly comments_count?: number;
-    readonly images?: Array<PostImage>;
+    readonly images?: PostImage[];
     /**
      * Created at
      */
@@ -256,9 +256,9 @@ export type PostListInput = {
      * Content
      */
     content: string;
-    images?: Array<{
+    images?: {
         [key: string]: string | null;
-    }>;
+    }[];
 };
 
 export type Comment = {
@@ -304,8 +304,8 @@ export type PostDetailOutput = {
      * Comments Count
      */
     readonly comments_count?: number;
-    readonly images?: Array<PostImage>;
-    readonly comments?: Array<Comment>;
+    readonly images?: PostImage[];
+    readonly comments?: Comment[];
     /**
      * Is liked
      */
@@ -329,9 +329,9 @@ export type PostDetailInput = {
      * Content
      */
     content?: string;
-    images?: Array<{
+    images?: {
         [key: string]: string | null;
-    }>;
+    }[];
 };
 
 export type PostCommentsOutput = {
@@ -561,7 +561,7 @@ export type PlaceRecommend = {
 };
 
 export type PlaceRecommendOutput = {
-    places: Array<PlaceRecommend>;
+    places: PlaceRecommend[];
 };
 
 export type Route = {
@@ -589,16 +589,16 @@ export type Route = {
      * Created by
      */
     created_by?: number | null;
-    readonly places?: Array<string>;
+    readonly places?: string[];
 };
 
 export type RouteRecommendationOutput = {
     /**
      * List of route options with places, distances, and metadata
      */
-    routes: Array<{
+    routes: {
         [key: string]: string | null;
-    }>;
+    }[];
     /**
      * User location
      */
@@ -818,7 +818,7 @@ export type TravelCourse = {
      * Description
      */
     description?: string;
-    routes: Array<TravelCourseRoute>;
+    routes: TravelCourseRoute[];
     /**
      * Start date
      */
@@ -906,7 +906,7 @@ export type CategoriesListData = {
 };
 
 export type CategoriesListResponses = {
-    200: Array<Category>;
+    200: Category[];
 };
 
 export type CategoriesListResponse = CategoriesListResponses[keyof CategoriesListResponses];
@@ -1033,7 +1033,7 @@ export type CommunityPostsListData = {
 };
 
 export type CommunityPostsListResponses = {
-    200: Array<PostListOutput>;
+    200: PostListOutput[];
 };
 
 export type CommunityPostsListResponse = CommunityPostsListResponses[keyof CommunityPostsListResponses];
@@ -1107,7 +1107,7 @@ export type CommunityPostsCommentsListData = {
 };
 
 export type CommunityPostsCommentsListResponses = {
-    200: Array<PostCommentsOutput>;
+    200: PostCommentsOutput[];
 };
 
 export type CommunityPostsCommentsListResponse = CommunityPostsCommentsListResponses[keyof CommunityPostsCommentsListResponses];
@@ -1150,7 +1150,7 @@ export type DistrictsListData = {
 };
 
 export type DistrictsListResponses = {
-    200: Array<DistrictList>;
+    200: DistrictList[];
 };
 
 export type DistrictsListResponse = DistrictsListResponses[keyof DistrictsListResponses];
@@ -1181,7 +1181,7 @@ export type PlacesListData = {
 };
 
 export type PlacesListResponses = {
-    200: Array<Place>;
+    200: Place[];
 };
 
 export type PlacesListResponse = PlacesListResponses[keyof PlacesListResponses];
@@ -1207,7 +1207,7 @@ export type PlacesRecommendListData = {
         lng: number;
         max_distance_km?: number | null;
         limit?: number | null;
-        category_filter?: Array<string> | null;
+        category_filter?: string[] | null;
     };
     url: '/places/recommend/';
 };
@@ -1296,7 +1296,7 @@ export type ProvincesListData = {
 };
 
 export type ProvincesListResponses = {
-    200: Array<Province>;
+    200: Province[];
 };
 
 export type ProvincesListResponse = ProvincesListResponses[keyof ProvincesListResponses];
@@ -1327,7 +1327,7 @@ export type RoutesListData = {
 };
 
 export type RoutesListResponses = {
-    200: Array<Route>;
+    200: Route[];
 };
 
 export type RoutesListResponse = RoutesListResponses[keyof RoutesListResponses];
@@ -1353,7 +1353,7 @@ export type RoutesMyListData = {
 };
 
 export type RoutesMyListResponses = {
-    200: Array<Route>;
+    200: Route[];
 };
 
 export type RoutesMyListResponse = RoutesMyListResponses[keyof RoutesMyListResponses];
@@ -1366,7 +1366,7 @@ export type RoutesRecommendListData = {
         lng: number;
         max_distance_km?: number | null;
         limit?: number | null;
-        category_filter?: Array<string> | null;
+        category_filter?: string[] | null;
     };
     url: '/routes/recommend/';
 };
@@ -1479,7 +1479,7 @@ export type TourismPoisListData = {
 };
 
 export type TourismPoisListResponses = {
-    200: Array<TourismPoi>;
+    200: TourismPoi[];
 };
 
 export type TourismPoisListResponse = TourismPoisListResponses[keyof TourismPoisListResponses];
@@ -1536,7 +1536,7 @@ export type TourismRelatedListData = {
 };
 
 export type TourismRelatedListResponses = {
-    200: Array<RelatedTourism>;
+    200: RelatedTourism[];
 };
 
 export type TourismRelatedListResponse = TourismRelatedListResponses[keyof TourismRelatedListResponses];
@@ -1567,7 +1567,7 @@ export type TravelCoursesListData = {
 };
 
 export type TravelCoursesListResponses = {
-    200: Array<TravelCourse>;
+    200: TravelCourse[];
 };
 
 export type TravelCoursesListResponse = TravelCoursesListResponses[keyof TravelCoursesListResponses];
@@ -1593,7 +1593,7 @@ export type TravelCoursesMyListData = {
 };
 
 export type TravelCoursesMyListResponses = {
-    200: Array<TravelCourse>;
+    200: TravelCourse[];
 };
 
 export type TravelCoursesMyListResponse = TravelCoursesMyListResponses[keyof TravelCoursesMyListResponses];

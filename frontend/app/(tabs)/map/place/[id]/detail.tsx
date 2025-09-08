@@ -2,7 +2,7 @@
 import React, { useState } from 'react';
 import { useBookmark } from '@/store/BookmarkContext';
 import { ScrollView, View, StyleSheet, SafeAreaView } from 'react-native';
-import { useRouter, useLocalSearchParams } from 'expo-router';
+import { useRouter, useLocalSearchParams , router } from 'expo-router';
 import { PlaceHeader } from '@/components/main/place/PlaceHeader';
 import { PlaceImageGallery } from '@/components/main/place/PlaceImage';
 import { PlaceInfo } from '@/components/main/place/PlaceInfo';
@@ -12,7 +12,6 @@ import { Colors } from '@/constants/Colors';
 import placesData from '@/mock-data/places.json';
 import { CourseList } from '@/components/plan/CourseList';
 import { Ionicons } from '@expo/vector-icons';
-import { router } from 'expo-router';
 
 export default function PlaceDetailScreen() {
     const router = useRouter();

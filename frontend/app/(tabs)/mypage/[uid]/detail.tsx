@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { useLocalSearchParams } from 'expo-router';
+import { useLocalSearchParams , router } from 'expo-router';
 import { View, ScrollView, StyleSheet, SafeAreaView } from 'react-native';
 import MyPageHeader from '@/components/mypage/MyPageHeader';
 import usersData from '@/mock-data/users.json';
@@ -12,7 +12,6 @@ import { SAMPLE_COURSES } from '@/constants/Data';
 import { ThemedText } from '@/components/ThemedText';
 import { Colors } from '@/constants/Colors';
 import { usePostStore } from '@/store/posts';
-import { router } from 'expo-router';
 import { Ionicons } from '@expo/vector-icons';
 import ReportModal from '@/components/community/ReportModal';
 

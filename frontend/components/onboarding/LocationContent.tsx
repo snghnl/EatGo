@@ -20,7 +20,7 @@ export default function LocationContent() {
                 제 1 조 (목적)
             </ThemedText>
             <ThemedText style={{ fontSize: Fonts.sm, color: Colors.textSecondary, lineHeight: 22, marginBottom: 16 }}>
-                이 약관은 미스트 (이하 "당사")가 제공하는 위치기반서비스와 관련하여 당사와 개인위치정보주체와의 권리,
+                이 약관은 미스트 (이하 &quot;당사&quot;)가 제공하는 위치기반서비스와 관련하여 당사와 개인위치정보주체와의 권리,
                 의무 및 책임사항, 기타 필요한 사항을 규정함을 목적으로 합니다.
             </ThemedText>
 
@@ -127,7 +127,7 @@ export default function LocationContent() {
                 제 9 조 (8세 이하의 아동 등의 보호의무자의 권리)
             </ThemedText>
             <ThemedText style={{ fontSize: Fonts.sm, color: Colors.textSecondary, lineHeight: 22, marginBottom: 12 }}>
-                ① 당사는 아래의 경우에 해당하는 자(이하 "8세 이하의 아동"등이라 함)의 보호의무자가 8세 이하의 아동 등의
+                ① 당사는 아래의 경우에 해당하는 자(이하 &quot;8세 이하의 아동&quot;등이라 함)의 보호의무자가 8세 이하의 아동 등의
                 생명 또는 신체보호를 위하여 개인위치정보의 이용 또는 제공에 동의하는 경우에는 본인의 동의가 있는 것으로
                 봅니다.
             </ThemedText>
@@ -149,7 +149,7 @@ export default function LocationContent() {
             <ThemedText style={{ fontSize: Fonts.sm, color: Colors.textSecondary, lineHeight: 22, marginBottom: 16 }}>
                 ① 당사는 위치기반서비스를 제공하기 위해 필요한 최소한의 기간 동안 개인위치정보를 보유 및 이용합니다.
                 {'\n'}② 당사는 대부분의 위치기반서비스에서 개인위치정보를 일회성 또는 임시로 이용 후 지체없이
-                파기합니다. 단, 'GeoTagging' 서비스와 같이 이용자가 게시물, 콘텐츠와 함께 개인위치정보를 잇고 서비스에
+                파기합니다. 단, &apos;GeoTagging&apos; 서비스와 같이 이용자가 게시물, 콘텐츠와 함께 개인위치정보를 잇고 서비스에
                 게시 또는 보관하는 경우, 해당 게시물, 콘텐츠의 보관기간 동안 개인위치정보가 함께 보관됩니다.
             </ThemedText>
 
