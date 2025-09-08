@@ -4,11 +4,11 @@ EatGo 프로젝트의 React Native/Expo 프론트엔드 애플리케이션입니
 
 ## 기술 스택
 
--   **React Native**: 0.79.5
--   **Expo**: ~53.0.17
--   **TypeScript**: ~5.8.3
--   **React Navigation**: ^7.1.6
--   **Expo Router**: ~5.1.3
+- **React Native**: 0.79.5
+- **Expo**: ~53.0.17
+- **TypeScript**: ~5.8.3
+- **React Navigation**: ^7.1.6
+- **Expo Router**: ~5.1.3
 
 ## 기본 셋팅
 
@@ -51,28 +51,26 @@ npx expo start
 
 개발 서버가 시작되면 다음 옵션들을 사용할 수 있습니다:
 
--   **iOS 시뮬레이터**: `i` 키를 누르거나 `npm run ios`
--   **Android 에뮬레이터**: `a` 키를 누르거나 `npm run android`
--   **웹 브라우저**: `w` 키를 누르거나 `npm run web`
--   **Expo Go 앱**: QR 코드를 스캔하여 실제 기기에서 실행
+- **iOS 시뮬레이터**: `i` 키를 누르거나 `npm run ios`
+- **Android 에뮬레이터**: `a` 키를 누르거나 `npm run android`
+- **웹 브라우저**: `w` 키를 누르거나 `npm run web`
+- **Expo Go 앱**: QR 코드를 스캔하여 실제 기기에서 실행
 
 ## 개발 환경 설정
 
 ### 필수 도구
 
 1. **iOS 개발** (macOS 필요)
-
-    - Xcode 설치
-    - iOS 시뮬레이터 설정
+   - Xcode 설치
+   - iOS 시뮬레이터 설정
 
 2. **Android 개발**
-
-    - Android Studio 설치
-    - Android SDK 설정
-    - Android 에뮬레이터 설정
+   - Android Studio 설치
+   - Android SDK 설정
+   - Android 에뮬레이터 설정
 
 3. **웹 개발**
-    - Chrome 또는 다른 웹 브라우저
+   - Chrome 또는 다른 웹 브라우저
 
 ### 환경 변수 설정
 
@@ -114,16 +112,16 @@ npm run reset-project  # 프로젝트 초기화
 
 ### 코드 스타일
 
--   TypeScript 사용
--   ESLint 규칙 준수
--   함수형 컴포넌트 사용
--   Hooks 기반 상태 관리
+- TypeScript 사용
+- ESLint 규칙 준수
+- 함수형 컴포넌트 사용
+- Hooks 기반 상태 관리
 
 ### 파일 명명 규칙
 
--   컴포넌트: PascalCase (예: `UserProfile.tsx`)
--   파일: camelCase (예: `userService.ts`)
--   상수: UPPER_SNAKE_CASE (예: `API_BASE_URL`)
+- 컴포넌트: PascalCase (예: `UserProfile.tsx`)
+- 파일: camelCase (예: `userService.ts`)
+- 상수: UPPER_SNAKE_CASE (예: `API_BASE_URL`)
 
 ## 문제 해결
 
@@ -131,20 +129,20 @@ npm run reset-project  # 프로젝트 초기화
 
 1. **Metro 번들러 캐시 문제**
 
-    ```bash
-    npx expo start --clear
-    ```
+   ```bash
+   npx expo start --clear
+   ```
 
 2. **iOS 빌드 문제**
 
-    ```bash
-    cd ios && pod install
-    ```
+   ```bash
+   cd ios && pod install
+   ```
 
 3. **Android 빌드 문제**
-    ```bash
-    npx expo run:android --clear
-    ```
+   ```bash
+   npx expo run:android --clear
+   ```
 
 ## 배포
 
@@ -167,6 +165,6 @@ eas build --platform android
 
 ## 추가 리소스
 
--   [Expo 문서](https://docs.expo.dev/)
--   [React Native 문서](https://reactnative.dev/)
--   [Expo Router 문서](https://docs.expo.dev/router/introduction/)
+- [Expo 문서](https://docs.expo.dev/)
+- [React Native 문서](https://reactnative.dev/)
+- [Expo Router 문서](https://docs.expo.dev/router/introduction/)
