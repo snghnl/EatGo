@@ -31,6 +31,7 @@ export default function MapScreen() {
     null,
   );
   const [nearbyPlaces, setNearbyPlaces] = React.useState<PlaceItem[]>([]);
+  const [mapCenter, setMapCenter] = React.useState<{ lat: number; lng: number } | null>(null);
 
   const handlePlaceSelect = useCallback((place: PlaceItem) => {
     console.log("Place selected:", place.place_name);
@@ -48,6 +49,11 @@ export default function MapScreen() {
     setSelectedPlace(place);
   }, []);
 
+  // 지도 중심 변경 핸들러
+  const handleMapCenterChange = useCallback((center: { lat: number; lng: number }) => {
+    setMapCenter(center);
+  }, []);
+
   // 카드 스와이퍼에 넘길 데이터: [선택된 장소, ...주변]
   const swiperData = useMemo(() => {
     if (!selectedPlace) return nearbyPlaces;
@@ -63,6 +69,7 @@ export default function MapScreen() {
           <SearchBar
             searchData={mockData.documents}
             onSelectItem={handleSelectItem}
+            mapCenter={mapCenter}
           />
         </View>
         <View style={styles.topBarWrapper}>
@@ -77,6 +84,7 @@ export default function MapScreen() {
           longitude={126.9786567}
           onPlaceSelect={handlePlaceSelect}
           onNearbyUpdate={handleNearbyUpdate}
+          onCenterChange={handleMapCenterChange}
         />
       </View>
 
