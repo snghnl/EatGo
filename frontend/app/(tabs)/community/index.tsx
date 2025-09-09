@@ -9,12 +9,16 @@ import {
 } from "react-native";
 import Header from "@/components/common/Header";
 import CoursePostCard from "@/components/community/CoursePostCard";
-import CourseDropdown from "@/components/community/CourseDropdown";
+import Dropdown from "@/components/common/Dropdown";
 import { JEONLA_DESTINATIONS } from "@/constants/Data";
 import { Colors } from "@/constants/Colors";
 import { useState, useMemo } from "react";
 import FloatingWriteButton from "@/components/community/FloatingWriteButton";
-import { usePosts, useDeletePost, useCurrentUser } from "@/src/hooks/useCommunity";
+import {
+    usePosts,
+    useDeletePost,
+    useCurrentUser,
+} from "@/src/hooks/useCommunity";
 
 // 도시 및 시기 옵션 정의
 const CITY_OPTIONS = ["전체 도시", "서울", "부산", "제주", "전라"];
@@ -45,36 +49,32 @@ export default function CommunityTab() {
     }, [posts, selectedCity, selectedSeason, selectedRegion]);
 
     const handleDeletePost = (postId: string) => {
-        Alert.alert(
-            "게시글 삭제",
-            "정말로 이 게시글을 삭제하시겠습니까?",
-            [
-                {
-                    text: "취소",
-                    style: "cancel",
-                },
-                {
-                    text: "삭제",
-                    style: "destructive",
-                    onPress: async () => {
-                        setDeletingPosts(prev => new Set(prev).add(postId));
-                        const success = await deletePost(postId);
-                        setDeletingPosts(prev => {
-                            const newSet = new Set(prev);
-                            newSet.delete(postId);
-                            return newSet;
-                        });
+        Alert.alert("게시글 삭제", "정말로 이 게시글을 삭제하시겠습니까?", [
+            {
+                text: "취소",
+                style: "cancel",
+            },
+            {
+                text: "삭제",
+                style: "destructive",
+                onPress: async () => {
+                    setDeletingPosts((prev) => new Set(prev).add(postId));
+                    const success = await deletePost(postId);
+                    setDeletingPosts((prev) => {
+                        const newSet = new Set(prev);
+                        newSet.delete(postId);
+                        return newSet;
+                    });
 
-                        if (success) {
-                            Alert.alert("삭제 완료", "게시글이 삭제되었습니다.");
-                            refreshPosts();
-                        } else {
-                            Alert.alert("오류", "게시글 삭제에 실패했습니다.");
-                        }
-                    },
+                    if (success) {
+                        Alert.alert("삭제 완료", "게시글이 삭제되었습니다.");
+                        refreshPosts();
+                    } else {
+                        Alert.alert("오류", "게시글 삭제에 실패했습니다.");
+                    }
                 },
-            ],
-        );
+            },
+        ]);
     };
 
     return (
@@ -83,26 +83,6 @@ export default function CommunityTab() {
                 title="여행 코스톡"
                 subtitle="미식가들의 숨겨진 여행 경로"
             />
-            <View style={styles.dropdownRow}>
-                <CourseDropdown
-                    label="전체 도시"
-                    options={CITY_OPTIONS}
-                    selected={selectedCity}
-                    onSelect={setSelectedCity}
-                />
-                <CourseDropdown
-                    label="세부 지역"
-                    options={["전체 지역", ...JEONLA_DESTINATIONS]}
-                    selected={selectedRegion}
-                    onSelect={setSelectedRegion}
-                />
-                <CourseDropdown
-                    label="여행 시기"
-                    options={SEASON_OPTIONS}
-                    selected={selectedSeason}
-                    onSelect={setSelectedSeason}
-                />
-            </View>
 
             {/* Loading State */}
             {isLoading && (
@@ -130,14 +110,19 @@ export default function CommunityTab() {
                     data={filteredPosts}
                     keyExtractor={(item) => item.id || "unknown"}
                     renderItem={({ item }) => {
-                        const isCurrentUserAuthor = Boolean(currentUser && item.user &&
-                            (currentUser.id === item.user.id || currentUser.username === item.user.username));
+                        const isCurrentUserAuthor = Boolean(
+                            currentUser &&
+                                item.user &&
+                                (currentUser.id === item.user.id ||
+                                    currentUser.username === item.user.username)
+                        );
                         const isPostDeleting = deletingPosts.has(item.id || "");
 
                         return (
                             <CoursePostCard
                                 user={{
-                                    nickname: item.user?.username || "Unknown User",
+                                    nickname:
+                                        item.user?.username || "Unknown User",
                                     profile_image_url:
                                         item.user?.profile_image_url || "",
                                 }}
@@ -151,9 +136,11 @@ export default function CommunityTab() {
                                     duration:
                                         item.travel_course?.start_date +
                                             " ~ " +
-                                            item.travel_course?.end_date || "미정",
+                                            item.travel_course?.end_date ||
+                                        "미정",
                                     images:
-                                        item.images?.map((img) => img.url) || [],
+                                        item.images?.map((img) => img.url) ||
+                                        [],
                                 }}
                                 showDeleteButton={isCurrentUserAuthor}
                                 onDelete={() => handleDeletePost(item.id || "")}
