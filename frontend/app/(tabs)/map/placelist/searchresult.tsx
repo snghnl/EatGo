@@ -87,7 +87,7 @@ export default function SearchResultScreen() {
             <View
                 style={{
                     position: "absolute",
-                    top: 20,
+                    top: 60,
                     left: 15,
                     zIndex: 10,
                 }}
@@ -96,7 +96,7 @@ export default function SearchResultScreen() {
                     name="chevron-back"
                     size={20}
                     color={Colors.textPrimary}
-                    onPress={() => router.push("/(tabs)/map")} //backbutton 수정 필요
+                    onPress={() => router.back()}
                 />
             </View>
             <FlatList
