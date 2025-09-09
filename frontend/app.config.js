@@ -25,6 +25,13 @@ export default {
             output: "static",
             favicon: "./assets/images/favicon.png",
         },
+        // Expo Go uses the top-level `splash` field at runtime.
+        // Keep this in sync with the expo-splash-screen plugin below.
+        splash: {
+            image: "./assets/images/splash-icon.png",
+            resizeMode: "contain",
+            backgroundColor: "#ffffff",
+        },
         plugins: [
             "expo-router",
             [
