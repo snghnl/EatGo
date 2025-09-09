@@ -6,7 +6,6 @@ export { DestinationSelector } from "./DestinationSelector";
 export { DestinationButton } from "./DestinationButton";
 export { FoodCard } from "./FoodCard";
 export { FoodSelector } from "./FoodSelector";
-export { DayPlanList } from "./DayPlanList";
 export { RouteListContainer } from "./RouteListContainer";
 export { RouteList } from "./RouteList";
 export { RouteItem } from "./RouteItem";
