@@ -46,15 +46,33 @@ export const PlaceCard: React.FC<PlaceCardProps> = ({
         style={styles.image}
       />
       <View style={styles.info}>
-        <ThemedText size="xs" color="textSecondary" style={styles.category}>
+        <ThemedText
+          size="xs"
+          color="textSecondary"
+          style={styles.category}
+          numberOfLines={1}
+          ellipsizeMode="tail"
+        >
           {category.split(" > ").slice(1).join(" > ")}
         </ThemedText>
 
-        <ThemedText size="lg" weight="bold" style={styles.name}>
+        <ThemedText
+          size="lg"
+          weight="bold"
+          style={styles.name}
+          numberOfLines={2}
+          ellipsizeMode="tail"
+        >
           {name}
         </ThemedText>
 
-        <ThemedText size="sm" color="textPrimary" style={styles.distance}>
+        <ThemedText
+          size="sm"
+          color="textPrimary"
+          style={styles.distance}
+          numberOfLines={2}
+          ellipsizeMode="tail"
+        >
           {distance} · {address}
         </ThemedText>
       </View>

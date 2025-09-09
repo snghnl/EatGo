@@ -8,7 +8,7 @@ import { Colors } from "@/constants/Colors";
 
 interface Props {
   courseId: string;
-  routes: Array<{ route_id: string; sequence?: number }>;
+  routes: { route_id: string; sequence?: number }[];
   onPlacePress?: (routeId: string, placeId: string) => void;
   onCardPress?: (routeId: string) => void;
   onLongPress?: (routeId: string) => void;

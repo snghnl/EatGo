@@ -67,12 +67,34 @@ export default function SearchListItem({
                     style={styles.icon}
                 />
                 <View style={styles.leftContent}>
-                    <Text style={styles.itemCategory}>{item.place_type}</Text>
-                    <Text style={styles.itemTitle}>{item.name}</Text>
+                    <Text
+                        style={styles.itemCategory}
+                        numberOfLines={1}
+                        ellipsizeMode="tail"
+                    >
+                        {item.place_type}
+                    </Text>
+                    <Text
+                        style={styles.itemTitle}
+                        numberOfLines={1}
+                        ellipsizeMode="tail"
+                    >
+                        {item.name}
+                    </Text>
                 </View>
                 <View style={styles.rightContent}>
-                    <Text style={styles.itemAddress}>{item.road_address}</Text>
-                    <Text style={styles.itemDistance}>
+                    <Text
+                        style={styles.itemAddress}
+                        numberOfLines={2}
+                        ellipsizeMode="tail"
+                    >
+                        {item.road_address}
+                    </Text>
+                    <Text
+                        style={styles.itemDistance}
+                        numberOfLines={1}
+                        ellipsizeMode="tail"
+                    >
                         {distance || item.address}
                     </Text>
                 </View>
@@ -100,6 +122,8 @@ const styles = StyleSheet.create({
     rightContent: {
         alignItems: "flex-end",
         minWidth: 80,
+        maxWidth: "40%",
+        flex: 0.4,
     },
     icon: {
         marginRight: 12,
