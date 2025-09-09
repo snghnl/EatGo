@@ -425,6 +425,10 @@ export type Province = {
    */
   readonly updated_at?: string;
   /**
+   * AreaCd
+   */
+  areaCd: number;
+  /**
    * Name
    */
   name: string;
@@ -452,6 +456,10 @@ export type District = {
    * Updated at
    */
   readonly updated_at?: string;
+  /**
+   * SigunguCd
+   */
+  sigunguCd: number;
   /**
    * Name
    */
