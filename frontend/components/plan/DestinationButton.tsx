@@ -19,7 +19,11 @@ export const DestinationButton: React.FC<DestinationButtonProps> = ({
       onPress={() => onPress(destination)}
       activeOpacity={0.7}
     >
-      <Text style={[styles.buttonText, isSelected && styles.selectedText]}>
+      <Text
+        style={[styles.buttonText, isSelected && styles.selectedText]}
+        numberOfLines={2}
+        ellipsizeMode="tail"
+      >
         {destination}
       </Text>
     </TouchableOpacity>
@@ -30,7 +34,7 @@ const styles = StyleSheet.create({
   button: {
     flex: 1,
     maxWidth: "23%",
-    height: 36,
+    minHeight: 44,
     backgroundColor: Colors.backgroundGray,
     borderRadius: 6,
     justifyContent: "center",
@@ -38,17 +42,19 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     borderColor: Colors.border,
     marginHorizontal: "0.5%",
+    paddingVertical: 4,
+    paddingHorizontal: 2,
   },
   selectedButton: {
     backgroundColor: Colors.primary,
     borderColor: Colors.primary,
   },
   buttonText: {
-    fontSize: 14,
+    fontSize: 11,
     fontWeight: "500",
     color: Colors.textPrimary,
     textAlign: "center",
-    lineHeight: 16,
+    lineHeight: 13,
   },
   selectedText: {
     color: Colors.white,

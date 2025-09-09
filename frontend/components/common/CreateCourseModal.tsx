@@ -270,7 +270,7 @@ const styles = StyleSheet.create({
     width: "100%",
     maxWidth: 400,
     minHeight: 500,
-    maxHeight: "85%",
+    maxHeight: "80%",
     backgroundColor: Colors.white,
     borderRadius: 12,
     padding: 20,
@@ -314,6 +314,7 @@ const styles = StyleSheet.create({
   content: {
     flex: 1,
     minHeight: 200,
+    maxHeight: 300,
   },
   subtitlePreview: {
     marginTop: 12,

@@ -1,5 +1,5 @@
 import React, { useState, useMemo } from "react";
-import { StyleSheet, View, Text } from "react-native";
+import { StyleSheet, View, Text, ScrollView } from "react-native";
 import { DestinationChangeHandler } from "@/types";
 import { DestinationButton } from "./DestinationButton";
 import { useProvinces } from "@/hooks/useProvinces";
@@ -123,29 +123,35 @@ export const DestinationSelector: React.FC<DestinationSelectorProps> = ({
             : "No districts available"}
         </Text>
       ) : (
-        rows.map((row, rowIndex) => (
-          <View
-            key={rowIndex}
-            style={[styles.row, row.length < 4 && styles.lastRow]}
-          >
-            {row.map((item, index) => (
-              <DestinationButton
-                key={`${rowIndex}-${index}`}
-                destination={item}
-                isSelected={
-                  step === "province"
-                    ? selectedItems.includes(item)
-                    : selectedDistricts.some((d) => d.endsWith(` ${item}`))
-                }
-                onPress={
-                  step === "province"
-                    ? handleProvincePress
-                    : handleDistrictPress
-                }
-              />
-            ))}
-          </View>
-        ))
+        <ScrollView
+          style={styles.scrollContainer}
+          showsVerticalScrollIndicator={false}
+          contentContainerStyle={styles.scrollContent}
+        >
+          {rows.map((row, rowIndex) => (
+            <View
+              key={rowIndex}
+              style={[styles.row, row.length < 4 && styles.lastRow]}
+            >
+              {row.map((item, index) => (
+                <DestinationButton
+                  key={`${rowIndex}-${index}`}
+                  destination={item}
+                  isSelected={
+                    step === "province"
+                      ? selectedItems.includes(item)
+                      : selectedDistricts.some((d) => d.endsWith(` ${item}`))
+                  }
+                  onPress={
+                    step === "province"
+                      ? handleProvincePress
+                      : handleDistrictPress
+                  }
+                />
+              ))}
+            </View>
+          ))}
+        </ScrollView>
       )}
     </View>
   );
@@ -205,5 +211,12 @@ const styles = StyleSheet.create({
   lastRow: {
     justifyContent: "center",
     gap: 8,
+  },
+  scrollContainer: {
+    maxHeight: 200,
+    marginBottom: 20,
+  },
+  scrollContent: {
+    paddingBottom: 10,
   },
 });
