@@ -18,10 +18,7 @@ interface SearchBarProps {
     mapCenter?: { lat: number; lng: number } | null;
 }
 
-export default function SearchBar({
-    onSelectItem,
-    mapCenter,
-}: SearchBarProps) {
+export default function SearchBar({ mapCenter }: SearchBarProps) {
     const [searchTerm, setSearchTerm] = useState("");
     const router = useRouter();
     const textInputRef = useRef<TextInput>(null);
