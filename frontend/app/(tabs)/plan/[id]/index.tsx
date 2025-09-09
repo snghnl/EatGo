@@ -8,8 +8,7 @@ import {
   ScrollView,
 } from "react-native";
 import { useLocalSearchParams, router } from "expo-router";
-import { AddCourseCard } from "@/components/plan";
-import { DayPlanListContainer } from "@/components/plan/DayPlanListContainer"; // ✅ 컨테이너로 교체
+import { AddCourseCard, RouteListContainer } from "@/components/plan";
 import PlaceCardSwiper from "@/components/main/PlaceCardSwiper";
 import Header from "@/components/common/Header";
 import ActionButtons from "@/components/common/ActionButtons";
@@ -30,7 +29,7 @@ export default function PlanDetailScreen() {
     }>();
 
   const [courseData, setCourseData] = useState<TravelCourse | null>(null);
-  const [selectedDayPlanId, setSelectedDayPlanId] = useState<string | null>(
+  const [selectedRouteId, setSelectedRouteId] = useState<string | null>(
     null,
   );
   const [selectedPlaceId, setSelectedPlaceId] = useState<string | null>(null);
@@ -118,23 +117,23 @@ export default function PlanDetailScreen() {
     // TODO: 편집 화면 이동 또는 편집 모드 전환
   };
 
-  const handleCardPress = (dayPlanId: string) => {
-    console.log("카드 클릭:", dayPlanId);
+  const handleCardPress = (routeId: string) => {
+    console.log("카드 클릭:", routeId);
     // TODO: 카드 전체 액션 (예: 스와이프 저장/상세 이동)
   };
 
-  const handleSave = (dayPlanId: string) => {
-    console.log("저장:", dayPlanId);
-    // TODO: 해당 일차 계획 저장 API 호출
-    // SOURCE: ??? (예: POST /courses/:courseId/day-plans/:dayPlanId/save)
+  const handleSave = (routeId: string) => {
+    console.log("저장:", routeId);
+    // TODO: 해당 경로 저장 API 호출
+    // SOURCE: ??? (예: POST /courses/:courseId/routes/:routeId/save)
   };
 
-  const handleRecommendationPress = (day: number) => {
-    console.log(`${day}일차 추천 여행경로 보러가기 클릭`);
+  const handleRecommendationPress = (sequence: number) => {
+    console.log(`${sequence}일차 추천 여행경로 보러가기 클릭`);
     router.push({
       pathname: `/plan/${id}/recommendation` as any,
       params: {
-        day: day.toString(),
+        day: sequence.toString(),
         startDate: startDate,
         endDate: endDate,
         destinations: destinations,
@@ -169,19 +168,19 @@ export default function PlanDetailScreen() {
     });
   };
 
-  const handleLongPress = (dayPlanId: string) => {
-    console.log("PlanCard long press:", dayPlanId);
-    setSelectedDayPlanId(dayPlanId);
+  const handleLongPress = (routeId: string) => {
+    console.log("RouteCard long press:", routeId);
+    setSelectedRouteId(routeId);
   };
 
-  const handlePlacePress = (dayPlanId: string, placeId: string) => {
-    console.log("Place pressed:", dayPlanId, placeId);
-    if (selectedDayPlanId === dayPlanId) {
+  const handlePlacePress = (routeId: string, placeId: string) => {
+    console.log("Place pressed:", routeId, placeId);
+    if (selectedRouteId === routeId) {
       setSelectedPlaceId(placeId);
       setShowPlaceCardSwiper(true);
     } else {
       // 일반적인 place 터치 (상세 페이지로 이동 등)
-      console.log("장소 클릭:", dayPlanId, placeId);
+      console.log("장소 클릭:", routeId, placeId);
       // TODO: 장소 상세로 이동
       // SOURCE: ??? (예: router.push(`/place/${placeId}`))
     }
@@ -190,7 +189,7 @@ export default function PlanDetailScreen() {
   const handleClosePlaceCardSwiper = () => {
     setShowPlaceCardSwiper(false);
     setSelectedPlaceId(null);
-    setSelectedDayPlanId(null);
+    setSelectedRouteId(null);
   };
 
   const handlePlaceSelect = (selectedPlace: any) => {
@@ -204,7 +203,7 @@ export default function PlanDetailScreen() {
           text: "교체",
           onPress: () => {
             // TODO: 실제 교체 로직 (API 호출 후 재조회)
-            // SOURCE: ??? (예: PUT /courses/:courseId/day-plans/:dayPlanId/places)
+            // SOURCE: ??? (예: PUT /courses/:courseId/routes/:routeId/places)
             console.log(
               `교체 시도: ${selectedPlace.place_name} (ID: ${selectedPlace.id})`,
             );
@@ -255,17 +254,17 @@ export default function PlanDetailScreen() {
             />
           </View>
 
-          {/* ✅ 실제 데이터 컨테이너: mock 제거 */}
-          <DayPlanListContainer
+          {/* ✅ 실제 데이터 컨테이너: 경로 기반으로 변경 */}
+          <RouteListContainer
             courseId={String(id)}
-            isNewCourse={false}
+            routes={courseData.routes || []}
             onPlacePress={handlePlacePress}
             onCardPress={handleCardPress}
             onSave={handleSave}
             onRecommendationPress={handleRecommendationPress}
             onLongPress={handleLongPress}
             selectedPlaceId={selectedPlaceId}
-            activeDayPlanId={selectedDayPlanId}
+            activeRouteId={selectedRouteId}
           />
         </ScrollView>
       )}
