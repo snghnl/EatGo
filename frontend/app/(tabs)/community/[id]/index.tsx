@@ -1,4 +1,4 @@
-import React, { useMemo, useState } from "react";
+import React, { useMemo, useState, useEffect } from "react";
 import {
   View,
   ScrollView,
@@ -13,12 +13,14 @@ import { ThemedText } from "@/components/ThemedText";
 import { Colors } from "@/constants/Colors";
 import { useBookmark } from "@/store/BookmarkContext";
 import { BookmarkButton } from "@/components/main/BookmarkButton";
-import { DayPlanListContainer } from "@/components/plan/DayPlanListContainer";
+import { RouteListContainer } from "@/components/plan";
 
 import { CommunityDetailUser } from "@/components/community/CommunityDetailUser";
 import { CommunityDetailContent } from "@/components/community/CommunityDetailContent";
 
 import { usePost, usePostComments } from "@/src/hooks/useCommunity";
+import { TravelCourses } from "@/src/client/sdk.gen";
+import { TravelCourse } from "@/src/client/types.gen";
 import ReportModal from "@/components/community/ReportModal";
 
 export default function CommunityPost() {
@@ -32,13 +34,39 @@ export default function CommunityPost() {
         : undefined;
   const [reportOpen, setReportOpen] = useState(false);
   const [selectedPlaceId, setSelectedPlaceId] = useState<string | null>(null);
-  const [selectedDayPlanId, setSelectedDayPlanId] = useState<string | null>(
-    null,
-  );
+  const [selectedRouteId, setSelectedRouteId] = useState<string | null>(null);
+  const [travelCourse, setTravelCourse] = useState<TravelCourse | null>(null);
+  const [courseLoading, setCourseLoading] = useState(false);
 
   // Fetch post from API
   const { post, isLoading, error } = usePost(id);
   const { comments: _comments } = usePostComments(id);
+
+  // Fetch travel course details when post is loaded
+  useEffect(() => {
+    const fetchTravelCourse = async () => {
+      const courseId = post?.travel_course?.id;
+      if (!courseId) return;
+
+      try {
+        setCourseLoading(true);
+        const response = await TravelCourses.travelCoursesRead({
+          path: { id: courseId },
+        });
+        if (response.data) {
+          setTravelCourse(response.data);
+        }
+      } catch (err) {
+        console.error("Failed to fetch travel course:", err);
+      } finally {
+        setCourseLoading(false);
+      }
+    };
+
+    if (post?.travel_course?.id) {
+      fetchTravelCourse();
+    }
+  }, [post?.travel_course?.id]);
 
   // Ensure hooks run in a consistent order across renders by placing memoization before any early returns
   const dateText = useMemo(() => {
@@ -112,14 +140,14 @@ export default function CommunityPost() {
     profile_image: "",
   };
 
-  const handlePlacePress = (dayPlanId: string, placeId: string) => {
-    setSelectedDayPlanId(dayPlanId);
+  const handlePlacePress = (routeId: string, placeId: string) => {
+    setSelectedRouteId(routeId);
     setSelectedPlaceId(placeId);
   };
-  const handleCardPress = (dayPlanId: string) =>
-    setSelectedDayPlanId(dayPlanId);
-  const handleLongPress = (_dayPlanId: string) => {};
-  const handleSave = (_dayPlanId: string) => {};
+  const handleCardPress = (routeId: string) => setSelectedRouteId(routeId);
+  const handleLongPress = (_routeId: string) => {};
+  const handleSave = (_routeId: string) => {};
+  const handleRecommendationPress = (_sequence: number) => {};
 
   return (
     <ScrollView>
@@ -183,17 +211,33 @@ export default function CommunityPost() {
             </View>
           </View>
 
-          <View style={styles.dayplan}>
-            <DayPlanListContainer
-              courseId={courseKey}
-              isNewCourse={false}
-              onPlacePress={handlePlacePress}
-              onCardPress={handleCardPress}
-              onSave={handleSave}
-              onLongPress={handleLongPress}
-              selectedPlaceId={selectedPlaceId}
-              activeDayPlanId={selectedDayPlanId}
-            />
+          <View style={styles.routeplan}>
+            {courseLoading ? (
+              <View style={{ padding: 20, alignItems: "center" }}>
+                <ActivityIndicator size="small" color={Colors.primary} />
+                <ThemedText style={{ marginTop: 8 }}>
+                  여행 경로를 불러오는 중...
+                </ThemedText>
+              </View>
+            ) : travelCourse?.routes ? (
+              <RouteListContainer
+                courseId={courseKey}
+                routes={travelCourse.routes}
+                onPlacePress={handlePlacePress}
+                onCardPress={handleCardPress}
+                onSave={handleSave}
+                onLongPress={handleLongPress}
+                onRecommendationPress={handleRecommendationPress}
+                selectedPlaceId={selectedPlaceId}
+                activeRouteId={selectedRouteId}
+              />
+            ) : (
+              <View style={{ padding: 20, alignItems: "center" }}>
+                <ThemedText color="textSecondary">
+                  등록된 여행 경로가 없습니다.
+                </ThemedText>
+              </View>
+            )}
           </View>
         </View>
       </SafeAreaView>
@@ -239,7 +283,7 @@ const styles = StyleSheet.create({
   metaRow: { marginTop: 20 },
   metaText: { color: Colors.textSecondary },
   contentRow: { marginTop: 16 },
-  dayplan: {
+  routeplan: {
     backgroundColor: Colors.backgroundGray,
     paddingTop: 0,
     marginTop: 0,
