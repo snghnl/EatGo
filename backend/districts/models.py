@@ -9,12 +9,14 @@ class Province(BaseModel):
 
     Attributes:
         id (UUIDField): Primary key for the province.
+        areaCd (IntegerField): The area code for the province.
         name (CharField): The name of the province in Korean.
         name_en (CharField): The English name of the province (optional).
         is_active (BooleanField): Whether the province is active.
     """
 
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
+    areaCd = models.IntegerField(unique=True)
     name = models.CharField(max_length=100, unique=True)
     name_en = models.CharField(max_length=100, blank=True)
     is_active = models.BooleanField(default=True)
@@ -34,6 +36,7 @@ class District(BaseModel):
 
     Attributes:
         id (UUIDField): Primary key for the district.
+        sigunguCd (IntegerField): The sigungu code for the district.
         province (ForeignKey): The province this district belongs to.
         name (CharField): The name of the district in Korean.
         name_en (CharField): The English name of the district (optional).
@@ -43,6 +46,7 @@ class District(BaseModel):
     """
 
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
+    sigunguCd = models.IntegerField(unique=True)
     province = models.ForeignKey(
         Province, on_delete=models.CASCADE, related_name="districts"
     )
