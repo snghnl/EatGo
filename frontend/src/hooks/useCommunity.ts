@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { Community } from "@/src/client/sdk.gen";
+import { Community, Accounts } from "@/src/client/sdk.gen";
 import type {
   PostListOutput,
   PostDetailOutput,
@@ -7,6 +7,7 @@ import type {
   PostCommentsInput,
   CommentDetailOutput,
   PostLikeOutput,
+  UserDetail,
 } from "@/src/client/types.gen";
 
 export interface CommunityPost extends PostListOutput {
@@ -348,5 +349,42 @@ export const useDeleteComment = () => {
     deleteComment,
     isLoading,
     error,
+  };
+};
+
+// Hook for getting current user information
+export const useCurrentUser = () => {
+  const [user, setUser] = useState<UserDetail | null>(null);
+  const [isLoading, setIsLoading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+
+  const fetchUser = async () => {
+    try {
+      setIsLoading(true);
+      setError(null);
+      const response = await Accounts.accountsMeRead();
+      if (response.data) {
+        setUser(response.data);
+      }
+    } catch (err) {
+      setError(err instanceof Error ? err.message : "Failed to fetch user");
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    fetchUser();
+  }, []);
+
+  const refreshUser = () => {
+    fetchUser();
+  };
+
+  return {
+    user,
+    isLoading,
+    error,
+    refreshUser,
   };
 };

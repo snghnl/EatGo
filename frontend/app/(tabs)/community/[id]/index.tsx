@@ -6,6 +6,9 @@ import {
     SafeAreaView,
     Pressable,
     ActivityIndicator,
+    Alert,
+    Modal,
+    TextInput,
 } from "react-native";
 import { useLocalSearchParams, router } from "expo-router";
 import { Ionicons } from "@expo/vector-icons";
@@ -18,7 +21,7 @@ import { RouteListContainer } from "@/components/plan";
 import { CommunityDetailUser } from "@/components/community/CommunityDetailUser";
 import { CommunityDetailContent } from "@/components/community/CommunityDetailContent";
 
-import { usePost, usePostComments } from "@/src/hooks/useCommunity";
+import { usePost, usePostComments, useDeletePost, useCurrentUser, useUpdatePost } from "@/src/hooks/useCommunity";
 import { TravelCourses } from "@/src/client/sdk.gen";
 import { TravelCourse } from "@/src/client/types.gen";
 import ReportModal from "@/components/community/ReportModal";
@@ -33,6 +36,9 @@ export default function CommunityPost() {
               ? rawId[0]
               : undefined;
     const [reportOpen, setReportOpen] = useState(false);
+    const [editModalOpen, setEditModalOpen] = useState(false);
+    const [editTitle, setEditTitle] = useState("");
+    const [editContent, setEditContent] = useState("");
     const [selectedPlaceId, setSelectedPlaceId] = useState<string | null>(null);
     const [selectedRouteId, setSelectedRouteId] = useState<string | null>(null);
     const [travelCourse, setTravelCourse] = useState<TravelCourse | null>(null);
@@ -40,7 +46,12 @@ export default function CommunityPost() {
 
     // Fetch post from API
     const { post, isLoading, error } = usePost(id);
-    const { comments: _comments } = usePostComments(id);
+    usePostComments(id);
+
+    // Get current user and delete/edit functionality
+    const { user: currentUser } = useCurrentUser();
+    const { deletePost, isLoading: isDeleting } = useDeletePost();
+    const { updatePost, isLoading: isUpdating } = useUpdatePost();
 
     // Fetch travel course details when post is loaded
     useEffect(() => {
@@ -142,6 +153,10 @@ export default function CommunityPost() {
         profile_image: "",
     };
 
+    // Check if current user is the author of the post
+    const isCurrentUserAuthor = currentUser && post.user &&
+        (currentUser.id === post.user.id || currentUser.username === post.user.username);
+
     const handlePlacePress = (routeId: string, placeId: string) => {
         setSelectedRouteId(routeId);
         setSelectedPlaceId(placeId);
@@ -150,6 +165,71 @@ export default function CommunityPost() {
     const handleLongPress = (_routeId: string) => {};
     const handleSave = (_routeId: string) => {};
     const handleRecommendationPress = (_sequence: number) => {};
+
+    const handleDeletePost = () => {
+        Alert.alert(
+            "게시글 삭제",
+            "정말로 이 게시글을 삭제하시겠습니까?",
+            [
+                {
+                    text: "취소",
+                    style: "cancel",
+                },
+                {
+                    text: "삭제",
+                    style: "destructive",
+                    onPress: async () => {
+                        if (!id) return;
+                        const success = await deletePost(id);
+                        if (success) {
+                            Alert.alert("삭제 완료", "게시글이 삭제되었습니다.", [
+                                {
+                                    text: "확인",
+                                    onPress: () => router.push("/(tabs)/community"),
+                                },
+                            ]);
+                        } else {
+                            Alert.alert("오류", "게시글 삭제에 실패했습니다.");
+                        }
+                    },
+                },
+            ],
+        );
+    };
+
+    const handleEditPost = () => {
+        if (!post) return;
+        setEditTitle(post.title || "");
+        setEditContent(post.content || "");
+        setEditModalOpen(true);
+    };
+
+    const handleSaveEdit = async () => {
+        if (!id || !editTitle.trim()) {
+            Alert.alert("오류", "제목을 입력해주세요.");
+            return;
+        }
+
+        const success = await updatePost(id, {
+            title: editTitle.trim(),
+            content: editContent.trim(),
+        });
+
+        if (success) {
+            Alert.alert("수정 완료", "게시글이 수정되었습니다.");
+            setEditModalOpen(false);
+            // Refresh the post data by navigating back and forth
+            router.replace(`/community/${id}`);
+        } else {
+            Alert.alert("오류", "게시글 수정에 실패했습니다.");
+        }
+    };
+
+    const handleCancelEdit = () => {
+        setEditModalOpen(false);
+        setEditTitle("");
+        setEditContent("");
+    };
 
     return (
         <ScrollView>
@@ -162,12 +242,48 @@ export default function CommunityPost() {
                             color={Colors.textPrimary}
                             onPress={() => router.push("/(tabs)/map")}
                         />
-                        <Ionicons
-                            name="alert-circle-outline"
-                            size={20}
-                            color={Colors.textSecondary}
-                            onPress={() => setReportOpen(true)}
-                        />
+                        <View style={styles.topbarRight}>
+                            {isCurrentUserAuthor && (
+                                <>
+                                    <Pressable
+                                        onPress={handleEditPost}
+                                        disabled={isUpdating}
+                                        style={[styles.editButton, isUpdating && styles.disabledButton]}
+                                    >
+                                        {isUpdating ? (
+                                            <ActivityIndicator size="small" color={Colors.primary} />
+                                        ) : (
+                                            <Ionicons
+                                                name="create-outline"
+                                                size={20}
+                                                color={Colors.primary}
+                                            />
+                                        )}
+                                    </Pressable>
+                                    <Pressable
+                                        onPress={handleDeletePost}
+                                        disabled={isDeleting}
+                                        style={[styles.deleteButton, isDeleting && styles.disabledButton]}
+                                    >
+                                        {isDeleting ? (
+                                            <ActivityIndicator size="small" color={Colors.error || "#FF0000"} />
+                                        ) : (
+                                            <Ionicons
+                                                name="trash-outline"
+                                                size={20}
+                                                color={Colors.error || "#FF0000"}
+                                            />
+                                        )}
+                                    </Pressable>
+                                </>
+                            )}
+                            <Ionicons
+                                name="alert-circle-outline"
+                                size={20}
+                                color={Colors.textSecondary}
+                                onPress={() => setReportOpen(true)}
+                            />
+                        </View>
                     </View>
                     <View style={styles.container}>
                         <View style={styles.headerRow}>
@@ -200,8 +316,11 @@ export default function CommunityPost() {
                                 }}
                             >
                                 <CommunityDetailUser
-                                    nickname={user.username || user.id}
-                                    profileImageUrl={user.profile_image || ""}
+                                    nickname={String(user.username || user.id)}
+                                    profileImageUrl={
+                                        ('profile_image_url' in user) ? user.profile_image_url || "" :
+                                        ('profile_image' in user) ? user.profile_image || "" : ""
+                                    }
                                     subInfo={`작성: ${dateText}`}
                                 />
                             </Pressable>
@@ -257,11 +376,74 @@ export default function CommunityPost() {
             <ReportModal
                 visible={reportOpen}
                 onClose={() => setReportOpen(false)}
-                authorName={user.username || user.id || ""}
-                it={(payload) => {
+                subjectType="post"
+                subjectName={post.title || ""}
+                subjectId={id}
+                onSubmit={(payload) => {
                     console.log("신고 제출", payload);
+                    setReportOpen(false);
                 }}
             />
+
+            {/* Edit Modal */}
+            <Modal
+                visible={editModalOpen}
+                animationType="slide"
+                presentationStyle="pageSheet"
+                onRequestClose={handleCancelEdit}
+            >
+                <SafeAreaView style={styles.editModalContainer}>
+                    <View style={styles.editModalHeader}>
+                        <Pressable onPress={handleCancelEdit}>
+                            <ThemedText color="textSecondary">취소</ThemedText>
+                        </Pressable>
+                        <ThemedText size="lg" weight="bold">
+                            게시글 수정
+                        </ThemedText>
+                        <Pressable
+                            onPress={handleSaveEdit}
+                            disabled={isUpdating || !editTitle.trim()}
+                        >
+                            <ThemedText
+                                color={isUpdating || !editTitle.trim() ? "textSecondary" : "primary"}
+                                weight="bold"
+                            >
+                                {isUpdating ? "저장 중..." : "저장"}
+                            </ThemedText>
+                        </Pressable>
+                    </View>
+
+                    <ScrollView style={styles.editModalContent}>
+                        <View style={styles.editInputContainer}>
+                            <ThemedText size="sm" weight="bold" style={styles.editLabel}>
+                                제목
+                            </ThemedText>
+                            <TextInput
+                                style={styles.editTitleInput}
+                                value={editTitle}
+                                onChangeText={setEditTitle}
+                                placeholder="제목을 입력하세요"
+                                maxLength={100}
+                                multiline
+                            />
+                        </View>
+
+                        <View style={styles.editInputContainer}>
+                            <ThemedText size="sm" weight="bold" style={styles.editLabel}>
+                                내용
+                            </ThemedText>
+                            <TextInput
+                                style={styles.editContentInput}
+                                value={editContent}
+                                onChangeText={setEditContent}
+                                placeholder="내용을 입력하세요"
+                                multiline
+                                textAlignVertical="top"
+                            />
+                        </View>
+                    </ScrollView>
+                </SafeAreaView>
+            </Modal>
         </ScrollView>
     );
 }
@@ -277,6 +459,63 @@ const styles = StyleSheet.create({
         flexDirection: "row",
         justifyContent: "space-between",
         alignItems: "center",
+    },
+    topbarRight: {
+        flexDirection: "row",
+        alignItems: "center",
+        gap: 15,
+    },
+    editButton: {
+        padding: 5,
+    },
+    deleteButton: {
+        padding: 5,
+    },
+    disabledButton: {
+        opacity: 0.6,
+    },
+    editModalContainer: {
+        flex: 1,
+        backgroundColor: Colors.white,
+    },
+    editModalHeader: {
+        flexDirection: "row",
+        justifyContent: "space-between",
+        alignItems: "center",
+        paddingHorizontal: 20,
+        paddingVertical: 15,
+        borderBottomWidth: 1,
+        borderBottomColor: Colors.backgroundGray,
+    },
+    editModalContent: {
+        flex: 1,
+        padding: 20,
+    },
+    editInputContainer: {
+        marginBottom: 20,
+    },
+    editLabel: {
+        marginBottom: 8,
+    },
+    editTitleInput: {
+        borderWidth: 1,
+        borderColor: Colors.backgroundGray,
+        borderRadius: 8,
+        padding: 15,
+        fontSize: 16,
+        minHeight: 50,
+        maxHeight: 100,
+        textAlignVertical: "top",
+    },
+    editContentInput: {
+        borderWidth: 1,
+        borderColor: Colors.backgroundGray,
+        borderRadius: 8,
+        padding: 15,
+        fontSize: 16,
+        minHeight: 120,
+        maxHeight: 300,
+        textAlignVertical: "top",
     },
     headerRow: {
         marginTop: 50,
