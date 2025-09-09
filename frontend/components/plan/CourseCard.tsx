@@ -12,6 +12,7 @@ interface CourseCardProps {
   onPress?: () => void;
   isDeleteMode?: boolean;
   isSelected?: boolean;
+  isEditMode?: boolean;
 }
 
 export const CourseCard: React.FC<CourseCardProps> = ({
@@ -21,6 +22,7 @@ export const CourseCard: React.FC<CourseCardProps> = ({
   onPress,
   isDeleteMode = false,
   isSelected = false,
+  isEditMode = false,
 }) => {
   return (
     <TouchableOpacity onPress={onPress} activeOpacity={0.8}>
@@ -41,6 +43,17 @@ export const CourseCard: React.FC<CourseCardProps> = ({
                   color={Colors.white}
                 />
               )}
+            </View>
+          </View>
+        )}
+        {isEditMode && (
+          <View style={styles.editIconContainer}>
+            <View style={styles.editIcon}>
+              <Ionicons
+                name="pencil"
+                size={16}
+                color={Colors.primary || "#007AFF"}
+              />
             </View>
           </View>
         )}
@@ -123,6 +136,20 @@ const styles = StyleSheet.create({
   checkboxSelected: {
     backgroundColor: Colors.primary || "#007AFF",
     borderColor: Colors.primary || "#007AFF",
+  },
+  editIconContainer: {
+    marginRight: 12,
+    paddingTop: 2,
+  },
+  editIcon: {
+    width: 24,
+    height: 24,
+    borderRadius: 12,
+    backgroundColor: Colors.backgroundGray,
+    borderWidth: 1,
+    borderColor: Colors.primary || "#007AFF",
+    justifyContent: "center",
+    alignItems: "center",
   },
   content: {
     gap: 1,

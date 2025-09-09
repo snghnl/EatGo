@@ -18,6 +18,7 @@ interface CourseListProps {
   isDeleteMode?: boolean;
   selectedCourseIds?: string[];
   onCourseSelect?: (courseId: string) => void;
+  isEditMode?: boolean;
 }
 
 export const CourseList: React.FC<CourseListProps> = ({
@@ -29,6 +30,7 @@ export const CourseList: React.FC<CourseListProps> = ({
   isDeleteMode = false,
   selectedCourseIds = [],
   onCourseSelect,
+  isEditMode = false,
 }) => {
   const [list, setList] = React.useState<TravelCourse[]>(courses ?? []);
 
@@ -62,7 +64,7 @@ export const CourseList: React.FC<CourseListProps> = ({
   };
 
   const handleCoursePress = (courseId: string) => {
-    if (isDeleteMode && onCourseSelect) {
+    if ((isDeleteMode || isEditMode) && onCourseSelect) {
       onCourseSelect(courseId);
       return;
     }
@@ -101,6 +103,7 @@ export const CourseList: React.FC<CourseListProps> = ({
                 onPress={() => handleCoursePress(course.id || "")}
                 isDeleteMode={isDeleteMode}
                 isSelected={selectedCourseIds.includes(course.id || "")}
+                isEditMode={isEditMode}
               />
             ))
           )}

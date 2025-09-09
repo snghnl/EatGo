@@ -26,12 +26,23 @@ interface CreateCourseModalProps {
   visible: boolean;
   onClose: () => void;
   onComplete?: (data: CreateCourseData) => void;
+  editMode?: boolean;
+  initialData?: {
+    title?: string;
+    description?: string;
+    startDate?: string;
+    endDate?: string;
+    destinations?: string[];
+    foods?: string[];
+  };
 }
 
 export const CreateCourseModal: React.FC<CreateCourseModalProps> = ({
   visible,
   onClose,
   onComplete,
+  editMode = false,
+  initialData,
 }) => {
   const [currentStep, setCurrentStep] = useState(1);
   const [startDate, setStartDate] = useState("");
@@ -75,12 +86,21 @@ export const CreateCourseModal: React.FC<CreateCourseModalProps> = ({
   // 모달 등장/사라짐 애니메이션
   useEffect(() => {
     if (visible) {
-      // 모든 상태를 초기화
-      setCurrentStep(1);
-      setStartDate("");
-      setEndDate("");
-      setSelectedDestinations([]);
-      setSelectedFoods([]);
+      if (editMode && initialData) {
+        // 편집 모드에서는 기존 데이터로 초기화
+        setCurrentStep(1);
+        setStartDate(initialData.startDate || "");
+        setEndDate(initialData.endDate || "");
+        setSelectedDestinations(initialData.destinations || []);
+        setSelectedFoods(initialData.foods || []);
+      } else {
+        // 일반 모드에서는 모든 상태를 초기화
+        setCurrentStep(1);
+        setStartDate("");
+        setEndDate("");
+        setSelectedDestinations([]);
+        setSelectedFoods([]);
+      }
       stepSlideAnim.setValue(0);
 
       slideAnim.setValue(1);
@@ -88,7 +108,7 @@ export const CreateCourseModal: React.FC<CreateCourseModalProps> = ({
     } else {
       animateSlide(slideAnim, 1);
     }
-  }, [visible, slideAnim]);
+  }, [visible, slideAnim, editMode, initialData]);
 
   const handleDateChange: DateChangeHandler = (start, end) => {
     setStartDate(start);

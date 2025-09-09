@@ -17,6 +17,9 @@ export default function PlanListScreen() {
   const [courses, setCourses] = useState<TravelCourse[]>([]);
   const [isDeleteMode, setIsDeleteMode] = useState(false);
   const [selectedCourseIds, setSelectedCourseIds] = useState<string[]>([]);
+  const [isEditMode, setIsEditMode] = useState(false);
+  const [editingCourse, setEditingCourse] = useState<TravelCourse | null>(null);
+  const [editModalVisible, setEditModalVisible] = useState(false);
 
   // plan 페이지에 포커스가 돌아올 때 모달 상태 초기화
   useFocusEffect(
@@ -79,8 +82,26 @@ export default function PlanListScreen() {
     }
   };
 
+  const handleEdit = () => {
+    if (!isEditMode) {
+      // 편집 모드 시작
+      setIsEditMode(true);
+      setIsDeleteMode(false); // 삭제 모드 비활성화
+      setSelectedCourseIds([]); // 선택된 항목 초기화
+    } else {
+      // 편집 모드 종료
+      setIsEditMode(false);
+      setEditingCourse(null);
+    }
+  };
+
   const handleCloseModal = () => {
     setModalVisible(false);
+  };
+
+  const handleCloseEditModal = () => {
+    setEditModalVisible(false);
+    setEditingCourse(null);
   };
 
   // 제목과 subtitle 생성 함수
@@ -122,6 +143,66 @@ export default function PlanListScreen() {
     }
 
     return { title, subtitle };
+  };
+
+  const handleCompleteEditModal = async (data: {
+    startDate: string;
+    endDate: string;
+    selectedDestinations: string[];
+    selectedFoods: string[];
+  }) => {
+    if (!editingCourse) return;
+
+    console.log("여행 계획 수정", data);
+
+    // Convert date format from "YY.MM.DD" to "YYYY-MM-DD"
+    const convertToISODate = (dateStr: string) => {
+      const [year, month, day] = dateStr.split(".");
+      const fullYear = year.length === 2 ? `20${year}` : year;
+      return `${fullYear}-${month.padStart(2, "0")}-${day.padStart(2, "0")}`;
+    };
+
+    const { title, subtitle } = generateTitleAndSubtitle(
+      data.selectedDestinations,
+      data.startDate,
+      data.endDate,
+    );
+
+    const courseInfo = {
+      title,
+      description: subtitle,
+      routes: editingCourse.routes || [],
+      start_date: convertToISODate(data.startDate),
+      end_date: convertToISODate(data.endDate),
+      destination: data.selectedDestinations.join(","),
+    };
+
+    try {
+      const response = await TravelCourses.travelCoursesPartialUpdate({
+        path: { id: editingCourse.id || "" },
+        body: courseInfo,
+      });
+
+      const updatedCourse = response.data;
+
+      if (!updatedCourse) {
+        throw new Error("Failed to update course");
+      }
+
+      // 로컬 상태 업데이트
+      setCourses((prev) =>
+        prev.map((course) =>
+          course.id === editingCourse.id ? updatedCourse : course
+        )
+      );
+
+      setEditModalVisible(false);
+      setEditingCourse(null);
+      setIsEditMode(false); // 편집 모드 종료
+    } catch (error) {
+      console.error("Failed to update course:", error);
+      // 에러 처리 - 여기서는 단순히 로그만 출력
+    }
   };
 
   const handleCompleteModal = async (data: {
@@ -208,7 +289,10 @@ export default function PlanListScreen() {
       <View style={styles.actionSection}>
         <ActionButtons
           actions={[
-            { label: "편집", onPress: handleAddCourse },
+            {
+              label: isEditMode ? "취소" : "편집",
+              onPress: handleEdit
+            },
             {
               label: isDeleteMode
                 ? selectedCourseIds.length > 0
@@ -229,18 +313,50 @@ export default function PlanListScreen() {
         isDeleteMode={isDeleteMode}
         selectedCourseIds={selectedCourseIds}
         onCourseSelect={(courseId: string) => {
-          setSelectedCourseIds((prev) =>
-            prev.includes(courseId)
-              ? prev.filter((id) => id !== courseId)
-              : [...prev, courseId]
-          );
+          if (isDeleteMode) {
+            setSelectedCourseIds((prev) =>
+              prev.includes(courseId)
+                ? prev.filter((id) => id !== courseId)
+                : [...prev, courseId]
+            );
+          } else if (isEditMode) {
+            // 편집 모드에서는 해당 코스 편집
+            const courseToEdit = courses.find(course => course.id === courseId);
+            if (courseToEdit) {
+              setEditingCourse(courseToEdit);
+              setEditModalVisible(true);
+            }
+          }
         }}
+        isEditMode={isEditMode}
       />
 
       <CreateCourseModal
         visible={modalVisible}
         onClose={handleCloseModal}
         onComplete={handleCompleteModal}
+      />
+
+      <CreateCourseModal
+        visible={editModalVisible}
+        onClose={handleCloseEditModal}
+        onComplete={handleCompleteEditModal}
+        editMode={true}
+        initialData={editingCourse ? {
+          title: editingCourse.title,
+          description: editingCourse.description,
+          startDate: editingCourse.start_date ?
+            editingCourse.start_date.split('-').map((part, index) =>
+              index === 0 ? part.slice(2) : part
+            ).join('.') : "",
+          endDate: editingCourse.end_date ?
+            editingCourse.end_date.split('-').map((part, index) =>
+              index === 0 ? part.slice(2) : part
+            ).join('.') : "",
+          destinations: editingCourse.destination ?
+            editingCourse.destination.split(',').filter(d => d.trim()) : [],
+          foods: [] // 음식 정보는 course에 저장되지 않음
+        } : undefined}
       />
     </SafeAreaView>
   );
