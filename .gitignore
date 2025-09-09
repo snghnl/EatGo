@@ -1,3 +1,4 @@
 scrapper/
 .env*
 !.env.example
+.cursor/
