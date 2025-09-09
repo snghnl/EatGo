@@ -92,9 +92,8 @@ export default function MapScreen() {
         style={[styles.cardSwiperWrapper, { paddingBottom: insets.bottom }]}
       >
         <MapPlaceCardSwiper
-          data={swiperData}
-          selectedPlace={selectedPlace}
           onSelectItem={handlePlaceSelect}
+          mapCenter={mapCenter}
         />
       </View>
     </View>

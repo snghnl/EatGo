@@ -8,24 +8,33 @@ import {
   Linking,
   GestureResponderEvent,
   TouchableOpacity,
+  ActivityIndicator,
 } from "react-native";
 import Swiper from "react-native-swiper";
 import placesData from "@/mock-data/places.json";
 import { useRouter } from "expo-router";
+import type { Place } from "@/services/placesService";
 
 const { width } = Dimensions.get("window");
 
 interface Props {
   onClose: () => void;
   onPlaceSelect?: (selectedPlace: any) => void;
+  places?: Place[];
+  loading?: boolean;
 }
 
-export default function PlaceCardSwiper({ onClose, onPlaceSelect }: Props) {
+export default function PlaceCardSwiper({ onClose, onPlaceSelect, places: propPlaces, loading }: Props) {
   const touchStartY = useRef(0);
   const isDragging = useRef(false);
   const router = useRouter();
 
-  const places = useMemo(() => placesData.documents.slice(0, 5), []);
+  const places = useMemo(() => {
+    if (propPlaces && propPlaces.length > 0) {
+      return propPlaces.slice(0, 5);
+    }
+    return placesData.documents.slice(0, 5);
+  }, [propPlaces]);
 
   const handleTouchStart = useCallback((e: GestureResponderEvent) => {
     touchStartY.current = e.nativeEvent.pageY;
@@ -59,7 +68,8 @@ export default function PlaceCardSwiper({ onClose, onPlaceSelect }: Props) {
 
   const handleCardPress = useCallback(
     (place: any) => {
-      router.push(`/map/place/${place.id}/detail`);
+      const placeId = place.external_id || place.id;
+      router.push(`/map/place/${placeId}/detail`);
     },
     [router],
   );
@@ -89,20 +99,20 @@ export default function PlaceCardSwiper({ onClose, onPlaceSelect }: Props) {
           <View style={styles.infoBlock}>
             <View style={styles.titleRow}>
               <Text style={styles.title} numberOfLines={1}>
-                {place.place_name}
+                {place.name || place.place_name}
               </Text>
               <TouchableOpacity onPress={() => handleMorePress(place)}>
                 <Text style={styles.more}>더보기 ›</Text>
               </TouchableOpacity>
             </View>
             <Text style={styles.sub} numberOfLines={1}>
-              {place.category_name}
+              {place.place_type || place.category_name}
             </Text>
             <Text style={styles.text} numberOfLines={1}>
-              전화번호: {place.phone || "정보 없음"}
+              전화번호: {place.phone_number || place.phone || "정보 없음"}
             </Text>
             <Text style={styles.text} numberOfLines={1}>
-              주소: {place.road_address_name}
+              주소: {place.road_address || place.road_address_name}
             </Text>
             <View style={styles.badgeRow}>
               <View style={styles.badge}>
@@ -132,23 +142,30 @@ export default function PlaceCardSwiper({ onClose, onPlaceSelect }: Props) {
       </View>
 
       <View style={styles.swiperWrapper}>
-        <Swiper
-          style={styles.swiperContainer}
-          showsPagination={false}
-          paginationStyle={styles.pagination}
-          dotStyle={styles.dot}
-          activeDotStyle={styles.activeDot}
-          loop={false}
-          autoplay={false}
-          showsButtons={true}
-          buttonWrapperStyle={styles.buttonWrapper}
-          nextButton={<Text style={styles.arrow}>›</Text>}
-          prevButton={<Text style={styles.arrow}>‹</Text>}
-          removeClippedSubviews={false}
-          height={135}
-        >
-          {places.map(renderPlaceCard)}
-        </Swiper>
+        {loading ? (
+          <View style={styles.loadingContainer}>
+            <ActivityIndicator size="large" color="#e94e77" />
+            <Text style={styles.loadingText}>주변 맛집을 찾고 있습니다...</Text>
+          </View>
+        ) : (
+          <Swiper
+            style={styles.swiperContainer}
+            showsPagination={false}
+            paginationStyle={styles.pagination}
+            dotStyle={styles.dot}
+            activeDotStyle={styles.activeDot}
+            loop={false}
+            autoplay={false}
+            showsButtons={places.length > 1}
+            buttonWrapperStyle={styles.buttonWrapper}
+            nextButton={<Text style={styles.arrow}>›</Text>}
+            prevButton={<Text style={styles.arrow}>‹</Text>}
+            removeClippedSubviews={false}
+            height={135}
+          >
+            {places.map(renderPlaceCard)}
+          </Swiper>
+        )}
       </View>
     </View>
   );
@@ -288,5 +305,24 @@ const styles = StyleSheet.create({
     fontSize: 40,
     color: "#e94e77",
     fontWeight: "bold",
+  },
+  loadingContainer: {
+    flex: 1,
+    justifyContent: "center",
+    alignItems: "center",
+    height: 140,
+    backgroundColor: "#fff",
+    borderRadius: 10,
+    marginHorizontal: 20,
+    shadowColor: "#000",
+    shadowOpacity: 0.1,
+    shadowOffset: { width: 0, height: 2 },
+    shadowRadius: 4,
+    elevation: 5,
+  },
+  loadingText: {
+    marginTop: 10,
+    fontSize: 14,
+    color: "#666",
   },
 });
