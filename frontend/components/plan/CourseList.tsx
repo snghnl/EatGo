@@ -15,6 +15,9 @@ interface CourseListProps {
   newCourse?: TravelCourse | null;
   onCoursePress?: (courseId: string) => void;
   addButtonText?: string; // ✅ (+ 새 여행경로 만들기) 문구 커스텀
+  isDeleteMode?: boolean;
+  selectedCourseIds?: string[];
+  onCourseSelect?: (courseId: string) => void;
 }
 
 export const CourseList: React.FC<CourseListProps> = ({
@@ -23,6 +26,9 @@ export const CourseList: React.FC<CourseListProps> = ({
   newCourse,
   onCoursePress,
   addButtonText = "+ 새 여행경로 만들기",
+  isDeleteMode = false,
+  selectedCourseIds = [],
+  onCourseSelect,
 }) => {
   const [list, setList] = React.useState<TravelCourse[]>(courses ?? []);
 
@@ -56,6 +62,10 @@ export const CourseList: React.FC<CourseListProps> = ({
   };
 
   const handleCoursePress = (courseId: string) => {
+    if (isDeleteMode && onCourseSelect) {
+      onCourseSelect(courseId);
+      return;
+    }
     if (onCoursePress) return onCoursePress(courseId);
     navigateDefault(courseId);
   };
@@ -89,6 +99,8 @@ export const CourseList: React.FC<CourseListProps> = ({
                 // TODO: 이미지 추가
                 hasImages={false}
                 onPress={() => handleCoursePress(course.id || "")}
+                isDeleteMode={isDeleteMode}
+                isSelected={selectedCourseIds.includes(course.id || "")}
               />
             ))
           )}

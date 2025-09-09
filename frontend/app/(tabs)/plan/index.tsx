@@ -15,6 +15,8 @@ export default function PlanListScreen() {
   const [modalVisible, setModalVisible] = useState(false);
   const [newCourse, setNewCourse] = useState<TravelCourse | null>(null);
   const [courses, setCourses] = useState<TravelCourse[]>([]);
+  const [isDeleteMode, setIsDeleteMode] = useState(false);
+  const [selectedCourseIds, setSelectedCourseIds] = useState<string[]>([]);
 
   // plan 페이지에 포커스가 돌아올 때 모달 상태 초기화
   useFocusEffect(
@@ -39,8 +41,42 @@ export default function PlanListScreen() {
     setModalVisible(true);
   };
 
-  const handleDelete = () => {
-    console.log("경로 삭제 버튼 클릭");
+  const handleDelete = async () => {
+    if (!isDeleteMode) {
+      // 삭제 모드 시작
+      setIsDeleteMode(true);
+      setSelectedCourseIds([]);
+    } else {
+      // 선택된 코스들 삭제
+      if (selectedCourseIds.length === 0) {
+        setIsDeleteMode(false);
+        return;
+      }
+
+      try {
+        // API 호출로 삭제
+        await Promise.all(
+          selectedCourseIds.map((courseId) =>
+            TravelCourses.travelCoursesDelete({ path: { id: courseId } })
+          )
+        );
+
+        // 로컬 상태에서 삭제
+        setCourses((prev) =>
+          prev.filter((course) => !selectedCourseIds.includes(course.id || ""))
+        );
+      } catch (error) {
+        console.error("Failed to delete courses:", error);
+        // 에러가 발생해도 로컬에서는 삭제 (낙관적 업데이트)
+        setCourses((prev) =>
+          prev.filter((course) => !selectedCourseIds.includes(course.id || ""))
+        );
+      }
+
+      // 삭제 모드 종료
+      setIsDeleteMode(false);
+      setSelectedCourseIds([]);
+    }
   };
 
   const handleCloseModal = () => {
@@ -173,7 +209,14 @@ export default function PlanListScreen() {
         <ActionButtons
           actions={[
             { label: "편집", onPress: handleAddCourse },
-            { label: "경로 삭제", onPress: handleDelete },
+            {
+              label: isDeleteMode
+                ? selectedCourseIds.length > 0
+                  ? `삭제 (${selectedCourseIds.length}개)`
+                  : "취소"
+                : "경로 삭제",
+              onPress: handleDelete
+            },
           ]}
         />
       </View>
@@ -183,6 +226,15 @@ export default function PlanListScreen() {
         courses={courses}
         newCourse={newCourse}
         onAddCourse={handleAddCourse}
+        isDeleteMode={isDeleteMode}
+        selectedCourseIds={selectedCourseIds}
+        onCourseSelect={(courseId: string) => {
+          setSelectedCourseIds((prev) =>
+            prev.includes(courseId)
+              ? prev.filter((id) => id !== courseId)
+              : [...prev, courseId]
+          );
+        }}
       />
 
       <CreateCourseModal

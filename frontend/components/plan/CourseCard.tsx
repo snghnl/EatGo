@@ -3,12 +3,15 @@ import { View, StyleSheet, TouchableOpacity } from "react-native";
 import { ThemedView } from "../ThemedView";
 import { ThemedText } from "../ThemedText";
 import { Colors } from "../../constants/Colors";
+import { Ionicons } from "@expo/vector-icons";
 
 interface CourseCardProps {
   subtitle: string;
   title: string;
   hasImages?: boolean;
   onPress?: () => void;
+  isDeleteMode?: boolean;
+  isSelected?: boolean;
 }
 
 export const CourseCard: React.FC<CourseCardProps> = ({
@@ -16,10 +19,31 @@ export const CourseCard: React.FC<CourseCardProps> = ({
   title,
   hasImages = false,
   onPress,
+  isDeleteMode = false,
+  isSelected = false,
 }) => {
   return (
     <TouchableOpacity onPress={onPress} activeOpacity={0.8}>
-      <ThemedView style={styles.card}>
+      <ThemedView style={[
+        styles.card,
+        isDeleteMode && isSelected && styles.selectedCard
+      ]}>
+        {isDeleteMode && (
+          <View style={styles.checkboxContainer}>
+            <View style={[
+              styles.checkbox,
+              isSelected && styles.checkboxSelected
+            ]}>
+              {isSelected && (
+                <Ionicons
+                  name="checkmark"
+                  size={16}
+                  color={Colors.white}
+                />
+              )}
+            </View>
+          </View>
+        )}
         <View style={styles.content}>
           <ThemedText
             size="xs"
@@ -74,9 +98,35 @@ const styles = StyleSheet.create({
     shadowOpacity: 0.1,
     shadowRadius: 4,
     elevation: 3,
+    flexDirection: "row",
+    alignItems: "flex-start",
+  },
+  selectedCard: {
+    backgroundColor: Colors.backgroundGray,
+    borderWidth: 2,
+    borderColor: Colors.primary || "#007AFF",
+  },
+  checkboxContainer: {
+    marginRight: 12,
+    paddingTop: 2,
+  },
+  checkbox: {
+    width: 24,
+    height: 24,
+    borderRadius: 12,
+    borderWidth: 2,
+    borderColor: Colors.border,
+    backgroundColor: Colors.white,
+    justifyContent: "center",
+    alignItems: "center",
+  },
+  checkboxSelected: {
+    backgroundColor: Colors.primary || "#007AFF",
+    borderColor: Colors.primary || "#007AFF",
   },
   content: {
     gap: 1,
+    flex: 1,
   },
   subtitle: {
     // ThemedText에서 처리됨
