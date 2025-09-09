@@ -1,5 +1,11 @@
 import React from "react";
-import { View, Text, TouchableOpacity, StyleSheet } from "react-native";
+import {
+    View,
+    Text,
+    TouchableOpacity,
+    StyleSheet,
+    Linking,
+} from "react-native";
 import { FontAwesome } from "@expo/vector-icons";
 import { Colors } from "@/constants/Colors";
 import { useRouter } from "expo-router";
@@ -44,17 +50,33 @@ export default function SearchListItem({
         }
     };
 
-    const distance = centerCoords && item.lat && item.lng
-        ? calculateDistance(centerCoords.latitude, centerCoords.longitude, item.lat, item.lng)
-        : null;
+    const distance =
+        centerCoords && item.lat && item.lng
+            ? calculateDistance(
+                  centerCoords.latitude,
+                  centerCoords.longitude,
+                  item.lat,
+                  item.lng
+              )
+            : null;
 
     const handlePress = () => {
-        console.log("SearchListItem pressed:", item.name, item.id);
+        console.log(
+            "SearchListItem pressed:",
+            item.name,
+            item.id,
+            item.external_url || "No external URL"
+        );
         onSelectItem?.(item);
-        router.push({
-            pathname: "/(tabs)/map/place/[id]/detail",
-            params: { id: item.id || "" },
-        });
+
+        if (item.external_url) {
+            Linking.openURL(item.external_url);
+        }
+        // TODO: route detail page
+        // router.push({
+        //     pathname: "/(tabs)/map/place/[id]/detail",
+        //     params: { id: item.id || "" },
+        // });
     };
 
     return (
