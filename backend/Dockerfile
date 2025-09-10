@@ -24,6 +24,9 @@ RUN pip install --no-cache-dir -r requirements.txt
 # Copy project
 COPY . .
 
+# Make the start script executable
+RUN chmod +x start.sh
+
 # Create a non-root user
 RUN useradd --create-home --shell /bin/bash app \
     && chown -R app:app /app
@@ -37,9 +40,7 @@ EXPOSE $PORT
 
 # Health check
 HEALTHCHECK --interval=30s --timeout=30s --start-period=5s --retries=3 \
-    CMD python -c "import requests; requests.get('http://localhost:$PORT/health/', timeout=10)"
+    CMD python -c "import urllib.request; urllib.request.urlopen('http://localhost:$PORT/health/')"
 
 # Run the application
-CMD python manage.py migrate && \
-    python manage.py loaddata fixtures/categories.json fixtures/users.json fixtures/places.json fixtures/routes.json fixtures/posts.json fixtures/wishlists.json && \
-    gunicorn --bind 0.0.0.0:$PORT --workers 3 --timeout 120 eatgo.wsgi:application
+CMD ["./start.sh"]
