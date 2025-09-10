@@ -51,14 +51,21 @@ export const RouteItem: React.FC<RouteItemProps> = ({
 
       try {
         const placePromises = route.places.map(async (placeId) => {
-          const response = await Places.placesRead({
-            path: { id: placeId },
-          });
-          return response.data;
+          try {
+            const response = await Places.placesRead({
+              path: { id: placeId },
+            });
+            return response.data;
+          } catch (error) {
+            console.warn(`Failed to fetch place ${placeId}:`, error);
+            return null;
+          }
         });
 
         const placeData = await Promise.all(placePromises);
-        setPlaces(placeData);
+        // Filter out null/undefined values
+        const validPlaces = placeData.filter((place): place is Place => place != null);
+        setPlaces(validPlaces);
       } catch (error) {
         console.error("Failed to fetch places:", error);
       } finally {
@@ -81,7 +88,9 @@ export const RouteItem: React.FC<RouteItemProps> = ({
     onSave?.();
   };
 
-  const getCategoryFromPlaceType = (placeType?: string) => {
+  const getCategoryFromPlaceType = (placeType?: string | null) => {
+    if (!placeType) return "기타";
+
     switch (placeType) {
       case "RESTAURANT":
         return "음식점";
@@ -154,16 +163,23 @@ export const RouteItem: React.FC<RouteItemProps> = ({
               style={styles.placesScroll}
               contentContainerStyle={styles.placesScrollContent}
             >
-              {places.map((place, index) => (
-                <View key={place.id} style={styles.placeWrapper}>
-                  <PlaceComponent
-                    category={getCategoryFromPlaceType(place.place_type)}
-                    name={place.name}
-                    onPress={() => onPlacePress?.(place.id!)}
-                    isSelected={selectedPlaceId === place.id}
-                  />
-                </View>
-              ))}
+              {places.map((place) => {
+                // Safety check to ensure place exists and has required properties
+                if (!place || !place.id || !place.name) {
+                  return null;
+                }
+
+                return (
+                  <View key={place.id} style={styles.placeWrapper}>
+                    <PlaceComponent
+                      category={getCategoryFromPlaceType(place.place_type)}
+                      name={place.name}
+                      onPress={() => onPlacePress?.(place.id!)}
+                      isSelected={selectedPlaceId === place.id}
+                    />
+                  </View>
+                );
+              })}
             </ScrollView>
           </View>
         ) : (

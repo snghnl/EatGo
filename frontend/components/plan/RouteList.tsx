@@ -1,5 +1,5 @@
 import React from "react";
-import { StyleSheet, View } from "react-native";
+import { StyleSheet, ScrollView } from "react-native";
 import { ThemedView } from "../ThemedView";
 import { RouteItem } from "./RouteItem";
 import { Colors } from "../../constants/Colors";
@@ -28,7 +28,11 @@ export const RouteList: React.FC<RouteListProps> = ({
 }) => {
   return (
     <ThemedView style={styles.container}>
-      <View style={styles.content}>
+      <ScrollView
+        style={styles.scrollView}
+        contentContainerStyle={styles.content}
+        showsVerticalScrollIndicator={false}
+      >
         {routes.map((route, index) => (
           <RouteItem
             key={route.id}
@@ -43,7 +47,7 @@ export const RouteList: React.FC<RouteListProps> = ({
             isActive={activeRouteId === route.id}
           />
         ))}
-      </View>
+      </ScrollView>
     </ThemedView>
   );
 };
@@ -52,6 +56,9 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: Colors.background,
+  },
+  scrollView: {
+    flex: 1,
   },
   content: {
     flexGrow: 1,
