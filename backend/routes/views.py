@@ -48,6 +48,7 @@ class RouteRecommendationView(GenericAPIView):
     )
     def get(self, request, *args, **kwargs):
         input_serializer = self.get_serializer(data=request.query_params)
+
         if not input_serializer.is_valid():
             return Response(
                 {"error": "Invalid input data", "details": input_serializer.errors},
@@ -70,7 +71,7 @@ class RouteRecommendationView(GenericAPIView):
                 lng=validated_data["lng"],
                 max_distance_km=validated_data.get("max_distance_km", 20.0),
                 limit=validated_data.get("limit", 10),
-                categories=validated_data.get("category_filter", []),
+                categories=validated_data.get("category_filter", "맛집"),
             )
 
             result = service.generate_multiple_routes(
