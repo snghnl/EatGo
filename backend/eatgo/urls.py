@@ -26,6 +26,7 @@ from rest_framework_simplejwt.views import (
     TokenRefreshView,
     TokenVerifyView,
 )
+from django.http import JsonResponse
 
 
 # Export a top-level Info object for drf_yasg DEFAULT_INFO import string
@@ -42,7 +43,14 @@ schema_view = get_schema_view(
 )
 
 
+# Simple health check view
+def health_check(request):
+    return JsonResponse({"status": "healthy", "service": "eatgo-api"})
+
+
 urlpatterns = [
+    # Health check for monitoring
+    path("health/", health_check, name="health_check"),
     # swagger
     path(
         "swagger.<format>/", schema_view.without_ui(cache_timeout=0), name="schema-json"

@@ -14,13 +14,14 @@ from pathlib import Path
 import os
 from datetime import timedelta
 from dotenv import load_dotenv
+import dj_database_url
 
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 
-# .env 파일 로드
-load_dotenv(BASE_DIR.parent / ".env.local")
+# .env 파일 로드 (로컬 개발용 .env.local, 프로덕션용 환경변수)
+load_dotenv(BASE_DIR / ".env")  # 로컬 개발용
 
 
 API_VERSION = "api/v1"
@@ -35,12 +36,19 @@ TOURISM_API_SERVICE_KEY = os.environ.get("TOURISM_API_SERVICE_KEY")
 # See https://docs.djangoproject.com/en/5.2/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = "django-insecure-=^bopkby=%wq@mhq+2h$#4d=gra)ms%xhj79^$t*=z(8*0tg0%"
+SECRET_KEY = os.environ.get(
+    "SECRET_KEY", "django-insecure-=^bopkby=%wq@mhq+2h$#4d=gra)ms%xhj79^$t*=z(8*0tg0%"
+)
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = os.environ.get("DEBUG", "True").lower() == "true"
 
-ALLOWED_HOSTS = ["localhost", "127.0.0.1", "0.0.0.0"]
+# Production 환경에서는 환경변수로 ALLOWED_HOSTS 설정
+ALLOWED_HOSTS_ENV = os.environ.get("DJANGO_ALLOWED_HOSTS", "")
+if ALLOWED_HOSTS_ENV:
+    ALLOWED_HOSTS = [host.strip() for host in ALLOWED_HOSTS_ENV.split(",")]
+else:
+    ALLOWED_HOSTS = ["localhost", "127.0.0.1", "0.0.0.0"]
 
 
 # Application definition
@@ -52,6 +60,7 @@ INSTALLED_APPS = [
     "django.contrib.sessions",
     "django.contrib.messages",
     "django.contrib.staticfiles",
+    "whitenoise.runserver_nostatic",  # For static files in production
     "corsheaders",
     "accounts",
     "core",
@@ -69,6 +78,7 @@ INSTALLED_APPS = [
 MIDDLEWARE = [
     "corsheaders.middleware.CorsMiddleware",
     "django.middleware.security.SecurityMiddleware",
+    "whitenoise.middleware.WhiteNoiseMiddleware",  # For static files in production
     "django.contrib.sessions.middleware.SessionMiddleware",
     "django.middleware.common.CommonMiddleware",
     "django.middleware.csrf.CsrfViewMiddleware",
@@ -100,16 +110,26 @@ WSGI_APPLICATION = "eatgo.wsgi.application"
 # Database
 # https://docs.djangoproject.com/en/5.2/ref/settings/#databases
 
-DATABASES = {
-    "default": {
-        "ENGINE": os.environ.get("DB_ENGINE", "django.db.backends.postgresql"),
-        "NAME": os.environ.get("DB_NAME", "eatgo_db"),
-        "USER": os.environ.get("DB_USER", "snghnl"),
-        "PASSWORD": os.environ.get("DB_PASSWORD", ""),
-        "HOST": os.environ.get("DB_HOST", "localhost"),
-        "PORT": os.environ.get("DB_PORT", "5432"),
+# Production 환경에서는 DATABASE_URL 사용 (Render 등)
+DATABASE_URL = os.environ.get("DATABASE_URL")
+
+if DATABASE_URL:
+    # Production: Render PostgreSQL
+    DATABASES = {"default": dj_database_url.parse(DATABASE_URL)}
+else:
+    # Development: 로컬 설정
+    DATABASES = {
+        "default": {
+            "ENGINE": os.environ.get("DB_ENGINE", "django.db.backends.sqlite3"),
+            "NAME": BASE_DIR / "db.sqlite3"
+            if os.environ.get("DB_ENGINE") != "django.db.backends.postgresql"
+            else os.environ.get("DB_NAME", "eatgo_db"),
+            "USER": os.environ.get("DB_USER", "snghnl"),
+            "PASSWORD": os.environ.get("DB_PASSWORD", ""),
+            "HOST": os.environ.get("DB_HOST", "localhost"),
+            "PORT": os.environ.get("DB_PORT", "5432"),
+        }
     }
-}
 
 
 # Password validation
@@ -146,7 +166,11 @@ USE_TZ = True
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/5.2/howto/static-files/
 
-STATIC_URL = "static/"
+STATIC_URL = "/static/"
+STATIC_ROOT = os.environ.get("STATIC_ROOT", BASE_DIR / "staticfiles")
+
+# WhiteNoise configuration for static files in production
+STATICFILES_STORAGE = "whitenoise.storage.CompressedManifestStaticFilesStorage"
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/5.2/ref/settings/#default-auto-field
@@ -230,13 +254,21 @@ LOGGING = {
 }
 
 # CORS Configuration
-CORS_ALLOWED_ORIGINS = [
-    "http://localhost:8081",  # Expo development server
-    "http://192.168.1.100:8081",  # Your local IP if needed
-]
+# Production 환경에서는 환경변수로 설정
+CORS_ALLOWED_ORIGINS_ENV = os.environ.get("CORS_ALLOWED_ORIGINS", "")
+if CORS_ALLOWED_ORIGINS_ENV:
+    CORS_ALLOWED_ORIGINS = [
+        origin.strip() for origin in CORS_ALLOWED_ORIGINS_ENV.split(",")
+    ]
+else:
+    # Development - 로컬 설정
+    CORS_ALLOWED_ORIGINS = [
+        "http://localhost:8081",  # Expo development server
+        "http://192.168.1.100:8081",  # Your local IP if needed
+    ]
 
-# For development only - allows all origins
-CORS_ALLOW_ALL_ORIGINS = True
+# For development only - allows all origins (프로덕션에서는 False로 설정)
+CORS_ALLOW_ALL_ORIGINS = DEBUG
 
 CORS_ALLOWED_HEADERS = [
     "accept",

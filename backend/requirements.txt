@@ -1,0 +1,16 @@
+# Production dependencies extracted from pyproject.toml
+django>=5.2.4
+djangorestframework>=3.16.0
+djangorestframework-simplejwt>=5.5.1
+drf-yasg>=1.21.10
+python-dotenv
+requests
+psycopg2-binary>=2.9.9
+django-cors-headers>=4.7.0
+
+# Production server
+gunicorn>=21.2.0
+
+# Additional production dependencies
+whitenoise>=6.5.0
+dj-database-url>=2.1.0
