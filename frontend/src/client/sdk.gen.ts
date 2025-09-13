@@ -4,6 +4,8 @@ import type { Options as ClientOptions, TDataShape, Client } from "./client";
 import type {
   AccountsMeReadData,
   AccountsMeReadResponses,
+  AccountsMeDeleteDeleteData,
+  AccountsMeDeleteDeleteResponses,
   AccountsSignupCreateData,
   AccountsSignupCreateResponses,
   AuthTokenCreateData,
@@ -156,6 +158,28 @@ export class Accounts {
         },
       ],
       url: "/accounts/me/",
+      ...options,
+    });
+  }
+
+  /**
+   * Delete the current user's account and all related data.
+   */
+  public static accountsMeDeleteDelete<ThrowOnError extends boolean = false>(
+    options?: Options<AccountsMeDeleteDeleteData, ThrowOnError>,
+  ) {
+    return (options?.client ?? _heyApiClient).delete<
+      AccountsMeDeleteDeleteResponses,
+      unknown,
+      ThrowOnError
+    >({
+      security: [
+        {
+          name: "Authorization",
+          type: "apiKey",
+        },
+      ],
+      url: "/accounts/me/delete/",
       ...options,
     });
   }

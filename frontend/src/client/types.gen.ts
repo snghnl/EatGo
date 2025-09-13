@@ -867,6 +867,17 @@ export type AccountsMeReadResponses = {
 export type AccountsMeReadResponse =
   AccountsMeReadResponses[keyof AccountsMeReadResponses];
 
+export type AccountsMeDeleteDeleteData = {
+  body?: never;
+  path?: never;
+  query?: never;
+  url: "/accounts/me/delete/";
+};
+
+export type AccountsMeDeleteDeleteResponses = {
+  204: unknown;
+};
+
 export type AccountsSignupCreateData = {
   body: User;
   path?: never;
