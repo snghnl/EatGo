@@ -1,6 +1,10 @@
 from django.test import TestCase
 from django.contrib.auth import get_user_model
 from django.db import IntegrityError
+from django.urls import reverse
+from rest_framework.test import APITestCase
+from rest_framework import status
+from rest_framework_simplejwt.tokens import RefreshToken
 
 from core.models import Category
 from .models import UserPreference
@@ -172,5 +176,76 @@ class UserPreferenceModelTest(TestCase):
         self.category1.delete()
 
         # Check preference is also deleted
+        with self.assertRaises(UserPreference.DoesNotExist):
+            UserPreference.objects.get(id=preference_id)
+
+
+class DeleteAccountViewTest(APITestCase):
+    """Test cases for DeleteAccountView"""
+
+    def setUp(self):
+        """Set up test data"""
+        self.user = User.objects.create_user(
+            username="testuser", email="test@example.com", password="testpass123"
+        )
+        self.delete_url = reverse("delete_account")
+
+    def test_delete_account_authenticated(self):
+        """Test successful account deletion with authentication"""
+        # Authenticate user
+        refresh = RefreshToken.for_user(self.user)
+        self.client.credentials(HTTP_AUTHORIZATION=f"Bearer {refresh.access_token}")
+
+        # Store user ID for verification
+        user_id = self.user.id
+
+        # Make delete request
+        response = self.client.delete(self.delete_url)
+
+        # Check response
+        self.assertEqual(response.status_code, status.HTTP_204_NO_CONTENT)
+        self.assertIn("계정이 성공적으로 삭제되었습니다", response.data["message"])
+
+        # Verify user is deleted
+        with self.assertRaises(User.DoesNotExist):
+            User.objects.get(id=user_id)
+
+    def test_delete_account_unauthenticated(self):
+        """Test account deletion without authentication should fail"""
+        response = self.client.delete(self.delete_url)
+
+        # Should require authentication
+        self.assertEqual(response.status_code, status.HTTP_401_UNAUTHORIZED)
+
+        # User should still exist
+        self.assertTrue(User.objects.filter(id=self.user.id).exists())
+
+    def test_delete_account_with_related_data(self):
+        """Test account deletion removes related data"""
+        # Create category for preferences
+        category = Category.objects.create(
+            name="테스트카테고리", description="테스트용", is_active=True
+        )
+
+        # Create user preference
+        preference = UserPreference.objects.create(
+            user=self.user, category=category, preference_score=0.8
+        )
+        preference_id = preference.id
+
+        # Authenticate user
+        refresh = RefreshToken.for_user(self.user)
+        self.client.credentials(HTTP_AUTHORIZATION=f"Bearer {refresh.access_token}")
+
+        # Delete account
+        response = self.client.delete(self.delete_url)
+
+        # Check response
+        self.assertEqual(response.status_code, status.HTTP_204_NO_CONTENT)
+
+        # Verify user and related preference are deleted
+        with self.assertRaises(User.DoesNotExist):
+            User.objects.get(id=self.user.id)
+
         with self.assertRaises(UserPreference.DoesNotExist):
             UserPreference.objects.get(id=preference_id)
