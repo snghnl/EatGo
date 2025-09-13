@@ -44,6 +44,8 @@ export default function LoginScreen() {
 
   // 로그인 처리
   const handleLogin = async () => {
+    console.log("handleLogin called");
+
     if (!form.email || !form.password) {
       Alert.alert("알림", "이메일과 비밀번호를 입력해주세요");
       return;
@@ -54,6 +56,7 @@ export default function LoginScreen() {
       return;
     }
 
+    console.log("About to call Auth.authTokenCreate");
     try {
       const response = await Auth.authTokenCreate({
         body: {
@@ -62,7 +65,31 @@ export default function LoginScreen() {
         },
       });
 
+      console.log("API response received:", response);
+      console.log("Response status:", response.response?.status);
+      console.log("Response data:", response.data);
+
+      // Check if the response contains an error
+      if (response.error) {
+        console.log("API returned error:", response.error);
+        const status = response.response?.status;
+
+        let errorMessage = "로그인에 실패했습니다";
+
+        if (status === 401) {
+          errorMessage = "이메일 또는 비밀번호가 올바르지 않습니다";
+        } else if (status === 400) {
+          errorMessage = "입력하신 정보를 다시 확인해주세요";
+        } else if (status >= 500) {
+          errorMessage = "서버 오류가 발생했습니다. 잠시 후 다시 시도해주세요";
+        }
+
+        Alert.alert("로그인 실패", errorMessage);
+        return;
+      }
+
       if (response.data) {
+        console.log("Login successful, processing tokens");
         // Login using AuthContext (automatically redirects to main app)
         const tokens = response.data as any; // Type assertion due to outdated OpenAPI types
         await login({
@@ -70,10 +97,67 @@ export default function LoginScreen() {
           refresh: tokens.refresh,
         });
         // Navigation will be handled by AuthContext
+      } else {
+        console.log("No response data, login failed");
+        Alert.alert("로그인 실패", "서버에서 응답을 받지 못했습니다");
       }
     } catch (error: unknown) {
       console.error("Login error:", error);
-      Alert.alert("알림", "로그인에 실패했습니다");
+      console.error("Error details:", JSON.stringify(error, null, 2));
+
+      // Check for different error structures that might exist
+      let errorMessage = "로그인에 실패했습니다. 다시 시도해주세요";
+
+      if (error && typeof error === 'object') {
+        // Check for response property (axios style)
+        if ('response' in error) {
+          const response = (error as any).response;
+          console.error("Response status:", response?.status);
+          console.error("Response data:", response?.data);
+
+          if (response?.status === 401) {
+            errorMessage = "이메일 또는 비밀번호가 올바르지 않습니다";
+          } else if (response?.status === 400) {
+            errorMessage = "입력하신 정보를 다시 확인해주세요";
+          } else if (response?.status >= 500) {
+            errorMessage = "서버 오류가 발생했습니다. 잠시 후 다시 시도해주세요";
+          }
+        }
+        // Check for status property (fetch style)
+        else if ('status' in error) {
+          const status = (error as any).status;
+          console.error("Error status:", status);
+
+          if (status === 401) {
+            errorMessage = "이메일 또는 비밀번호가 올바르지 않습니다";
+          } else if (status === 400) {
+            errorMessage = "입력하신 정보를 다시 확인해주세요";
+          } else if (status >= 500) {
+            errorMessage = "서버 오류가 발생했습니다. 잠시 후 다시 시도해주세요";
+          }
+        }
+        // Check for message property
+        else if ('message' in error) {
+          const message = (error as any).message;
+          console.error("Error message:", message);
+
+          if (message?.toLowerCase().includes('unauthorized') || message?.toLowerCase().includes('401')) {
+            errorMessage = "이메일 또는 비밀번호가 올바르지 않습니다";
+          } else if (message?.toLowerCase().includes('bad request') || message?.toLowerCase().includes('400')) {
+            errorMessage = "입력하신 정보를 다시 확인해주세요";
+          }
+        }
+      }
+
+      // Force show alert and also log to console
+      console.log("About to show alert:", errorMessage);
+      Alert.alert("로그인 실패", errorMessage);
+
+      // Also try with a timeout to ensure it shows
+      setTimeout(() => {
+        console.log("Backup alert triggered");
+        Alert.alert("알림", "로그인 중 오류가 발생했습니다");
+      }, 100);
     }
   };
 
