@@ -15,7 +15,12 @@ import Header from "@/components/common/Header";
 import { ThemedText } from "@/components/ThemedText";
 import { Colors } from "@/constants/Colors";
 import { Routes, Districts, TravelCourses } from "@/src/client/sdk.gen";
-import { Route, District, TravelCourse, TravelCourseRoute } from "@/src/client/types.gen";
+import {
+    Route,
+    District,
+    TravelCourse,
+    TravelCourseRoute,
+} from "@/src/client/types.gen";
 
 async function getDistrictCoordinates(destinationName: string): Promise<{
     lat: number;
@@ -90,7 +95,11 @@ async function fetchRecommendedPlaces(params: {
 
         // Transform API response to place IDs
         let placeIds: string[] = [];
-        if (response.data?.routes && Array.isArray(response.data.routes) && response.data.routes.length > 0) {
+        if (
+            response.data?.routes &&
+            Array.isArray(response.data.routes) &&
+            response.data.routes.length > 0
+        ) {
             // Extract place IDs from the first recommended route
             const firstRoute = response.data.routes[0];
             if (firstRoute && Array.isArray(firstRoute.places)) {
@@ -111,7 +120,10 @@ async function fetchRecommendedPlaces(params: {
 
         return route;
     } catch (error) {
-        console.warn("Failed to fetch recommendations from API, using empty route:", error);
+        console.warn(
+            "Failed to fetch recommendations from API, using empty route:",
+            error
+        );
 
         // Fallback: return empty route if API fails
         const route: Route & { sequence: number } = {
@@ -188,14 +200,13 @@ async function fetchRouteRecommendations(params: {
 }
 
 export default function RecommendationScreen() {
-    const { startDate, endDate, destinations } =
-        useLocalSearchParams<{
-            courseId: string;
-            startDate?: string;
-            endDate?: string;
-            destinations?: string;
-            foods?: string;
-        }>();
+    const { startDate, endDate, destinations } = useLocalSearchParams<{
+        courseId: string;
+        startDate?: string;
+        endDate?: string;
+        destinations?: string;
+        foods?: string;
+    }>();
 
     const [routes, setRoutes] = useState<(Route & { sequence: number })[]>([]);
     const [loading, setLoading] = useState(false);
@@ -203,8 +214,12 @@ export default function RecommendationScreen() {
 
     const [selectedRouteId, setSelectedRouteId] = useState<string | null>(null);
     const [selectedPlaceId, setSelectedPlaceId] = useState<string | null>(null);
-    const [showPlaceRecommendationModal, setShowPlaceRecommendationModal] = useState(false);
-    const [recommendationCoordinates, setRecommendationCoordinates] = useState<{ lat: number; lng: number } | null>(null);
+    const [showPlaceRecommendationModal, setShowPlaceRecommendationModal] =
+        useState(false);
+    const [recommendationCoordinates, setRecommendationCoordinates] = useState<{
+        lat: number;
+        lng: number;
+    } | null>(null);
 
     const regionName = useMemo(() => {
         if (destinations) {
@@ -253,10 +268,12 @@ export default function RecommendationScreen() {
     const handlePlaceSelect = (selectedPlace: any) => {
         // Add the selected place to the current route
         if (selectedRouteId) {
-            setRoutes(prevRoutes =>
-                prevRoutes.map(route => {
+            setRoutes((prevRoutes) =>
+                prevRoutes.map((route) => {
                     if (route.id === selectedRouteId) {
-                        const updatedPlaces = route.places ? [...route.places] : [];
+                        const updatedPlaces = route.places
+                            ? [...route.places]
+                            : [];
                         // Only add if not already in the route
                         if (!updatedPlaces.includes(selectedPlace.id)) {
                             updatedPlaces.push(selectedPlace.id);
@@ -267,7 +284,10 @@ export default function RecommendationScreen() {
                 })
             );
 
-            Alert.alert("성공", `${selectedPlace.name}이(가) 일정에 추가되었습니다.`);
+            Alert.alert(
+                "성공",
+                `${selectedPlace.name}이(가) 일정에 추가되었습니다.`
+            );
         }
     };
 
@@ -282,14 +302,19 @@ export default function RecommendationScreen() {
 
             if (destinations) {
                 try {
-                    const destinationName = String(destinations).split(",")[0] || "전주";
-                    const coords = await getDistrictCoordinates(destinationName);
+                    const destinationName =
+                        String(destinations).split(",")[0] || "전주";
+                    const coords =
+                        await getDistrictCoordinates(destinationName);
                     if (coords) {
                         lat = coords.lat;
                         lng = coords.lng;
                     }
                 } catch (error) {
-                    console.warn("Failed to get coordinates for destination:", error);
+                    console.warn(
+                        "Failed to get coordinates for destination:",
+                        error
+                    );
                 }
             }
 
@@ -305,13 +330,14 @@ export default function RecommendationScreen() {
     const handleSave = async (routeId: string) => {
         try {
             // Find the route to save
-            const routeToSave = routes.find(route => route.id === routeId);
+            const routeToSave = routes.find((route) => route.id === routeId);
             if (!routeToSave) return;
 
             // First, create the route in the backend
             const routeData: Route = {
                 title: routeToSave.title,
-                description: routeToSave.description || `${destinations || "추천"} 코스`,
+                description:
+                    routeToSave.description || `${destinations || "추천"} 코스`,
                 places: routeToSave.places || [],
             };
 
@@ -332,7 +358,9 @@ export default function RecommendationScreen() {
             // Create the travel course
             const travelCourse: TravelCourse = {
                 title: routeToSave.title,
-                description: routeToSave.description || `${destinations || "추천"} 여행 코스`,
+                description:
+                    routeToSave.description ||
+                    `${destinations || "추천"} 여행 코스`,
                 routes: [travelCourseRoute],
                 start_date: startDate ? String(startDate) : null,
                 end_date: endDate ? String(endDate) : null,
