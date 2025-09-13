@@ -37,3 +37,23 @@ class UserDetailSerializer(serializers.ModelSerializer):
             "date_joined",
         )
         read_only_fields = ("id", "date_joined")
+
+
+class UserUpdateSerializer(serializers.ModelSerializer):
+    """
+    Serializer for updating user profile information.
+    Allows updating username and profile_image_url only.
+    """
+
+    class Meta:
+        model = User
+        fields = ("username", "profile_image_url")
+
+    def validate_username(self, value):
+        """
+        Validate that username is unique (excluding current user).
+        """
+        user = self.instance
+        if User.objects.filter(username=value).exclude(pk=user.pk).exists():
+            raise serializers.ValidationError("이미 사용 중인 사용자명입니다.")
+        return value

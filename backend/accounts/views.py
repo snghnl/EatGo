@@ -1,11 +1,11 @@
-from rest_framework.generics import CreateAPIView, RetrieveAPIView
+from rest_framework.generics import CreateAPIView, RetrieveUpdateAPIView
 from rest_framework.response import Response
 from rest_framework import status
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.views import APIView
 from django.db import transaction
 from django.contrib.auth import get_user_model
-from .serializers import UserSerializer, UserDetailSerializer
+from .serializers import UserSerializer, UserDetailSerializer, UserUpdateSerializer
 from rest_framework_simplejwt.tokens import RefreshToken
 import logging
 
@@ -13,14 +13,64 @@ User = get_user_model()
 logger = logging.getLogger(__name__)
 
 
-class MeView(RetrieveAPIView):
+class MeView(RetrieveUpdateAPIView):
+    """
+    Retrieve and update the authenticated user's profile.
+
+    GET: Returns user profile information
+    PATCH: Updates user profile (username, profile_image_url)
+    """
+
     permission_classes = [IsAuthenticated]
     serializer_class = UserDetailSerializer
 
-    def get(self, request):
-        user = request.user
-        serializer = UserDetailSerializer(user)
-        return Response(serializer.data, status=status.HTTP_200_OK)
+    def get_object(self):
+        return self.request.user
+
+    def get_serializer_class(self):
+        if self.request.method == "PATCH":
+            return UserUpdateSerializer
+        return UserDetailSerializer
+
+    def patch(self, request, *args, **kwargs):
+        """
+        Update user profile information.
+        """
+        try:
+            user = self.get_object()
+            serializer = UserUpdateSerializer(user, data=request.data, partial=True)
+
+            if serializer.is_valid():
+                updated_user = serializer.save()
+
+                # Log the profile update
+                logger.info(
+                    f"Profile updated for user: {updated_user.username} (ID: {updated_user.id})"
+                )
+
+                # Return updated user data using the detail serializer
+                response_serializer = UserDetailSerializer(updated_user)
+                return Response(
+                    {
+                        "message": "프로필이 성공적으로 업데이트되었습니다.",
+                        "user": response_serializer.data,
+                    },
+                    status=status.HTTP_200_OK,
+                )
+
+            return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+        except Exception as e:
+            logger.error(
+                f"Failed to update profile for user: {request.user.username}. Error: {str(e)}"
+            )
+            return Response(
+                {
+                    "error": "프로필 업데이트 중 오류가 발생했습니다.",
+                    "detail": "잠시 후 다시 시도해주세요.",
+                },
+                status=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            )
 
 
 class SignupView(CreateAPIView):
