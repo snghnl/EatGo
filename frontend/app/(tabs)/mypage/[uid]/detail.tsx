@@ -1,19 +1,20 @@
 import React, { useState, useEffect } from "react";
 import { useLocalSearchParams, router } from "expo-router";
-import { View, ScrollView, StyleSheet, SafeAreaView } from "react-native";
+import { View, ScrollView, StyleSheet, TouchableOpacity } from "react-native";
+import { SafeAreaView } from "react-native-safe-area-context";
 import MyPageHeader from "@/components/mypage/MyPageHeader";
-import usersData from "@/mock-data/users.json";
 import { MyPageTabs } from "@/components/mypage/MyPageTabs";
 import DropdownSort from "@/components/mypage/DropdownSort";
-import { PlaceCard } from "@/components/main/PlaceCard";
-import placesData from "@/mock-data/places.json";
 import { CourseCard } from "@/components/plan";
-import { SAMPLE_COURSES } from "@/constants/Data";
 import { ThemedText } from "@/components/ThemedText";
 import { Colors } from "@/constants/Colors";
-import { usePostStore } from "@/store/posts";
 import { Ionicons } from "@expo/vector-icons";
 import ReportModal from "@/components/community/ReportModal";
+import type {
+  UserDetail,
+  PostListOutput,
+} from "@/src/client/types.gen";
+import { Accounts, Community } from "@/src/client/sdk.gen";
 
 const UserProfilePage = () => {
   // ✅ 모든 Hook들을 먼저 선언
@@ -22,110 +23,139 @@ const UserProfilePage = () => {
     "places",
   );
   const [sortOption, setSortOption] = useState("최신순");
-  const [userData, setUserData] = useState<any>(null);
-  const [userPlaces, setUserPlaces] = useState<any[]>([]);
-  const [userCourses, setUserCourses] = useState<any[]>([]);
+  const [userData, setUserData] = useState<UserDetail | null>(null);
+  const [userPosts, setUserPosts] = useState<PostListOutput[]>([]);
   const [isLoading, setIsLoading] = useState(true);
-  const { posts, getPostsByCourse } = usePostStore();
   const [reportOpen, setReportOpen] = useState(false);
 
   // ✅ useEffect도 Hook이므로 조건부 렌더링 전에 위치
   useEffect(() => {
-    const initializeUserData = () => {
+    const fetchUserData = async () => {
       try {
         setIsLoading(true);
 
-        // uid를 기반으로 사용자 데이터를 찾거나 로드
-        const foundUser = usersData.find(
-          (user) =>
-            String(user.id) === String(uid) || user.username === String(uid),
-        );
+        // Note: Currently there's no API endpoint to fetch other users' profiles by ID
+        // For now, we'll use a placeholder approach until the backend provides this endpoint
+        // TODO: Replace with direct user profile API call when available: await Accounts.accountsUserRead({id: uid})
 
-        if (foundUser) {
-          setUserData(foundUser);
-          loadUserData(String(foundUser.id));
-        } else {
-          // 사용자를 찾을 수 없는 경우 기본 데이터 설정
-          setUserData(usersData[0]);
-          loadUserData(String(usersData[0].id));
+        // Fetch current user data to get the structure
+        const currentUserResponse = await Accounts.accountsMeRead();
+        if (currentUserResponse.data) {
+          // Create a placeholder user profile for the requested UID
+          const placeholderUser: UserDetail = {
+            ...currentUserResponse.data,
+            id: uid ? Number(uid) : currentUserResponse.data.id,
+            username: `User_${uid}`,
+            email: `user${uid}@example.com`,
+          };
+          setUserData(placeholderUser);
+
+          // Fetch user's posts from community (if they have any public posts)
+          try {
+            const postsResponse = await Community.communityPostsList();
+            if (postsResponse.data && Array.isArray(postsResponse.data)) {
+              // TODO: When proper user matching is available, use this filter:
+              // const userPostsFiltered = postsResponse.data.filter((post: PostListOutput) =>
+              //   post.user?.id === Number(uid) || post.user?.username === userData.username
+              // );
+
+              // For now, show all posts as demonstration of the "내여행코스" section
+              // This will show community posts that would represent user's published travel courses
+              setUserPosts(postsResponse.data.slice(0, 3)); // Show first 3 posts as demo
+            }
+          } catch (postsError) {
+            console.log("Failed to fetch user posts:", postsError);
+            setUserPosts([]);
+          }
         }
       } catch (error) {
         console.error("사용자 데이터 로딩 실패:", error);
-        setUserData(usersData[0]);
-        loadUserData(String(usersData[0].id));
+        // Fallback to placeholder data
+        setUserData({
+          id: uid ? Number(uid) : 1,
+          username: `User_${uid || '1'}`,
+          email: `user${uid || '1'}@example.com`,
+          profile_image_url: null,
+          date_joined: new Date().toISOString(),
+        });
+        setUserPosts([]);
       } finally {
         setIsLoading(false);
       }
     };
 
     if (uid) {
-      initializeUserData();
+      fetchUserData();
     } else {
       setIsLoading(false);
     }
   }, [uid]);
 
-  // ✅ 일반 함수는 Hook 선언 후에 위치
-  const loadUserData = (userId: string) => {
-    try {
-      // 실제로는 API 호출로 해당 사용자의 데이터를 가져와야 합니다
-      // 여기서는 샘플 데이터를 사용합니다
-
-      // 사용자의 공개 장소 데이터 (실제로는 API에서 가져옴)
-      const userPublicPlaces = placesData.documents?.slice(0, 2) || [];
-      setUserPlaces(userPublicPlaces);
-
-      // 사용자의 공개 코스 데이터 (실제로는 API에서 가져옴)
-      const userPublicCourses = SAMPLE_COURSES?.slice(0, 2) || [];
-      setUserCourses(userPublicCourses);
-    } catch (error) {
-      console.error("사용자 장소/코스 데이터 로딩 실패:", error);
-      setUserPlaces([]);
-      setUserCourses([]);
-    }
-  };
 
   // ✅ 조건부 렌더링은 모든 Hook 선언 후에
   if (isLoading) {
     return (
-      <View style={[styles.container, styles.loadingContainer]}>
+      <SafeAreaView
+        style={[styles.container, styles.loadingContainer]}
+        edges={["top"]}
+      >
         <ThemedText>사용자 정보를 불러오는 중...</ThemedText>
-      </View>
+      </SafeAreaView>
     );
   }
 
   if (!userData) {
     return (
-      <View style={[styles.container, styles.loadingContainer]}>
+      <SafeAreaView
+        style={[styles.container, styles.loadingContainer]}
+        edges={["top"]}
+      >
         <ThemedText>사용자 정보를 찾을 수 없습니다.</ThemedText>
-      </View>
+      </SafeAreaView>
     );
   }
 
   return (
-    <ScrollView>
-      <SafeAreaView>
-        <View style={styles.container}>
-          <View style={styles.topbar}>
-            <Ionicons
-              name="chevron-back"
-              size={22}
-              color={Colors.textPrimary}
-              onPress={() => router.push("/(tabs)/community/")}
-            />
-            <Ionicons
-              name="alert-circle-outline"
-              size={20}
-              color={Colors.textSecondary}
-              onPress={() => setReportOpen(true)}
-            />
-          </View>
-          <View style={styles.headerSection} />
+    <SafeAreaView style={styles.container} edges={["top"]}>
+      <ScrollView>
+        <View style={styles.headerSection}>
+          <View style={{ flex: 1 }} />
           <MyPageHeader
             username={userData.username || `사용자 ${userData.id}`}
-            neighborCount={userData.followers_count || 0}
-            profileImageUrl={userData.profile_image}
+            neighborCount={0} // API doesn't provide followers_count yet
+            profileImageUrl={userData.profile_image_url || undefined}
           />
+
+          {/* Back and Report Button */}
+          <View style={styles.actionContainer}>
+            <TouchableOpacity
+              style={styles.actionButton}
+              onPress={() => router.back()}
+            >
+              <Ionicons
+                name="chevron-back"
+                size={20}
+                color={Colors.textSecondary}
+              />
+              <ThemedText style={styles.actionText}>
+                뒤로가기
+              </ThemedText>
+            </TouchableOpacity>
+            <TouchableOpacity
+              style={styles.reportButton}
+              onPress={() => setReportOpen(true)}
+            >
+              <Ionicons
+                name="alert-circle-outline"
+                size={20}
+                color={Colors.textSecondary}
+              />
+              <ThemedText style={styles.actionText}>
+                신고하기
+              </ThemedText>
+            </TouchableOpacity>
+          </View>
+
           <MyPageTabs
             style={styles.tabs}
             onTabChange={(tab) => setActiveTab(tab)}
@@ -149,67 +179,45 @@ const UserProfilePage = () => {
         <View style={styles.cardWrapper}>
           {activeTab === "places" && (
             <View>
-              {userPlaces.length > 0 ? (
-                userPlaces.map((place) => (
-                  <PlaceCard
-                    key={`place-${place.id}`}
-                    id={place.id}
-                    name={place.place_name}
-                    category={place.category_name}
-                    distance={place.distance}
-                    address={place.road_address_name}
-                    description={place.category_name}
-                    imageUrl={"https://source.unsplash.com/random/300x300?food"}
-                    isBookmarked={false}
-                    onBookmark={() => {}}
-                    isSaved={false}
-                  />
-                ))
-              ) : (
-                <ThemedText style={styles.emptyText}>
-                  공개된 장소가 없습니다.
-                </ThemedText>
-              )}
+              <ThemedText style={styles.emptyText}>
+                사용자의 공개된 장소 정보는 추후 지원 예정입니다.
+              </ThemedText>
             </View>
           )}
 
           {activeTab === "courses" && (
             <View>
-              {userCourses.length > 0 ? (
-                userCourses.map((course) => {
-                  // ✅ 안전한 함수 호출
-                  const courseId = String(course.id);
-                  const post = getPostsByCourse
-                    ? getPostsByCourse(courseId)?.[0]
-                    : undefined;
-
-                  return (
-                    <CourseCard
-                      key={`course-${course.id}`}
-                      subtitle={course.subtitle}
-                      title={course.title}
-                      hasImages={course.hasImages}
-                      onPress={() => {
-                        try {
-                          if (post) {
-                            router.push({
-                              pathname: "/community/[id]",
-                              params: { id: post.id },
-                            });
-                          } else {
-                            alert("해당 코스에 작성된 게시글이 없습니다.");
-                          }
-                        } catch (error) {
-                          console.error("네비게이션 오류:", error);
-                          alert("페이지 이동 중 오류가 발생했습니다.");
+              {userPosts.length > 0 ? (
+                userPosts.map((post) => (
+                  <CourseCard
+                    key={`post-${post.id}`}
+                    subtitle={
+                      post.travel_course?.title ||
+                      (post.content.length > 50
+                        ? post.content.substring(0, 50) + "..."
+                        : post.content) ||
+                      "여행 코스"
+                    }
+                    title={post.title}
+                    hasImages={post.images && post.images.length > 0}
+                    onPress={() => {
+                      try {
+                        if (post.id) {
+                          router.push({
+                            pathname: "/community/[id]",
+                            params: { id: post.id },
+                          });
                         }
-                      }}
-                    />
-                  );
-                })
+                      } catch (error) {
+                        console.error("네비게이션 오류:", error);
+                        alert("페이지 이동 중 오류가 발생했습니다.");
+                      }
+                    }}
+                  />
+                ))
               ) : (
                 <ThemedText style={styles.emptyText}>
-                  공개된 여행코스가 없습니다.
+                  공개된 여행 코스가 없습니다.
                 </ThemedText>
               )}
             </View>
@@ -223,7 +231,7 @@ const UserProfilePage = () => {
             </View>
           )}
         </View>
-      </SafeAreaView>
+      </ScrollView>
       <ReportModal
         visible={reportOpen}
         onClose={() => setReportOpen(false)}
@@ -235,7 +243,7 @@ const UserProfilePage = () => {
           console.log("신고 제출", payload);
         }}
       />
-    </ScrollView>
+    </SafeAreaView>
   );
 };
 
@@ -244,41 +252,67 @@ export default UserProfilePage;
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: Colors.white,
-  },
-  topbar: {
-    position: "absolute",
-    top: 20,
-    left: 15,
-    right: 30,
-    zIndex: 10,
-    flexDirection: "row",
-    justifyContent: "space-between",
-    alignItems: "center",
-  },
-  headerSection: {
-    minHeight: 40,
-    padding: 10,
+    backgroundColor: "#ffe6e8ff",
   },
   loadingContainer: {
+    justifyContent: "center",
+    alignItems: "center",
+  },
+  centered: {
     justifyContent: "center",
     alignItems: "center",
   },
   dropdownWrapper: {
     marginBottom: 10,
   },
-
+  headerSection: {
+    width: "100%",
+    backgroundColor: Colors.listbackground,
+    minHeight: 250,
+  },
+  actionContainer: {
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "space-between",
+    paddingVertical: 16,
+    paddingHorizontal: 24,
+  },
+  actionButton: {
+    flexDirection: "row",
+    alignItems: "center",
+    paddingVertical: 8,
+    paddingHorizontal: 16,
+    borderRadius: 8,
+    backgroundColor: Colors.white,
+    borderWidth: 1,
+    borderColor: Colors.backgroundGray,
+  },
+  reportButton: {
+    flexDirection: "row",
+    alignItems: "center",
+    paddingVertical: 8,
+    paddingHorizontal: 16,
+    borderRadius: 8,
+    backgroundColor: Colors.white,
+    borderWidth: 1,
+    borderColor: Colors.backgroundGray,
+  },
+  actionText: {
+    marginLeft: 8,
+    fontSize: 14,
+    color: Colors.textSecondary,
+  },
   tabs: {
     marginBottom: 0,
     alignItems: "center",
   },
   cardWrapper: {
-    paddingHorizontal: 16,
-    paddingTop: 16,
+    padding: 16,
   },
   emptyText: {
     textAlign: "center",
-    marginTop: 40,
     color: Colors.textSecondary,
+    fontSize: 16,
+    marginTop: 32,
   },
 });
