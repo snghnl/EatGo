@@ -10,10 +10,7 @@ import { ThemedText } from "@/components/ThemedText";
 import { Colors } from "@/constants/Colors";
 import { Ionicons } from "@expo/vector-icons";
 import ReportModal from "@/components/community/ReportModal";
-import type {
-  UserDetail,
-  PostListOutput,
-} from "@/src/client/types.gen";
+import type { UserDetail, PostListOutput } from "@/src/client/types.gen";
 import { Accounts, Community } from "@/src/client/sdk.gen";
 
 const UserProfilePage = () => {
@@ -73,8 +70,8 @@ const UserProfilePage = () => {
         // Fallback to placeholder data
         setUserData({
           id: uid ? Number(uid) : 1,
-          username: `User_${uid || '1'}`,
-          email: `user${uid || '1'}@example.com`,
+          username: `User_${uid || "1"}`,
+          email: `user${uid || "1"}@example.com`,
           profile_image_url: null,
           date_joined: new Date().toISOString(),
         });
@@ -90,7 +87,6 @@ const UserProfilePage = () => {
       setIsLoading(false);
     }
   }, [uid]);
-
 
   // ✅ 조건부 렌더링은 모든 Hook 선언 후에
   if (isLoading) {
@@ -137,9 +133,7 @@ const UserProfilePage = () => {
                 size={20}
                 color={Colors.textSecondary}
               />
-              <ThemedText style={styles.actionText}>
-                뒤로가기
-              </ThemedText>
+              <ThemedText style={styles.actionText}>뒤로가기</ThemedText>
             </TouchableOpacity>
             <TouchableOpacity
               style={styles.reportButton}
@@ -150,9 +144,7 @@ const UserProfilePage = () => {
                 size={20}
                 color={Colors.textSecondary}
               />
-              <ThemedText style={styles.actionText}>
-                신고하기
-              </ThemedText>
+              <ThemedText style={styles.actionText}>신고하기</ThemedText>
             </TouchableOpacity>
           </View>
 
