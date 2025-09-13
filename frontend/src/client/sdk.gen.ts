@@ -4,6 +4,10 @@ import type { Options as ClientOptions, TDataShape, Client } from "./client";
 import type {
   AccountsMeReadData,
   AccountsMeReadResponses,
+  AccountsMePartialUpdateData,
+  AccountsMePartialUpdateResponses,
+  AccountsMeUpdateData,
+  AccountsMeUpdateResponses,
   AccountsMeDeleteDeleteData,
   AccountsMeDeleteDeleteResponses,
   AccountsSignupCreateData,
@@ -143,11 +147,58 @@ export type Options<
 };
 
 export class Accounts {
+  /**
+   * Retrieve and update the authenticated user's profile.
+   */
   public static accountsMeRead<ThrowOnError extends boolean = false>(
     options?: Options<AccountsMeReadData, ThrowOnError>,
   ) {
     return (options?.client ?? _heyApiClient).get<
       AccountsMeReadResponses,
+      unknown,
+      ThrowOnError
+    >({
+      security: [
+        {
+          name: "Authorization",
+          type: "apiKey",
+        },
+      ],
+      url: "/accounts/me/",
+      ...options,
+    });
+  }
+
+  /**
+   * Update user profile information.
+   */
+  public static accountsMePartialUpdate<ThrowOnError extends boolean = false>(
+    options?: Options<AccountsMePartialUpdateData, ThrowOnError>,
+  ) {
+    return (options?.client ?? _heyApiClient).patch<
+      AccountsMePartialUpdateResponses,
+      unknown,
+      ThrowOnError
+    >({
+      security: [
+        {
+          name: "Authorization",
+          type: "apiKey",
+        },
+      ],
+      url: "/accounts/me/",
+      ...options,
+    });
+  }
+
+  /**
+   * Retrieve and update the authenticated user's profile.
+   */
+  public static accountsMeUpdate<ThrowOnError extends boolean = false>(
+    options?: Options<AccountsMeUpdateData, ThrowOnError>,
+  ) {
+    return (options?.client ?? _heyApiClient).put<
+      AccountsMeUpdateResponses,
       unknown,
       ThrowOnError
     >({
